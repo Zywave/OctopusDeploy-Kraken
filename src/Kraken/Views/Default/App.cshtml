@@ -1,0 +1,18 @@
+﻿<div data-bind="component: { name: '@Html.Raw(ViewData["View"])', params: @Html.Raw(ViewData["Params"]) }"></div>
+
+@section Scripts {
+    <script>
+        window.app = {
+            basePath: '@Url.Content("~/")'
+        };
+    </script>
+    <environment names="Development">
+        <script asp-src-include="~/js/**/*.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/js/app.min.js" asp-append-version="true"></script>
+    </environment>
+    <script>
+        ko.applyBindings();
+    </script>
+}

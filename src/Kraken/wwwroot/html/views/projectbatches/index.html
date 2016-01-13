@@ -1,0 +1,14 @@
+﻿<div class="view">
+    <header class="view__header">
+        <h1>Project Batches</h1>
+    </header>
+    <section class="view__body">
+        <ul class="project-batch-list" data-bind="foreach: projectBatches">
+            <li class="project-batch-list__item">
+                <h3>
+                    <a data-bind="text: name, attr: { href: viewUrl }"></a>
+                </h3>
+            </li>
+        </ul>
+    </section>
+</div>

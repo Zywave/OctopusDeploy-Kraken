@@ -1,0 +1,35 @@
+﻿<div class="view" data-bind="with: projectBatch">
+    <header class="view__header">
+        <h1 data-bind="text: name"></h1>
+    </header>
+
+    <div class="view__body">
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Sync <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" data-bind="foreach: $parent.environments">
+                <li><a href="#" data-bind="text: name"></a></li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Deploy <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" data-bind="foreach: $parent.environments">
+                <li><a href="#" data-bind="text: name"></a></li>
+            </ul>
+        </div>
+        
+        <ul data-bind="foreach: items">
+            <li>
+                <span data-bind="text: name"></span>
+                <span data-bind="text: version"></span>
+            </li>
+        </ul>
+
+    </div>
+
+</div>
