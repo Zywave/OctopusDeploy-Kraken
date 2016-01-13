@@ -105,7 +105,7 @@
                 routes.MapRoute(
                     name: "default",    
                     template: "{action}/{*view}",
-                    defaults: new { controller = "Default", action = "App", view = "projectbatches" });
+                    defaults: new { controller = "Default", action = "App", view = "releasebatches" });
             });
         }
 

@@ -26,7 +26,7 @@ namespace Kraken.Migrations
                     b.HasKey("UserName");
                 });
 
-            modelBuilder.Entity("Kraken.Models.ProjectBatch", b =>
+            modelBuilder.Entity("Kraken.Models.ReleaseBatch", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -38,24 +38,10 @@ namespace Kraken.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Kraken.Models.ProjectBatchItem", b =>
+            modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("LatestDeploymentId")
-                        .HasAnnotation("MaxLength", 20);
-
-                    b.Property<string>("LatestReleaseId")
-                        .HasAnnotation("MaxLength", 20);
-
-                    b.Property<string>("LatestTaskId")
-                        .HasAnnotation("MaxLength", 20);
-
-                    b.Property<string>("NugetPackageId")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<int>("ProjectBatchId");
 
                     b.Property<string>("ProjectId")
                         .IsRequired()
@@ -69,14 +55,19 @@ namespace Kraken.Migrations
                         .IsRequired()
                         .HasAnnotation("MaxLength", 20);
 
+                    b.Property<int>("ReleaseBatchId");
+
+                    b.Property<string>("ReleaseId")
+                        .HasAnnotation("MaxLength", 20);
+
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Kraken.Models.ProjectBatchItem", b =>
+            modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>
                 {
-                    b.HasOne("Kraken.Models.ProjectBatch")
+                    b.HasOne("Kraken.Models.ReleaseBatch")
                         .WithMany()
-                        .HasForeignKey("ProjectBatchId");
+                        .HasForeignKey("ReleaseBatchId");
                 });
         }
     }

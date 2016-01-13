@@ -2,13 +2,13 @@ namespace Kraken.Models
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    public class ProjectBatchItem
+    public class ReleaseBatchItem
     {
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey("ProjectBatch")]
-        public int ProjectBatchId { get; set; }
+        [ForeignKey("ReleaseBatch")]
+        public int ReleaseBatchId { get; set; }
 
         [Required]
         [StringLength(20)]
@@ -23,17 +23,8 @@ namespace Kraken.Models
         public string ProjectVersion { get; set; }
         
         [StringLength(20)]
-        public string LatestReleaseId { get; set; }
+        public string ReleaseId { get; set; }
 
-        [StringLength(20)]
-        public string LatestDeploymentId { get; set; }
-
-        [StringLength(20)]
-        public string LatestTaskId { get; set; }
-
-        [StringLength(50)]
-        public string NugetPackageId { get; set; }
-
-        public ProjectBatch Batch { get; set; }
+        public ReleaseBatch Batch { get; set; }
     }
 }

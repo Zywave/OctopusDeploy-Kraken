@@ -31,6 +31,18 @@ textarea {
     z-index: 10000;
 }
 
-.project-batch-list {
+.release-batch-list {
     list-style: none;
+}
+
+.hint {
+    text-align: center;
+}
+
+.hint .alert {
+    display: inline-block;
+}
+
+.hint .alert .close {
+    margin-left: 20px;
 }

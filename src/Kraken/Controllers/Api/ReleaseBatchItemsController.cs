@@ -1,5 +1,6 @@
 namespace Kraken.Controllers.Api
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -7,61 +8,59 @@ namespace Kraken.Controllers.Api
     using Microsoft.AspNet.Mvc;
     using Microsoft.Data.Entity;
     using Kraken.Models;
-    using Microsoft.AspNet.Authorization;
 
-    [Authorize]
     [Produces("application/json")]
-    [Route("api/projectbatches")]
-    public class ProjectBatchesController : Controller
+    [Route("api/ReleaseBatchItems")]
+    public class ReleaseBatchItemsController : Controller
     {
-        private ApplicationDbContext _context;
-
-        public ProjectBatchesController(ApplicationDbContext context)
+        public ReleaseBatchItemsController(ApplicationDbContext context)
         {
+            if (context == null) throw new ArgumentNullException(nameof(context));
+
             _context = context;
         }
 
-        // GET: api/ProjectBatches
+        // GET: api/ReleaseBatchItems
         [HttpGet]
-        public IEnumerable<ProjectBatch> GetProjectBatches()
+        public IEnumerable<ReleaseBatchItem> GetReleaseBatchItems()
         {
-            return _context.ProjectBatches;
+            return _context.ReleaseBatchItems;
         }
 
-        // GET: api/ProjectBatches/5
-        [HttpGet("{id}", Name = "GetProjectBatch")]
-        public async Task<IActionResult> GetProjectBatch([FromRoute] int id)
+        // GET: api/ReleaseBatchItems/5
+        [HttpGet("{id}", Name = "GetReleaseBatchItem")]
+        public async Task<IActionResult> GetReleaseBatchItem([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            var projectBatch = await _context.ProjectBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
+            var releaseBatchItem = await _context.ReleaseBatchItems.SingleAsync(m => m.Id == id);
 
-            if (projectBatch == null)
+            if (releaseBatchItem == null)
             {
                 return HttpNotFound();
             }
 
-            return Ok(projectBatch);
+            return Ok(releaseBatchItem);
         }
 
-        // PUT: api/ProjectBatches/5
+        // PUT: api/ReleaseBatchItems/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProjectBatch([FromRoute] int id, [FromBody] ProjectBatch projectBatch)
+        public async Task<IActionResult> PutReleaseBatchItem([FromRoute] int id, [FromBody] ReleaseBatchItem releaseBatchItem)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            if (id != projectBatch.Id)
+            if (id != releaseBatchItem.Id)
             {
                 return HttpBadRequest();
             }
 
-            _context.Entry(projectBatch).State = EntityState.Modified;
+            _context.Entry(releaseBatchItem).State = EntityState.Modified;
 
             try
             {
@@ -69,7 +68,7 @@ namespace Kraken.Controllers.Api
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProjectBatchExists(id))
+                if (!ReleaseBatchItemExists(id))
                 {
                     return HttpNotFound();
                 }
@@ -82,23 +81,23 @@ namespace Kraken.Controllers.Api
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
 
-        // POST: api/ProjectBatches
+        // POST: api/ReleaseBatchItems
         [HttpPost]
-        public async Task<IActionResult> PostProjectBatch([FromBody] ProjectBatch projectBatch)
+        public async Task<IActionResult> PostReleaseBatchItem([FromBody] ReleaseBatchItem releaseBatchItem)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            _context.ProjectBatches.Add(projectBatch);
+            _context.ReleaseBatchItems.Add(releaseBatchItem);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (ProjectBatchExists(projectBatch.Id))
+                if (ReleaseBatchItemExists(releaseBatchItem.Id))
                 {
                     return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -108,28 +107,28 @@ namespace Kraken.Controllers.Api
                 }
             }
 
-            return CreatedAtRoute("GetProjectBatch", new { id = projectBatch.Id }, projectBatch);
+            return CreatedAtRoute("GetReleaseBatchItem", new { id = releaseBatchItem.Id }, releaseBatchItem);
         }
 
-        // DELETE: api/ProjectBatches/5
+        // DELETE: api/ReleaseBatchItems/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProjectBatch([FromRoute] int id)
+        public async Task<IActionResult> DeleteReleaseBatchItem([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            var projectBatch = await _context.ProjectBatches.SingleAsync(m => m.Id == id);
-            if (projectBatch == null)
+            var releaseBatchItem = await _context.ReleaseBatchItems.SingleAsync(m => m.Id == id);
+            if (releaseBatchItem == null)
             {
                 return HttpNotFound();
             }
 
-            _context.ProjectBatches.Remove(projectBatch);
+            _context.ReleaseBatchItems.Remove(releaseBatchItem);
             await _context.SaveChangesAsync();
 
-            return Ok(projectBatch);
+            return Ok(releaseBatchItem);
         }
 
         protected override void Dispose(bool disposing)
@@ -141,9 +140,11 @@ namespace Kraken.Controllers.Api
             base.Dispose(disposing);
         }
 
-        private bool ProjectBatchExists(int id)
+        private bool ReleaseBatchItemExists(int id)
         {
-            return _context.ProjectBatches.Count(e => e.Id == id) > 0;
+            return _context.ReleaseBatchItems.Count(e => e.Id == id) > 0;
         }
+
+        private readonly ApplicationDbContext _context;
     }
 }

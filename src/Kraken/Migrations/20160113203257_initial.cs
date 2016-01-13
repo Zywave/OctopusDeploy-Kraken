@@ -23,7 +23,7 @@ namespace Kraken.Migrations
                     table.PrimaryKey("PK_ApplicationUser", x => x.UserName);
                 });
             migrationBuilder.CreateTable(
-                name: "ProjectBatch",
+                name: "ReleaseBatch",
                 schema: "kraken",
                 columns: table => new
                 {
@@ -33,10 +33,10 @@ namespace Kraken.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectBatch", x => x.Id);
+                    table.PrimaryKey("PK_ReleaseBatch", x => x.Id);
                 });
             migrationBuilder.CreateTable(
-                name: "ProjectBatchItem",
+                name: "ReleaseBatchItem",
                 schema: "kraken",
                 columns: table => new
                 {
@@ -46,19 +46,19 @@ namespace Kraken.Migrations
                     LatestReleaseId = table.Column<string>(nullable: true),
                     LatestTaskId = table.Column<string>(nullable: true),
                     NugetPackageId = table.Column<string>(nullable: true),
-                    ProjectBatchId = table.Column<int>(nullable: false),
                     ProjectId = table.Column<string>(nullable: false),
                     ProjectName = table.Column<string>(nullable: false),
-                    ProjectVersion = table.Column<string>(nullable: false)
+                    ProjectVersion = table.Column<string>(nullable: false),
+                    ReleaseBatchId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectBatchItem", x => x.Id);
+                    table.PrimaryKey("PK_ReleaseBatchItem", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProjectBatchItem_ProjectBatch_ProjectBatchId",
-                        column: x => x.ProjectBatchId,
+                        name: "FK_ReleaseBatchItem_ReleaseBatch_ReleaseBatchId",
+                        column: x => x.ReleaseBatchId,
                         principalSchema: "kraken",
-                        principalTable: "ProjectBatch",
+                        principalTable: "ReleaseBatch",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -67,8 +67,8 @@ namespace Kraken.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(name: "ApplicationUser", schema: "kraken");
-            migrationBuilder.DropTable(name: "ProjectBatchItem", schema: "kraken");
-            migrationBuilder.DropTable(name: "ProjectBatch", schema: "kraken");
+            migrationBuilder.DropTable(name: "ReleaseBatchItem", schema: "kraken");
+            migrationBuilder.DropTable(name: "ReleaseBatch", schema: "kraken");
         }
     }
 }

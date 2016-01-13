@@ -1,12 +1,12 @@
-﻿ko.components.register('views/projectbatches/details', {
+﻿ko.components.register('views/releasebatches/details', {
     viewModel: function (params) {
 
-        this.projectBatch = ko.observable();
+        this.releaseBatch = ko.observable();
         this.environments = ko.observableArray();
 
-        this.loadProjectBatch = function () {
-            $.get(app.basePath + 'api/projectbatches/' + params.id).then(function (data) {
-                this.projectBatch(data);
+        this.loadReleaseBatch = function () {
+            $.get(app.basePath + 'api/releasebatches/' + params.id).then(function (data) {
+                this.releaseBatch(data);
             }.bind(this));
         }.bind(this);
         
@@ -16,7 +16,7 @@
             }.bind(this));
         }.bind(this);
 
-        this.loadProjectBatch();
+        this.loadReleaseBatch();
         this.loadEnvironments();
 
     },
