@@ -3,7 +3,7 @@
     var shell = new cmdr.OverlayShell();
     
     shell.define({
-        name: 'BATCHES',
+        name: 'BATCH',
         description: 'Lists all release batches.',
         main: function() {
             return $.get(app.basePath + 'api/releasebatches').then(function(data) {
@@ -79,6 +79,7 @@
             this.shell.readLine(function(value) {
                 if (value.toLowerCase() !== 'y') {
                     deferred.resolve();
+                    return;
                 }
                 $.ajax({
                     url: app.basePath + 'api/releasebatches/' + id,
@@ -98,7 +99,7 @@
     });
 
     shell.define({
-        name: 'ENVIRONMENTS',
+        name: 'ENV',
         description: 'Lists all Octopus environments.',
         main: function () {
             return $.get(app.basePath + 'api/environments').then(function(data) {
@@ -113,7 +114,7 @@
     });
 
     shell.define({
-        name: 'PROJECTS',
+        name: 'PROJECT',
         description: 'List all Octopus projects.',
         main: function () {
             return $.get(app.basePath + 'api/projects').then(function (data) {
@@ -136,6 +137,7 @@
             this.shell.readLine(function(value) {
                 if (value.toLowerCase() !== 'y') {
                     deferred.resolve();
+                    return;
                 }
                 document.location = app.basePath + 'logout';
                 deferred.resolve();

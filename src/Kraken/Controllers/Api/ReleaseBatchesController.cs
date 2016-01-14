@@ -33,7 +33,7 @@ namespace Kraken.Controllers.Api
         }
 
         // GET: api/ReleaseBatches/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetReleaseBatch")]
         public async Task<IActionResult> GetReleaseBatch([FromRoute] int id)
         {
             if (!ModelState.IsValid)
