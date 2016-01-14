@@ -29,7 +29,10 @@ namespace Kraken.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: false)
+                    Name = table.Column<string>(nullable: false),
+                    SyncDateTime = table.Column<DateTimeOffset>(nullable: true),
+                    SyncEnvironmentId = table.Column<string>(nullable: true),
+                    SyncUserName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -42,18 +45,16 @@ namespace Kraken.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    LatestDeploymentId = table.Column<string>(nullable: true),
-                    LatestReleaseId = table.Column<string>(nullable: true),
-                    LatestTaskId = table.Column<string>(nullable: true),
-                    NugetPackageId = table.Column<string>(nullable: true),
                     ProjectId = table.Column<string>(nullable: false),
                     ProjectName = table.Column<string>(nullable: false),
-                    ProjectVersion = table.Column<string>(nullable: false),
-                    ReleaseBatchId = table.Column<int>(nullable: false)
+                    ReleaseBatchId = table.Column<int>(nullable: false),
+                    ReleaseId = table.Column<string>(nullable: true),
+                    ReleaseVersion = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ReleaseBatchItem", x => x.Id);
+                    table.UniqueConstraint("AK_ReleaseBatchItem_ReleaseBatchId_ProjectId", x => new { x.ReleaseBatchId, x.ProjectId });
                     table.ForeignKey(
                         name: "FK_ReleaseBatchItem_ReleaseBatch_ReleaseBatchId",
                         column: x => x.ReleaseBatchId,

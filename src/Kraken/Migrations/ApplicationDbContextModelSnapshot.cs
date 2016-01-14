@@ -33,6 +33,14 @@ namespace Kraken.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<DateTimeOffset?>("SyncDateTime");
+
+                    b.Property<string>("SyncEnvironmentId")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("SyncUserName")
                         .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("Id");
@@ -51,16 +59,17 @@ namespace Kraken.Migrations
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<string>("ProjectVersion")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 20);
-
                     b.Property<int>("ReleaseBatchId");
 
                     b.Property<string>("ReleaseId")
                         .HasAnnotation("MaxLength", 20);
 
+                    b.Property<string>("ReleaseVersion")
+                        .HasAnnotation("MaxLength", 20);
+
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("ReleaseBatchId", "ProjectId");
                 });
 
             modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>

@@ -7,19 +7,22 @@ namespace Kraken.Controllers.Api
     using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Mvc;
     using Microsoft.Data.Entity;
-    using Kraken.Models;
     using Microsoft.AspNet.Authorization;
+    using Kraken.Models;
+    using Kraken.Services;
 
     [Authorize]
     [Produces("application/json")]
     [Route("api/releasebatches")]
     public class ReleaseBatchesController : Controller
     {
-        public ReleaseBatchesController(ApplicationDbContext context)
+        public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
+            if (octopusProxy == null) throw new ArgumentNullException(nameof(octopusProxy));
 
             _context = context;
+            _octopusProxy = octopusProxy;
         }
 
         // GET: api/ReleaseBatches
@@ -30,7 +33,7 @@ namespace Kraken.Controllers.Api
         }
 
         // GET: api/ReleaseBatches/5
-        [HttpGet("{id}", Name = "GetReleaseBatch")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetReleaseBatch([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -133,6 +136,87 @@ namespace Kraken.Controllers.Api
             return Ok(releaseBatch);
         }
 
+        // PUT: api/ReleaseBatches/5/LinkProject
+        [HttpPut("{id}/LinkProject")]
+        public async Task<IActionResult> LinkProjectToReleaseBatch([FromRoute] int id, [FromBody] string projectId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+            
+            var projectResource = _octopusProxy.GetProject(projectId);
+
+            var releaseBatchItem = new ReleaseBatchItem
+            {
+                ReleaseBatchId = id,
+                ProjectId = projectResource.Id,
+                ProjectName = projectResource.Name
+            };
+            
+            _context.ReleaseBatchItems.Add(releaseBatchItem);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReleaseBatchExists(id))
+                {
+                    return HttpNotFound();
+                }
+                else
+                {
+                    throw;
+                }
+                //TODO: check for existence and throw bad request
+            }
+
+            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+        }
+
+        // PUT: api/ReleaseBatches/5/UnlinkProject
+        [HttpPut("{id}/UnlinkProject")]
+        public async Task<IActionResult> UnlinkProjectFromReleaseBatch([FromRoute] int id, [FromBody] string projectId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+            
+            var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == id && e.ProjectId == projectId);
+            if (releaseBatchItem != null)
+            {
+                _context.ReleaseBatchItems.Remove(releaseBatchItem);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ReleaseBatchExists(id))
+                    {
+                        return HttpNotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            else if (!ReleaseBatchExists(id))
+            {
+                return HttpNotFound();
+            }
+            else
+            {
+                return HttpBadRequest();
+            }
+
+            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -148,5 +232,6 @@ namespace Kraken.Controllers.Api
         }
 
         private readonly ApplicationDbContext _context;
+        private readonly IOctopusProxy _octopusProxy;
     }
 }

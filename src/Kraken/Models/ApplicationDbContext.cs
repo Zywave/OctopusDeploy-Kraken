@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.Metadata;
 
 namespace Kraken.Models
 {
@@ -14,7 +15,9 @@ namespace Kraken.Models
 
             modelBuilder.HasDefaultSchema("kraken");
 
-            modelBuilder.Entity<ReleaseBatchItem>().HasOne(e => e.Batch).WithMany(e => e.Items);
+            modelBuilder.Entity<ReleaseBatchItem>().HasOne(e => e.Batch).WithMany(e => e.Items).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ReleaseBatchItem>().HasAlternateKey(e => new { e.ReleaseBatchId, e.ProjectId });
         }
     }
 }

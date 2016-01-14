@@ -8,7 +8,7 @@ using Kraken.Models;
 namespace Kraken.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20160113203257_initial")]
+    [Migration("20160114084405_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,14 @@ namespace Kraken.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<DateTimeOffset?>("SyncDateTime");
+
+                    b.Property<string>("SyncEnvironmentId")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("SyncUserName")
                         .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("Id");
@@ -44,18 +52,6 @@ namespace Kraken.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("LatestDeploymentId")
-                        .HasAnnotation("MaxLength", 20);
-
-                    b.Property<string>("LatestReleaseId")
-                        .HasAnnotation("MaxLength", 20);
-
-                    b.Property<string>("LatestTaskId")
-                        .HasAnnotation("MaxLength", 20);
-
-                    b.Property<string>("NugetPackageId")
-                        .HasAnnotation("MaxLength", 50);
-
                     b.Property<string>("ProjectId")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 20);
@@ -64,13 +60,17 @@ namespace Kraken.Migrations
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<string>("ProjectVersion")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 20);
-
                     b.Property<int>("ReleaseBatchId");
 
+                    b.Property<string>("ReleaseId")
+                        .HasAnnotation("MaxLength", 20);
+
+                    b.Property<string>("ReleaseVersion")
+                        .HasAnnotation("MaxLength", 20);
+
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("ReleaseBatchId", "ProjectId");
                 });
 
             modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>

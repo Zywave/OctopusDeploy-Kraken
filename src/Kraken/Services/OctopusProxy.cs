@@ -24,7 +24,12 @@
         {
             return _repository.Environments.FindAll();
         }
-        
+
+        public ProjectResource GetProject(string projectId)
+        {
+            return _repository.Projects.Get(projectId);
+        }
+
         private readonly OctopusRepository _repository;
     }
 }
