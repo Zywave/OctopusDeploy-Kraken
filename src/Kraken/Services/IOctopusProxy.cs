@@ -1,7 +1,7 @@
 ﻿namespace Kraken.Services
 {
-    using System.Collections.Generic;
-    using Octopus.Client.Model;
+using System.Collections.Generic;
+using Octopus.Client.Model;
 
     public interface IOctopusProxy
     {

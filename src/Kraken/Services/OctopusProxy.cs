@@ -24,10 +24,15 @@
         {
             return _repository.Environments.FindAll();
         }
-
+        
         public ProjectResource GetProject(string projectId)
         {
             return _repository.Projects.Get(projectId);
+        }
+
+        public IEnumerable<ProjectResource> GetProjects()
+        {
+            return _repository.Projects.FindAll();
         }
 
         private readonly OctopusRepository _repository;
