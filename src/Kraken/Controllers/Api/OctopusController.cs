@@ -2,21 +2,17 @@ namespace Kraken.Controllers.Api
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNet.Http;
-    using Microsoft.AspNet.Mvc;
-    using Microsoft.Data.Entity;
-    using Kraken.Models;
     using Microsoft.AspNet.Authorization;
+    using Microsoft.AspNet.Mvc;
     using Octopus.Client.Model;
     using Services;
+
     [Authorize]
     [Produces("application/json")]
-    [Route("api/releasebatches")]
+    [Route("api/[controller]")]
     public class OctopusController : Controller
     {
-        public OctopusController(OctopusProxy octopus)
+        public OctopusController(IOctopusProxy octopus)
         {
             if (octopus == null) throw new ArgumentNullException(nameof(octopus));
 
@@ -24,12 +20,12 @@ namespace Kraken.Controllers.Api
         }
 
         // GET: api/Octopus/GetProjects
-        [HttpGet]
+        [HttpGet("GetProjects")]
         public IEnumerable<ProjectResource> GetProjects()
         {
             return _octopus.GetProjects();
         }
 
-        private readonly OctopusProxy _octopus;
+        private readonly IOctopusProxy _octopus;
     }
 }
