@@ -3,7 +3,7 @@
     var shell = new cmdr.OverlayShell();
     
     shell.define({
-        name: 'BATCH',
+        name: 'BATCHES',
         description: 'Lists all release batches.',
         main: function() {
             return $.get(app.basePath + 'api/releasebatches').then(function(data) {
@@ -98,7 +98,7 @@
     });
 
     shell.define({
-        name: 'ENV',
+        name: 'ENVIRONMENTS',
         description: 'Lists all Octopus environments.',
         main: function () {
             return $.get(app.basePath + 'api/environments').then(function(data) {
