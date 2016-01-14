@@ -9,6 +9,6 @@
     "knockoutjs": "~3.4.0",
     "knockout-select2v4": "~1.0.7",
     "select2": "4.0.0",
-    "cmdrjs": "~1.1.5-beta"
+    "cmdrjs": "~1.1.6-beta"
   }
 }
