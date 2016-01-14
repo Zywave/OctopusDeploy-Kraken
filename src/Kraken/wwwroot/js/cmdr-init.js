@@ -113,6 +113,21 @@
     });
 
     shell.define({
+        name: 'PROJECTS',
+        description: 'List all Octopus projects.',
+        main: function () {
+            return $.get(app.basePath + 'api/projects').then(function (data) {
+                this.shell.writeLine('Octopus projects');
+                this.shell.writeLine();
+                this.shell.writeTable(data, ['id:20', 'slug:50', 'name:*'], true);
+            }.bind(this)).fail(function (xhr, error, message) {
+                this.shell.writeLine(message, 'error');
+                this.shell.writeLine('Operation failed', 'error');
+            }.bind(this));
+        }
+    });
+
+    shell.define({
         name: 'LOGOUT',
         description: 'Logout of Kraken.',
         main: function () {
@@ -128,29 +143,6 @@
             return deferred;
         }
     });
-
-    define({
-        name: 'PROJECTS',
-        description: 'List all Octopus projects',
-        callback: function () {
-            return $.get(app.basePath + 'api/projects').then(function (data) {
-                this.shell.writeLine('Octopus projects');
-                this.shell.writeLine();
-                this.shell.writePad('slug', ' ', 20);
-                this.shell.writeLine('name');
-                this.shell.writePad('--', ' ', 20);
-                this.shell.writeLine('----');
-                $.each(data, function (index, item) {
-                    this.shell.writePad(item.slug.toString(), ' ', 20);
-                    this.shell.writeLine(item.name);
-                }.bind(this));
-                this.shell.writeLine();
-            }.bind(this)).fail(function (xhr, error, message) {
-                this.shell.writeLine(message, 'error');
-                this.shell.writeLine('Operation failed', 'error');
-            }.bind(this));
-        }
-    })
 
     app.shell = shell;
 
