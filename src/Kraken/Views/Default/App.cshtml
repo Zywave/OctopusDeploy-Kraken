@@ -2,17 +2,14 @@
 
 @section Scripts {
     <script>
-        window.app = {
+        window.appContext = {
             basePath: '@Url.Content("~/")'
         };
     </script>
     <environment names="Development">
-        <script asp-src-include="~/js/**/*.js"></script>
+        <script data-main="js/app.js" src="lib/requirejs/require.js"></script>
     </environment>
     <environment names="Staging,Production">
-        <script src="~/js/app.min.js" asp-append-version="true"></script>
+        <script src="js/app-built.js"></script>
     </environment>
-    <script>
-        ko.applyBindings();
-    </script>
 }

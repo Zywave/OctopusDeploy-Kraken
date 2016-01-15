@@ -6,9 +6,11 @@
     "jquery": "2.1.4",
     "jquery-validation": "1.14.0",
     "jquery-validation-unobtrusive": "3.2.4",
-    "knockoutjs": "~3.4.0",
     "knockout-select2v4": "~1.0.7",
     "select2": "4.0.0",
-    "cmdrjs": "~1.1.6-beta"
+    "cmdrjs": "~1.1.6-beta",
+    "requirejs": "2.1.20",
+    "knockout": "~3.4.0",
+    "text": "requirejs-text#~2.0.14"
   }
 }
