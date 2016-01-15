@@ -53,6 +53,14 @@
                 data: JSON.stringify(projectId),
                 contentType: 'application/json'
             });
+        },
+        syncReleaseBatch: function (batchId, environmentId) {
+            return $.ajax({
+                type: 'PUT',
+                url: context.basePath + 'api/releasebatches/' + batchId + '/sync',
+                data: JSON.stringify(environmentId),
+                contentType: 'application/json'
+            });
         }
     };
 

@@ -11,6 +11,7 @@
 /// <reference path="js/commands/proj.js" />
 /// <reference path="js/commands/renbatch.js" />
 /// <reference path="js/commands/rmbatch.js" />
+/// <reference path="js/commands/syncbatch.js" />
 /// <reference path="js/commands/unlinkproj.js" />
 /// <reference path="js/component-loader.js" />
 /// <reference path="js/services/projects.js" />

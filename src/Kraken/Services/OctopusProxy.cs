@@ -36,7 +36,14 @@
             return _repository.Projects.FindAll();
         }
 
-        public ReleaseResource GetLastDeployedReleaseForProjectAndEnvironment(string projectId, string environmentId)
+        public ReleaseResource GetLastestRelease(string projectId)
+        {
+            //TODO: sort by version properly
+            //TODO: make this faster
+            return _repository.Releases.FindMany(r => r.ProjectId == projectId).OrderByDescending(r => r.Version).FirstOrDefault();
+        }
+
+        public ReleaseResource GetLastDeployedRelease(string projectId, string environmentId)
         {
             var deployment =
                 _repository.Deployments.FindAll(new[] { projectId }, new[] { environmentId })

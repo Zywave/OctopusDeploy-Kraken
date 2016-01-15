@@ -11,6 +11,8 @@ using Octopus.Client.Model;
 
         IEnumerable<ProjectResource> GetProjects();
 
-        ReleaseResource GetLastDeployedReleaseForProjectAndEnvironment(string projectId, string environmentId);
+        ReleaseResource GetLastestRelease(string projectId);
+
+        ReleaseResource GetLastDeployedRelease(string projectId, string environmentId);
     }
 }

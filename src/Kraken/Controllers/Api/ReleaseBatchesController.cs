@@ -10,6 +10,7 @@ namespace Kraken.Controllers.Api
     using Microsoft.AspNet.Authorization;
     using Kraken.Models;
     using Kraken.Services;
+    using Octopus.Client.Model;
 
     [Authorize]
     [Produces("application/json")]
@@ -217,8 +218,9 @@ namespace Kraken.Controllers.Api
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
 
+        // PUT: api/ReleaseBatches/5/Sync
         [HttpPut("{id}/Sync")]
-        public async Task<IActionResult> SyncReleaseBatchWithOctopus([FromRoute] int id, [FromBody] string environmentId)
+        public async Task<IActionResult> SyncReleaseBatch([FromRoute] int id, [FromBody] string environmentId = null)
         {
             if (!ReleaseBatchExists(id))
             {
@@ -230,13 +232,37 @@ namespace Kraken.Controllers.Api
             {
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    var releaseResource =
-                        _octopusProxy.GetLastDeployedReleaseForProjectAndEnvironment(releaseBatchItem.ProjectId,
-                            environmentId);
+                    ReleaseResource releaseResource;
+                    if (String.IsNullOrEmpty(environmentId))
+                    {
+                        releaseResource = _octopusProxy.GetLastestRelease(releaseBatchItem.ProjectId);
+                    }
+                    else
+                    {
+                        releaseResource =
+                            _octopusProxy.GetLastDeployedRelease(releaseBatchItem.ProjectId,
+                                environmentId);
+                    }
                     releaseBatchItem.ReleaseId = releaseResource?.Id;
                     releaseBatchItem.ReleaseVersion = releaseResource?.Version;
                 }
                 _context.Entry(releaseBatch).State = EntityState.Modified;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReleaseBatchExists(id))
+                {
+                    return HttpNotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
             return Ok(releaseBatch);

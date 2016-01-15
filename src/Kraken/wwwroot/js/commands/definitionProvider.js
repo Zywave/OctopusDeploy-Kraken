@@ -7,7 +7,8 @@
     'commands/renbatch',
     'commands/rmbatch',
     'commands/linkproj',
-    'commands/unlinkproj'
+    'commands/unlinkproj',
+    'commands/syncbatch'
 ],
 function (cmdr) {
     var provider = new cmdr.DefinitionProvider();

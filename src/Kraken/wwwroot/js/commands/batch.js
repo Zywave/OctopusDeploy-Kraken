@@ -12,6 +12,7 @@
 
             if (batchId) {
                 return releaseBatchesService.getReleaseBatch(batchId).then(function (data) {
+                    this.shell.writeLine("Batch name: " + data.name);
                     this.shell.writeLine("Projects in batch:");
                     this.shell.writeLine();
                     this.shell.writeTable(data.items, ['projectId:20:project id', 'projectName:50:project name', 'releaseVersion:*:release version'], true);
