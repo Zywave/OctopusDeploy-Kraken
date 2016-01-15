@@ -66,6 +66,54 @@
     });
 
     shell.define({
+        name: 'SYNCBATCH',
+        description: 'Syncs a release batch.',
+        usage: 'SYNCBATCH id environmentId',
+        main: function (id, environmentId) {
+            if (!id || !environmentId) {
+                this.shell.writeLine('Project batch id and environmentId required', 'error');
+                return;
+            }
+            return $.ajax({
+                type: 'PUT',
+                url: app.basePath + 'api/releasebatches/' + id + '/Sync',
+                data: JSON.stringify({ id: id, environmentId: environmentId }),
+                contentType: 'application/json'
+            }).then(function () {
+                $(document).trigger('releasebatches.update', id);
+                this.shell.writeLine('Project batch updated', 'success');
+            }.bind(this)).fail(function (xhr, error, message) {
+                this.shell.writeLine(message, 'error');
+                this.shell.writeLine('Operation failed', 'error');
+            }.bind(this));
+        }
+    });
+
+    shell.define({
+        name: 'LNKPRJ',
+        description: 'Link a project to a release batch.',
+        usage: 'LNKPRJ id projectId',
+        main: function (id, projectId) {
+            if (!id || !projectId) {
+                this.shell.writeLine('Project batch id and name required', 'error');
+                return;
+            }
+            return $.ajax({
+                type: 'PUT',
+                url: app.basePath + 'api/releasebatches/' + id + '/LinkProject',
+                data: JSON.stringify({ id: id, projectId: projectId }),
+                contentType: 'application/json'
+            }).then(function () {
+                $(document).trigger('releasebatches.update', id);
+                this.shell.writeLine('Project batch updated', 'success');
+            }.bind(this)).fail(function (xhr, error, message) {
+                this.shell.writeLine(message, 'error');
+                this.shell.writeLine('Operation failed', 'error');
+            }.bind(this));
+        }
+    });
+
+    shell.define({
         name: 'RMBATCH',
         description: 'Deletes a release batch by id.',
         usage: 'RMBATCH id',

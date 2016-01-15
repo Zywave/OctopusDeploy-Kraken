@@ -100,7 +100,7 @@ namespace Kraken.Controllers.Api
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
                 if (ReleaseBatchExists(releaseBatch.Id))
                 {
@@ -215,6 +215,31 @@ namespace Kraken.Controllers.Api
             }
 
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+        }
+
+        [HttpPut("{id}/Sync")]
+        public async Task<IActionResult> SyncReleaseBatchWithOctopus([FromRoute] int id, [FromBody] string environmentId)
+        {
+            if (!ReleaseBatchExists(id))
+            {
+                return new HttpStatusCodeResult(StatusCodes.Status404NotFound);
+            }
+
+            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
+            if (releaseBatch.Items != null && releaseBatch.Items.Any())
+            {
+                foreach (var releaseBatchItem in releaseBatch.Items)
+                {
+                    var releaseResource =
+                        _octopusProxy.GetLastDeployedReleaseForProjectAndEnvironment(releaseBatchItem.ProjectId,
+                            environmentId);
+                    releaseBatchItem.ReleaseId = releaseResource?.Id;
+                    releaseBatchItem.ReleaseVersion = releaseResource?.Version;
+                }
+                _context.Entry(releaseBatch).State = EntityState.Modified;
+            }
+
+            return Ok(releaseBatch);
         }
 
         protected override void Dispose(bool disposing)

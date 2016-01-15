@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Kraken.Security;
     using Microsoft.AspNet.Http;
     using Microsoft.Extensions.OptionsModel;
@@ -33,6 +34,14 @@
         public IEnumerable<ProjectResource> GetProjects()
         {
             return _repository.Projects.FindAll();
+        }
+
+        public ReleaseResource GetLastDeployedReleaseForProjectAndEnvironment(string projectId, string environmentId)
+        {
+            var deployment =
+                _repository.Deployments.FindAll(new[] { projectId }, new[] { environmentId })
+                    .Items.OrderByDescending(d => d.Created).FirstOrDefault();
+            return deployment != null ? _repository.Releases.Get(deployment.ReleaseId) : null;
         }
 
         private readonly OctopusRepository _repository;
