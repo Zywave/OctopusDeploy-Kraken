@@ -16,6 +16,7 @@
     using Kraken.Services;
     using Microsoft.AspNet.Identity;
     using Microsoft.Extensions.OptionsModel;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
     public class Startup
     {
@@ -50,6 +51,7 @@
             services.AddMvc().AddJsonOptions(options =>
             {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
             });
             
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));

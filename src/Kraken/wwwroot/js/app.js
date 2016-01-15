@@ -1,5 +1,5 @@
 ﻿requirejs.config({
-    baseUrl: 'js',
+    baseUrl: window.appContext.basePath + 'js',
     paths: {
         html: '../html',
 
@@ -7,7 +7,7 @@
         cmdr: '../lib/cmdrjs/dist/cmdr',
         jquery: '../lib/jquery/dist/jquery',
         knockout: '../lib/knockout/dist/knockout',
-        bootstrap: '../lib/bootstrap/dist/js/boostrap'
+        bootstrap: '../lib/bootstrap/dist/js/bootstrap'
     }
 });
 

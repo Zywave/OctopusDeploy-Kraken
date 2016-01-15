@@ -1,9 +1,9 @@
 ﻿define(['cmdr', 'bus', 'services/releaseBatches'], function (cmdr, bus, releaseBatchesService) {
 
     return new cmdr.Definition({
-        name: 'LINKPROJ',
-        description: 'Links an Octopus project to a release batch.',
-        usage: 'LINKPROJ batchId projectId',
+        name: 'UNLINKPROJ',
+        description: 'Unlinks an Octopus project from a release batch.',
+        usage: 'UNLINKPROJ batchId projectId',
         main: function (batchId, projectId) {
             if (!batchId || !projectId) {
                 this.shell.writeLine('Batch id and project id required', 'error');

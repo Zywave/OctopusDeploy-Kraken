@@ -41,7 +41,7 @@
         linkProject: function(batchId, projectId) {
             return $.ajax({
                 type: 'PUT',
-                url: context.basePath + 'api/releasebatches/' + batchId + '/link',
+                url: context.basePath + 'api/releasebatches/' + batchId + '/linkproject',
                 data: JSON.stringify(projectId),
                 contentType: 'application/json'
             });
@@ -49,7 +49,7 @@
         unlinkProject: function(batchId, projectId) {
             return $.ajax({
                 type: 'PUT',
-                url: context.basePath + 'api/releasebatches/' + batchId + '/unlink',
+                url: context.basePath + 'api/releasebatches/' + batchId + '/unlinkproject',
                 data: JSON.stringify(projectId),
                 contentType: 'application/json'
             });
