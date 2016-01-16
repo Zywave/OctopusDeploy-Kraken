@@ -40,7 +40,7 @@
         {
             //TODO: sort by version properly
             //TODO: make this faster
-            return _repository.Releases.FindMany(r => r.ProjectId == projectId).OrderByDescending(r => r.Version).FirstOrDefault();
+            return _repository.Releases.FindOne(r => r.ProjectId == projectId);
         }
 
         public ReleaseResource GetLastDeployedRelease(string projectId, string environmentId)
@@ -49,6 +49,16 @@
                 _repository.Deployments.FindAll(new[] { projectId }, new[] { environmentId })
                     .Items.OrderByDescending(d => d.Created).FirstOrDefault();
             return deployment != null ? _repository.Releases.Get(deployment.ReleaseId) : null;
+        }
+        
+        public void DeployRelease(string releaseId, string environmentId)
+        { 
+            var deploymentResource = new DeploymentResource
+            {
+                ReleaseId = releaseId,
+                EnvironmentId = environmentId,
+            };
+            _repository.Deployments.Create(deploymentResource);
         }
 
         private readonly OctopusRepository _repository;

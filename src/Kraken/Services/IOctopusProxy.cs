@@ -14,5 +14,7 @@ using Octopus.Client.Model;
         ReleaseResource GetLastestRelease(string projectId);
 
         ReleaseResource GetLastDeployedRelease(string projectId, string environmentId);
+
+        void DeployRelease(string releaseId, string environmentId);
     }
 }

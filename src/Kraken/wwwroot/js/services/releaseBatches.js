@@ -61,6 +61,14 @@
                 data: JSON.stringify(environmentId),
                 contentType: 'application/json'
             });
+        },
+        deployReleaseBatch: function (batchId, environmentId) {
+            return $.ajax({
+                type: 'POST',
+                url: context.basePath + 'api/releasebatches/' + batchId + '/deploy',
+                data: JSON.stringify(environmentId),
+                contentType: 'application/json'
+            });
         }
     };
 

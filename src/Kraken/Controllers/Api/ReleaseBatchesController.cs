@@ -268,6 +268,24 @@ namespace Kraken.Controllers.Api
             return Ok(releaseBatch);
         }
 
+        [HttpPost("{id}/Deploy")]
+        public async Task<IActionResult> DeployReleaseBatch([FromRoute] int id, [FromBody] string environmentId)
+        {
+            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
+
+            if (releaseBatch.Items != null && releaseBatch.Items.Any())
+            {
+                foreach (
+                    var releaseBatchItem in
+                        releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
+                {
+                    _octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environmentId);
+                }
+            }
+
+            return Ok();
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
