@@ -38,8 +38,6 @@
 
         public ReleaseResource GetLastestRelease(string projectId)
         {
-            //TODO: sort by version properly
-            //TODO: make this faster
             return _repository.Releases.FindOne(r => r.ProjectId == projectId);
         }
 

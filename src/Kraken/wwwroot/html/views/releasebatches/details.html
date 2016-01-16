@@ -14,7 +14,7 @@
                     Sync <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" data-bind="foreach: $parent.environments">
-                    <li><a href="#" data-bind="text: name"></a></li>
+                    <li><a href="#" data-bind="text: name, click: $component.sync"></a></li>
                 </ul>
             </div>
 
@@ -23,7 +23,7 @@
                     Deploy <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" data-bind="foreach: $parent.environments">
-                    <li><a href="#" data-bind="text: name"></a></li>
+                    <li><a href="#" data-bind="text: name, click: $component.deploy"></a></li>
                 </ul>
             </div>
         </div>
