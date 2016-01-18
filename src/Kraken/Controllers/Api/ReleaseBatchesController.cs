@@ -101,7 +101,7 @@ namespace Kraken.Controllers.Api
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException e)
+            catch (DbUpdateException)
             {
                 if (ReleaseBatchExists(releaseBatch.Id))
                 {
@@ -233,7 +233,7 @@ namespace Kraken.Controllers.Api
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
                     ReleaseResource releaseResource;
-                    if (String.IsNullOrEmpty(environmentId))
+                    if (string.IsNullOrEmpty(environmentId))
                     {
                         releaseResource = _octopusProxy.GetLastestRelease(releaseBatchItem.ProjectId);
                     }
@@ -268,10 +268,12 @@ namespace Kraken.Controllers.Api
             return Ok(releaseBatch);
         }
 
+        // POST api/ReleaseBatches/5/Deploy
         [HttpPost("{id}/Deploy")]
         public async Task<IActionResult> DeployReleaseBatch([FromRoute] int id, [FromBody] string environmentId)
         {
             var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
+            var deployments = new List<DeploymentResource>();
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
@@ -279,11 +281,11 @@ namespace Kraken.Controllers.Api
                     var releaseBatchItem in
                         releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
                 {
-                    _octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environmentId);
+                    deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environmentId));
                 }
             }
 
-            return Ok();
+            return Ok(deployments);
         }
 
         protected override void Dispose(bool disposing)
