@@ -1,5 +1,4 @@
 ﻿requirejs.config({
-    baseUrl: window.appContext.basePath + 'js',
     paths: {
         html: '../html',
 
