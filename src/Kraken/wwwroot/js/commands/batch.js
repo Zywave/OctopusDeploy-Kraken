@@ -16,14 +16,18 @@
             if (batchId) {
                 return releaseBatchesService.getReleaseBatch(batchId).then(function (data) {
                     this.shell.writeLine(data.name);
+                    this.shell.writeLine();
+                    this.shell.writeTable(data.items, ['projectId:20:project id', 'projectName:50:project name', 'releaseVersion:*:release version'], true);
+                    this.shell.writeLine();
+                    if (data.updateDateTime) {
+                        this.shell.writeLine("Last updated by " + data.updateUserName + " at " + moment(data.updateDateTime).format('l LTS'));
+                    }
                     if (data.syncDateTime) {
                         this.shell.writeLine("Last synced to " + data.syncEnvironmentName + " by " + data.syncUserName + " at " + moment(data.syncDateTime).format('l LTS'));
                     }
                     if (data.deployDateTime) {
                         this.shell.writeLine("Last deployed to " + data.deployEnvironmentName + " by " + data.deployUserName + " at " + moment(data.deployDateTime).format('l LTS'));
                     }
-                    this.shell.writeLine();
-                    this.shell.writeTable(data.items, ['projectId:20:project id', 'projectName:50:project name', 'releaseVersion:*:release version'], true);
                 }.bind(this)).fail(fail);
             }
 

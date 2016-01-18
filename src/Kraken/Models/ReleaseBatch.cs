@@ -14,6 +14,11 @@ namespace Kraken.Models
         public string Name { get; set; }
         
         [StringLength(50)]
+        public string UpdateUserName { get; set; }
+
+        public DateTimeOffset? UpdateDateTime { get; set; }
+
+        [StringLength(50)]
         public string SyncUserName { get; set; }
 
         [StringLength(20)]

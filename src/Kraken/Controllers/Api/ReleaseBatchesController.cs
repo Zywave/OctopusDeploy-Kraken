@@ -66,7 +66,18 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest();
             }
 
+            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
+            releaseBatch.UpdateUserName = User.Identity.Name;
+
             _context.Entry(releaseBatch).State = EntityState.Modified;
+            _context.Entry(releaseBatch).Property(b => b.SyncDateTime).IsModified = false;
+            _context.Entry(releaseBatch).Property(b => b.SyncEnvironmentId).IsModified = false;
+            _context.Entry(releaseBatch).Property(b => b.SyncEnvironmentName).IsModified = false;
+            _context.Entry(releaseBatch).Property(b => b.SyncUserName).IsModified = false;
+            _context.Entry(releaseBatch).Property(b => b.DeployDateTime).IsModified = false;
+            _context.Entry(releaseBatch).Property(b => b.DeployEnvironmentId).IsModified = false;
+            _context.Entry(releaseBatch).Property(b => b.DeployEnvironmentName).IsModified = false;
+            _context.Entry(releaseBatch).Property(b => b.DeployUserName).IsModified = false;
 
             try
             {
@@ -95,6 +106,9 @@ namespace Kraken.Controllers.Api
             {
                 return HttpBadRequest(ModelState);
             }
+
+            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
+            releaseBatch.UpdateUserName = User.Identity.Name;
 
             _context.ReleaseBatches.Add(releaseBatch);
             try
@@ -145,7 +159,16 @@ namespace Kraken.Controllers.Api
             {
                 return HttpBadRequest(ModelState);
             }
-            
+
+            var releaseBatch = await _context.ReleaseBatches.SingleAsync(m => m.Id == id);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+
+            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
+            releaseBatch.UpdateUserName = User.Identity.Name;
+
             var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
             if (projectResource == null)
             {
@@ -160,22 +183,8 @@ namespace Kraken.Controllers.Api
             };
             
             _context.ReleaseBatchItems.Add(releaseBatchItem);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReleaseBatchExists(id))
-                {
-                    return HttpNotFound();
-                }
-                else
-                {
-                    throw;
-                }
-                //TODO: check for existence and throw bad request
-            }
+
+            await _context.SaveChangesAsync();
 
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
@@ -188,7 +197,16 @@ namespace Kraken.Controllers.Api
             {
                 return HttpBadRequest(ModelState);
             }
-            
+
+            var releaseBatch = await _context.ReleaseBatches.SingleAsync(m => m.Id == id);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+
+            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
+            releaseBatch.UpdateUserName = User.Identity.Name;
+
             var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
             if (projectResource == null)
             {
@@ -200,25 +218,7 @@ namespace Kraken.Controllers.Api
             {
                 _context.ReleaseBatchItems.Remove(releaseBatchItem);
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReleaseBatchExists(id))
-                    {
-                        return HttpNotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-            else if (!ReleaseBatchExists(id))
-            {
-                return HttpNotFound();
+                await _context.SaveChangesAsync();
             }
             else
             {

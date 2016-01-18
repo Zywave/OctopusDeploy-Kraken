@@ -25,7 +25,7 @@
                 data: JSON.stringify(releaseBatch),
                 contentType: 'application/json'
             }).then(function (data) {
-                bus.publish('releasebatches:add', data.id);
+                bus.publish('releasebatches:update', id);
                 return data;
             });
         },
