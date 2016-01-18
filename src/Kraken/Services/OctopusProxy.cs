@@ -28,7 +28,7 @@
 
         public EnvironmentResource GetEnvironment(string idOrName)
         {
-            return _repository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Projects-" + idOrName || e.Name == idOrName);
+            return _repository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Environments-" + idOrName || e.Name == idOrName);
         }
 
         public ProjectResource GetProject(string idOrSlugOrName)
@@ -69,13 +69,19 @@
                 {
                     var task = _repository.Tasks.Get(checkDeploy.TaskId);
                     
-                    // if the task hasn't finished successfully, then try to redeploy
+                    // if the task hasn't completed, don't queue up another deploy
+                    if (!task.IsCompleted)
+                    {
+                        return null;
+                    }
+
+                    // if the task has finished successfully, only redeploy if there have been modifications made to the release since the deploy
                     if (task.FinishedSuccessfully)
                     {
                         var release = _repository.Releases.Get(checkDeploy.ReleaseId);
 
-                        // if no modificatoins have been made to a successful deploy, assume it's a redeploy
-                        if (release.LastModifiedOn <= checkDeploy.LastModifiedOn)
+                        // if no modifications have been made to a successful deploy since its creation, assume it's a redeploy
+                        if (release.LastModifiedOn <= checkDeploy.Created)
                         {
                             return null;
                         }
