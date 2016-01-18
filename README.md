@@ -1,5 +1,7 @@
 # OctopusDeploy-Kraken
 
+[![Join the chat at https://gitter.im/Zywave/OctopusDeploy-Kraken](https://badges.gitter.im/Zywave/OctopusDeploy-Kraken.svg)](https://gitter.im/Zywave/OctopusDeploy-Kraken?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Work in progress... *do not* release the Kraken.
 
 ### Notes
