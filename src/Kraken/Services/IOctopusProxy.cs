@@ -15,6 +15,6 @@ using Octopus.Client.Model;
 
         ReleaseResource GetLastDeployedRelease(string projectId, string environmentId);
 
-        DeploymentResource DeployRelease(string releaseId, string environmentId);
+        DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedploy = true);
     }
 }
