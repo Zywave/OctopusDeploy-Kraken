@@ -9,7 +9,7 @@
     'commands/linkproj',
     'commands/unlinkproj',
     'commands/syncbatch',
-    'commands/deploy'
+    'commands/deploybatch'
 ],
 function (cmdr) {
     var provider = new cmdr.DefinitionProvider();

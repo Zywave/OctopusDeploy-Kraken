@@ -10,7 +10,10 @@
                 this.shell.writeTable(data, ['id:20', 'slug:50', 'name:*'], true);
             }.bind(this)).fail(function (xhr, error, message) {
                 this.shell.writeLine(message, 'error');
-                this.shell.writeLine('Operation failed', 'error');
+                if (xhr.responseText) {
+                    this.shell.writeLine(xhr.responseText, 'error');
+                }
+                this.shell.writeLine('Operation Failed', 'error');
             }.bind(this));
         }
     });

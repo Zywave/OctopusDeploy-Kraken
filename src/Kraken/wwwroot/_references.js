@@ -4,6 +4,7 @@
 /// <reference path="js/app-events.js" />
 /// <reference path="js/commands/batch.js" />
 /// <reference path="js/commands/commands.js" />
+/// <reference path="js/commands/deploy.js" />
 /// <reference path="js/commands/env.js" />
 /// <reference path="js/commands/linkproj.js" />
 /// <reference path="js/commands/logout.js" />

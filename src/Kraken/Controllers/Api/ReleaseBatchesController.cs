@@ -220,7 +220,7 @@ namespace Kraken.Controllers.Api
 
         // PUT: api/ReleaseBatches/5/Sync
         [HttpPut("{id}/Sync")]
-        public async Task<IActionResult> SyncReleaseBatch([FromRoute] int id, [FromBody] string environmentId = null)
+        public async Task<IActionResult> SyncReleaseBatch([FromRoute] int id, [FromBody] string environmentIdOrName = null)
         {
             if (!ReleaseBatchExists(id))
             {
@@ -230,18 +230,26 @@ namespace Kraken.Controllers.Api
             var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
+                EnvironmentResource environment = null;
+                if (!String.IsNullOrEmpty(environmentIdOrName))
+                {
+                    environment = _octopusProxy.GetEnvironment(environmentIdOrName);
+                    if (environment == null)
+                    {
+                        return HttpBadRequest("Environment Not Found");
+                    }
+                }
+
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
                     ReleaseResource releaseResource;
-                    if (string.IsNullOrEmpty(environmentId))
+                    if (environment == null)
                     {
                         releaseResource = _octopusProxy.GetLastestRelease(releaseBatchItem.ProjectId);
                     }
                     else
-                    {
-                        releaseResource =
-                            _octopusProxy.GetLastDeployedRelease(releaseBatchItem.ProjectId,
-                                environmentId);
+                    {      
+                        releaseResource = _octopusProxy.GetLastDeployedRelease(releaseBatchItem.ProjectId, environment.Id);
                     }
                     releaseBatchItem.ReleaseId = releaseResource?.Id;
                     releaseBatchItem.ReleaseVersion = releaseResource?.Version;
@@ -270,18 +278,22 @@ namespace Kraken.Controllers.Api
 
         // POST api/ReleaseBatches/5/Deploy
         [HttpPost("{id}/Deploy")]
-        public async Task<IActionResult> DeployReleaseBatch([FromRoute] int id, [FromBody] string environmentId)
+        public async Task<IActionResult> DeployReleaseBatch([FromRoute] int id, [FromBody] string environmentIdOrName)
         {
             var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
             var deployments = new List<DeploymentResource>();
 
+            var environment = _octopusProxy.GetEnvironment(environmentIdOrName);
+            if (environment == null)
+            {
+                return HttpBadRequest("Environment Not Found");
+            }
+
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
-                foreach (
-                    var releaseBatchItem in
-                        releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
+                foreach (var releaseBatchItem in releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
                 {
-                    deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environmentId));
+                    deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id));
                 }
             }
 

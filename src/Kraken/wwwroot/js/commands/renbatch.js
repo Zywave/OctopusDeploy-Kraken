@@ -14,7 +14,10 @@
                 this.shell.writeLine('Batch updated', 'success');
             }.bind(this)).fail(function (xhr, error, message) {
                 this.shell.writeLine(message, 'error');
-                this.shell.writeLine('Operation failed', 'error');
+                if (xhr.responseText) {
+                    this.shell.writeLine(xhr.responseText, 'error');
+                }
+                this.shell.writeLine('Operation Failed', 'error');
             }.bind(this));
         }
     });

@@ -25,10 +25,15 @@
         {
             return _repository.Environments.FindAll();
         }
-        
-        public ProjectResource GetProject(string projectId)
+
+        public EnvironmentResource GetEnvironment(string idOrName)
         {
-            return _repository.Projects.Get(projectId);
+            return _repository.Environments.FindOne(e => e.Id == idOrName || e.Name == idOrName);
+        }
+
+        public ProjectResource GetProject(string idOrName)
+        {
+            return _repository.Projects.FindOne(p => p.Id == idOrName || p.Name == idOrName);
         }
 
         public IEnumerable<ProjectResource> GetProjects()
