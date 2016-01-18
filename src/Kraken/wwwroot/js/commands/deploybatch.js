@@ -3,7 +3,7 @@
     return new cmdr.Definition({
         name: 'DEPLOYBATCH',
         description: 'Deploys all items in a release batch',
-        usage: 'DEPLOYBATCH batchId environmentIdOrName',
+        usage: 'DEPLOYBATCH batchId environmentIdOrName\n\nEnvironment id can be full (Environments-123) or short (123)',
         main: function (batchId, environmentIdOrName) {
             if (!batchId || !environmentIdOrName) {
                 this.shell.writeLine('Batch id and environment id or name required', 'error');

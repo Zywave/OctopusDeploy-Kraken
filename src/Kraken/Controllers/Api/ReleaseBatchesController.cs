@@ -139,14 +139,18 @@ namespace Kraken.Controllers.Api
 
         // PUT: api/ReleaseBatches/5/LinkProject
         [HttpPut("{id}/LinkProject")]
-        public async Task<IActionResult> LinkProjectToReleaseBatch([FromRoute] int id, [FromBody] string projectId)
+        public async Task<IActionResult> LinkProjectToReleaseBatch([FromRoute] int id, [FromBody] string projectIdOrSlugOrName)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
             
-            var projectResource = _octopusProxy.GetProject(projectId);
+            var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
+            if (projectResource == null)
+            {
+                return HttpBadRequest("Project Not Found");
+            }
 
             var releaseBatchItem = new ReleaseBatchItem
             {
@@ -178,14 +182,20 @@ namespace Kraken.Controllers.Api
 
         // PUT: api/ReleaseBatches/5/UnlinkProject
         [HttpPut("{id}/UnlinkProject")]
-        public async Task<IActionResult> UnlinkProjectFromReleaseBatch([FromRoute] int id, [FromBody] string projectId)
+        public async Task<IActionResult> UnlinkProjectFromReleaseBatch([FromRoute] int id, [FromBody] string projectIdOrSlugOrName)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
             
-            var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == id && e.ProjectId == projectId);
+            var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
+            if (projectResource == null)
+            {
+                return HttpBadRequest("Project Not Found");
+            }
+
+            var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == id && e.ProjectId == projectResource.Id);
             if (releaseBatchItem != null)
             {
                 _context.ReleaseBatchItems.Remove(releaseBatchItem);

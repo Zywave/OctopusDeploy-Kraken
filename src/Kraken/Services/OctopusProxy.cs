@@ -28,12 +28,12 @@
 
         public EnvironmentResource GetEnvironment(string idOrName)
         {
-            return _repository.Environments.FindOne(e => e.Id == idOrName || e.Name == idOrName);
+            return _repository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Projects-" + idOrName || e.Name == idOrName);
         }
 
-        public ProjectResource GetProject(string idOrName)
+        public ProjectResource GetProject(string idOrSlugOrName)
         {
-            return _repository.Projects.FindOne(p => p.Id == idOrName || p.Name == idOrName);
+            return _repository.Projects.FindOne(p => p.Id == idOrSlugOrName || p.Id == "Projects-" + idOrSlugOrName || p.Slug == idOrSlugOrName || p.Name == idOrSlugOrName);
         }
 
         public IEnumerable<ProjectResource> GetProjects()

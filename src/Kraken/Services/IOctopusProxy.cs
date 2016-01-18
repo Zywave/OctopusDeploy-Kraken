@@ -9,7 +9,7 @@ using Octopus.Client.Model;
 
         EnvironmentResource GetEnvironment(string idOrName);
 
-        ProjectResource GetProject(string idOrName);
+        ProjectResource GetProject(string idOrSlugOrName);
 
         IEnumerable<ProjectResource> GetProjects();
 
