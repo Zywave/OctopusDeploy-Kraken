@@ -7,7 +7,8 @@
         cmdr: '../lib/cmdrjs/dist/cmdr',
         jquery: '../lib/jquery/dist/jquery',
         knockout: '../lib/knockout/dist/knockout',
-        bootstrap: '../lib/bootstrap/dist/js/bootstrap'
+        bootstrap: '../lib/bootstrap/dist/js/bootstrap',
+        moment: '../lib/moment/moment'
     }
 });
 

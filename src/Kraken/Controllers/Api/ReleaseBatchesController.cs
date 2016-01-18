@@ -264,7 +264,11 @@ namespace Kraken.Controllers.Api
                     releaseBatchItem.ReleaseId = releaseResource?.Id;
                     releaseBatchItem.ReleaseVersion = releaseResource?.Version;
                 }
-                _context.Entry(releaseBatch).State = EntityState.Modified;
+
+                releaseBatch.SyncDateTime = DateTimeOffset.Now;
+                releaseBatch.SyncEnvironmentId = environment?.Id;
+                releaseBatch.SyncEnvironmentName = environment?.Name ?? "(Latest)";
+                releaseBatch.SyncUserName = User.Identity.Name;
             }
 
             try
@@ -290,14 +294,19 @@ namespace Kraken.Controllers.Api
         [HttpPost("{id}/Deploy")]
         public async Task<IActionResult> DeployReleaseBatch([FromRoute] int id, [FromBody] string environmentIdOrName)
         {
-            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
-            var deployments = new List<DeploymentResource>();
+            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleOrDefaultAsync(m => m.Id == id);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
 
             var environment = _octopusProxy.GetEnvironment(environmentIdOrName);
             if (environment == null)
             {
                 return HttpBadRequest("Environment Not Found");
             }
+
+            var deployments = new List<DeploymentResource>();
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
@@ -306,6 +315,13 @@ namespace Kraken.Controllers.Api
                     deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id));
                 }
             }
+
+            releaseBatch.DeployDateTime = DateTimeOffset.Now;
+            releaseBatch.DeployEnvironmentId = environment.Id;
+            releaseBatch.DeployEnvironmentName = environment.Name;
+            releaseBatch.DeployUserName = User.Identity.Name;
+
+            await _context.SaveChangesAsync();
 
             return Ok(deployments);
         }

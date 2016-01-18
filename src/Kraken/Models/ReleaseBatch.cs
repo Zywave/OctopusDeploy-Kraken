@@ -16,10 +16,24 @@ namespace Kraken.Models
         [StringLength(50)]
         public string SyncUserName { get; set; }
 
-        [StringLength(50)]
+        [StringLength(20)]
         public string SyncEnvironmentId { get; set; }
 
+        [StringLength(50)]
+        public string SyncEnvironmentName { get; set; }
+
         public DateTimeOffset? SyncDateTime { get; set; }
+
+        [StringLength(50)]
+        public string DeployUserName { get; set; }
+
+        [StringLength(20)]
+        public string DeployEnvironmentId { get; set; }
+
+        [StringLength(50)]
+        public string DeployEnvironmentName { get; set; }
+
+        public DateTimeOffset? DeployDateTime { get; set; }
 
         public List<ReleaseBatchItem> Items { get; set; }
     }
