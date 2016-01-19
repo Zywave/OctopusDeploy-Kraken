@@ -337,8 +337,8 @@ namespace Kraken.Controllers.Api
                 foreach(var releaseBatchItem in releaseBatch.Items)
                 {
                     var release = _octopusProxy.CreateReleaseFromNuget(releaseBatchItem.ProjectId);
-                    releaseBatchItem.ReleaseId = release.Id;
-                    releaseBatchItem.ReleaseVersion = release.Version;
+                    releaseBatchItem.ReleaseId = release?.Id;
+                    releaseBatchItem.ReleaseVersion = release?.Version;
                 }
 
                 _context.Entry(releaseBatch).State = EntityState.Modified;
