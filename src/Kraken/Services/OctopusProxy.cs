@@ -11,6 +11,7 @@
     using Octopus.Client.Model;
     using NuGet;
     using System.Globalization;
+
     public class OctopusProxy : IOctopusProxy
     {
         public OctopusProxy(IOptions<AppSettings> settings, IHttpContextAccessor httpContextAccessor)

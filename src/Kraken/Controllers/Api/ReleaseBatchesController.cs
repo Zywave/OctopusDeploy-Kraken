@@ -292,7 +292,7 @@ namespace Kraken.Controllers.Api
 
         // POST api/ReleaseBatches/5/Deploy
         [HttpPost("{id}/Deploy")]
-        public async Task<IActionResult> DeployReleaseBatch([FromRoute] int id, [FromBody] string environmentIdOrName)
+        public async Task<IActionResult> DeployReleaseBatch([FromRoute] int id, [FromBody] string environmentIdOrName, [FromBody] bool allowRedeploy = false)
         {
             var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleOrDefaultAsync(m => m.Id == id);
             if (releaseBatch == null)
@@ -312,7 +312,7 @@ namespace Kraken.Controllers.Api
             {
                 foreach (var releaseBatchItem in releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
                 {
-                    deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id));
+                    deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id, allowRedeploy));
                 }
             }
 

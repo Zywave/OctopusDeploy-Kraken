@@ -3,13 +3,14 @@
     return new cmdr.Definition({
         name: 'DEPLOYBATCH',
         description: 'Deploys all items in a release batch',
-        usage: 'DEPLOYBATCH batchId environmentIdOrName\n\nEnvironment id can be full (Environments-123) or short (123)',
-        main: function (batchId, environmentIdOrName) {
+        usage: 'DEPLOYBATCH batchId environmentIdOrName [allowRedeploy]\n\nEnvironment id can be full (Environments-123) or short (123)',
+        main: function (batchId, environmentIdOrName, allowRedeploy) {
             if (!batchId || !environmentIdOrName) {
                 this.shell.writeLine('Batch id and environment id or name required', 'error');
                 return;
             }
-            return releaseBatchesService.deployReleaseBatch(batchId, environmentIdOrName).then(function (data) {
+
+            return releaseBatchesService.deployReleaseBatch(batchId, environmentIdOrName, !!allowRedeploy).then(function (data) {
                 bus.publish('releasebatches:deploy', batchId);
                 this.shell.writeLine();
                 this.shell.writeLine('                $$$$$$$');
