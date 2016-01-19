@@ -67,9 +67,9 @@
 
             if (!allowRedeploy)
             {
-                var checkDeploy = _octopusRepository.Deployments.FindOne(d => d.ReleaseId == releaseId && d.EnvironmentId == environmentId);
+                var checkDeploy = _octopusRepository.Deployments.FindOne(d => d.EnvironmentId == environmentId);
 
-                if (checkDeploy != null)
+                if (checkDeploy != null && checkDeploy.ReleaseId == releaseId)
                 {
                     var task = _octopusRepository.Tasks.Get(checkDeploy.TaskId);
 
@@ -82,7 +82,7 @@
                     // if the task has finished successfully, only redeploy if there have been modifications made to the release since the deploy
                     if (task.FinishedSuccessfully)
                     {
-                        var release = _octopusRepository.Releases.Get(checkDeploy.ReleaseId);
+                        var release = _octopusRepository.Releases.Get(releaseId);
 
                         // if no modifications have been made to a successful deploy since its creation, assume it's a redeploy
                         if (release.LastModifiedOn <= checkDeploy.Created)
