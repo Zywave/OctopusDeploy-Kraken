@@ -11,7 +11,7 @@ using Octopus.Client.Model;
 
         ProjectResource GetProject(string idOrSlugOrName);
 
-        IEnumerable<ProjectResource> GetProjects();
+        IEnumerable<ProjectResource> GetProjects(string searchQuery);
 
         ReleaseResource GetLastestRelease(string projectId);
 

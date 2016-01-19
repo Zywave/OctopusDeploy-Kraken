@@ -10,7 +10,7 @@
     using Octopus.Client;
     using Octopus.Client.Model;
     using NuGet;
-
+    using System.Globalization;
     public class OctopusProxy : IOctopusProxy
     {
         public OctopusProxy(IOptions<AppSettings> settings, IHttpContextAccessor httpContextAccessor)
@@ -39,9 +39,9 @@
             return _octopusRepository.Projects.FindOne(p => p.Id == idOrSlugOrName || p.Id == "Projects-" + idOrSlugOrName || p.Slug == idOrSlugOrName || p.Name == idOrSlugOrName);
         }
 
-        public IEnumerable<ProjectResource> GetProjects()
+        public IEnumerable<ProjectResource> GetProjects(string searchQuery)
         {
-            return _octopusRepository.Projects.FindAll();
+            return _octopusRepository.Projects.FindMany(p => string.IsNullOrEmpty(searchQuery) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, searchQuery, CompareOptions.IgnoreCase) >= 0);
         }
 
         public ReleaseResource GetLastestRelease(string projectId)
@@ -109,7 +109,7 @@
                 foreach (var nugetStep in nugetSteps)
                 {
                     var actions = nugetStep.Actions;
-                    var nugetPackageId = actions.Select(a => a.Properties["Octopus.Action.Package.NuGetPackageId"]).FirstOrDefault();
+                    var nugetPackageId = actions.Select(a => a.Properties["Octopus.Action.Package.NuGetPackageId"]).First();
 
                     // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NugetPackage}"
                     string regexPattern = @"\#\{[a-zA-Z]+\}";
@@ -119,10 +119,10 @@
                     {
                         // TODO: clean up this refKey nonsense
                         var refKey = nugetPackageId.Replace("#{", "").Replace("}", "");
-                        nugetPackageId = actions.Select(a => a.Properties[refKey]).FirstOrDefault();
+                        nugetPackageId = actions.Select(a => a.Properties[refKey]).First();
                     }
 
-                    var latestNugetPackage = _nugetRepository.FindPackagesById(nugetPackageId).OrderByDescending(n => n.Published).FirstOrDefault();
+                    var latestNugetPackage = _nugetRepository.FindPackagesById(nugetPackageId).OrderByDescending(n => n.Published).First();
                     var version = latestNugetPackage.Version.ToString();
 
                     // assume the last deployed release is less than or equal to the latest package in nuget
@@ -143,8 +143,7 @@
                     SelectedPackages = selectedPackages
                 };
 
-                release = _octopusRepository.Releases.Create(release);
-                return release;
+                return _octopusRepository.Releases.Create(release);
             }
             return null;
         }

@@ -2,9 +2,10 @@
 
     return new cmdr.Definition({
         name: 'PROJ',
-        description: 'List all Octopus projects.',
-        main: function () {
-            return projectsService.getProjects().then(function (data) {
+        description: 'List all Octopus projects. If searchQuery is given, searches for all project names containing that value',
+        usage: 'PROJ [searchQuery]',
+        main: function (searchQuery) {
+            return projectsService.getProjects(searchQuery).then(function (data) {
                 this.shell.writeLine('Octopus projects');
                 this.shell.writeLine();
                 this.shell.writeTable(data, ['id:20', 'slug:50', 'name:*'], true);
