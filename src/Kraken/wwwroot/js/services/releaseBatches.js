@@ -69,6 +69,13 @@
                 data: JSON.stringify(environmentId),
                 contentType: 'application/json'
             });
+        },
+        createReleasesFromNuget: function (batchId) {
+            return $.ajax({
+                type: 'POST',
+                url: context.basePath + 'api/releasebatches/' + batchId + '/releasefromnuget',
+                contentType: 'application/json'
+            });
         }
     };
 

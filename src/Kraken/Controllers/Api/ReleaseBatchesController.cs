@@ -326,6 +326,43 @@ namespace Kraken.Controllers.Api
             return Ok(deployments);
         }
 
+        // POST api/ReleaseBatches/5/ReleaseFromNuget
+        [HttpPost("{id}/ReleaseFromNuget")]
+        public async Task<IActionResult> ReleaseFromNuget([FromRoute] int id)
+        {
+            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
+
+            if (releaseBatch.Items != null && releaseBatch.Items.Any())
+            {
+                foreach(var releaseBatchItem in releaseBatch.Items)
+                {
+                    var release = _octopusProxy.CreateReleaseFromNuget(releaseBatchItem.ProjectId);
+                    releaseBatchItem.ReleaseId = release.Id;
+                    releaseBatchItem.ReleaseVersion = release.Version;
+                }
+
+                _context.Entry(releaseBatch).State = EntityState.Modified;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReleaseBatchExists(id))
+                {
+                    return HttpNotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(releaseBatch);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
