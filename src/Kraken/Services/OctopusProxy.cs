@@ -22,7 +22,6 @@
 
             var endpoint = new OctopusServerEndpoint(settings.Value.OctopusServerAddress, apiKey);
             _octopusRepository = new OctopusRepository(endpoint);
-            _nugetRepository = PackageRepositoryFactory.Default.CreateRepository(settings.Value.NugetServerAddress);
         }
 
         public IEnumerable<EnvironmentResource> GetEnvironments()
@@ -96,60 +95,92 @@
             return _octopusRepository.Deployments.Create(deploymentResource);
         }
 
-        public ReleaseResource CreateReleaseFromNuget(string projectId)
+        public IEnumerable<DeploymentStepResource> GetNuGetDeploymentStepResources(string projectId)
         {
             var project = GetProject(projectId);
             var deploymentProcess = _octopusRepository.DeploymentProcesses.Get(project.DeploymentProcessId);
-            var nugetSteps = deploymentProcess.Steps.Where(s => s.Actions.Any(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId")));
+            return deploymentProcess.Steps.Where(
+                s => s.Actions.Any(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId"))).ToList();
+        }
 
-            if (nugetSteps != null && nugetSteps.Any())
+        public IEnumerable<string> GetNugetPackageIdsFromSteps(IEnumerable<DeploymentStepResource> nugetSteps)
+        {
+            var nugetPackageIds = new List<string>();
+            if (nugetSteps.Any())
             {
-                var selectedPackages = new List<SelectedPackage>();
-                var checkRelease = _octopusRepository.Releases.FindOne(r => r.ProjectId == project.Id);
-
                 foreach (var nugetStep in nugetSteps)
                 {
-                    var actions = nugetStep.Actions;
-                    var nugetPackageId = actions.Select(a => a.Properties["Octopus.Action.Package.NuGetPackageId"]).First();
+                    var actions = nugetStep.Actions.Where(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId"));
+                    nugetPackageIds.AddRange(actions.Select(GetNugetPackageIdFromAction).Where(nugetPackageId => nugetPackageId != null));
+                }
+            }
+            return nugetPackageIds;
+        }
 
-                    // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NugetPackage}"
-                    string regexPattern = @"\#\{[a-zA-Z]+\}";
-                    var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-                    var match = regex.Match(nugetPackageId);
-                    if (match.Success)
-                    {
-                        // TODO: clean up this refKey nonsense
-                        var refKey = nugetPackageId.Replace("#{", "").Replace("}", "");
-                        nugetPackageId = actions.Select(a => a.Properties[refKey]).First();
-                    }
+        public ReleaseResource CreateReleases(string projectId, IEnumerable<DeploymentStepResource> steps, Dictionary<string, string> nugetPackageInfo)
+        {
+            var project = GetProject(projectId);
+            var versioningStrategy = project.VersioningStrategy;
+            string releaseVersion = null;
+            var selectedPackages = new List<SelectedPackage>();
 
-                    var latestNugetPackage = _nugetRepository.FindPackagesById(nugetPackageId).OrderByDescending(n => n.Published).First();
-                    var version = latestNugetPackage.Version.ToString();
-
-                    // assume the last deployed release is less than or equal to the latest package in nuget
-                    if (checkRelease != null && checkRelease.Version == version) return checkRelease;
-
-                    selectedPackages.Add(new SelectedPackage
-                    {
-                        StepName = nugetStep.Name,
-                        Version = version
-                    });
+            foreach (var step in steps)
+            {
+                var actions = step.Actions.Where(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId"));
+                if (!string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
+                    versioningStrategy.DonorPackageStepId == step.Id)
+                {
+                    var nugetPackageId = GetNugetPackageIdFromAction(actions.First());
+                    releaseVersion = nugetPackageInfo[nugetPackageId];
                 }
 
-                var release = new ReleaseResource
+                foreach (var action in actions)
                 {
-                    ProjectId = project.Id,
-                    Version = selectedPackages.First().Version,
-                    ReleaseNotes = "Release created with Kraken",
-                    SelectedPackages = selectedPackages
-                };
+                    var nugetPackageId = GetNugetPackageIdFromAction(action);
+                    if (!string.IsNullOrEmpty(nugetPackageId))
+                    {
+                        var version = nugetPackageInfo[nugetPackageId];
+                        if (!string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
+                            versioningStrategy.DonorPackageStepId == action.Id)
+                        {
+                            releaseVersion = version;
+                        }
+                        selectedPackages.Add(new SelectedPackage(action.Name, version));
+                    }
+                }
+                
+            }
 
-                return _octopusRepository.Releases.Create(release);
+            var release = new ReleaseResource
+            {
+                Version = releaseVersion,
+                ProjectId = projectId,
+                SelectedPackages = selectedPackages
+            };
+
+            return _octopusRepository.Releases.Create(release);
+        }
+
+        private string GetNugetPackageIdFromAction(DeploymentActionResource action)
+        {
+            string nugetPackageId;
+            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nugetPackageId))
+            {
+                // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NugetPackage}"
+                string regexPattern = @"\#\{[a-zA-Z]+\}";
+                var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
+                var match = regex.Match(nugetPackageId);
+                if (match.Success)
+                {
+                    // TODO: clean up this refKey nonsense
+                    var refKey = nugetPackageId.Replace("#{", "").Replace("}", "");
+                    nugetPackageId = action.Properties[refKey];
+                }
+                return nugetPackageId;
             }
             return null;
         }
 
         private readonly OctopusRepository _octopusRepository;
-        private readonly IPackageRepository _nugetRepository;
     }
 }

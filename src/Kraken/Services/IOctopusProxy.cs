@@ -19,6 +19,10 @@ using Octopus.Client.Model;
 
         DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedploy = true);
 
-        ReleaseResource CreateReleaseFromNuget(string projectId);
+        IEnumerable<DeploymentStepResource> GetNuGetDeploymentStepResources(string projectId);
+
+        IEnumerable<string> GetNugetPackageIdsFromSteps(IEnumerable<DeploymentStepResource> nugetSteps);
+
+        ReleaseResource CreateReleases(string projectId, IEnumerable<DeploymentStepResource> steps, Dictionary<string, string> nugetPackageInfo);
     }
 }

@@ -58,6 +58,7 @@
             
             services.AddTransient<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
             services.AddTransient<IOctopusProxy, OctopusProxy>();
+            services.AddTransient<INuGetProxy, NuGetProxy>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

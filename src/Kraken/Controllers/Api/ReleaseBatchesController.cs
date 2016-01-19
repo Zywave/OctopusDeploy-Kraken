@@ -17,13 +17,14 @@ namespace Kraken.Controllers.Api
     [Route("api/releasebatches")]
     public class ReleaseBatchesController : Controller
     {
-        public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy)
+        public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy, INuGetProxy nuGetProxy)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (octopusProxy == null) throw new ArgumentNullException(nameof(octopusProxy));
 
             _context = context;
             _octopusProxy = octopusProxy;
+            _nuGetProxy = nuGetProxy;
         }
 
         // GET: api/ReleaseBatches
@@ -327,16 +328,20 @@ namespace Kraken.Controllers.Api
         }
 
         // POST api/ReleaseBatches/5/ReleaseFromNuget
-        [HttpPost("{id}/ReleaseFromNuget")]
-        public async Task<IActionResult> ReleaseFromNuget([FromRoute] int id)
+        [HttpPost("{id}/CreateReleases")]
+        public async Task<IActionResult> CreateReleases([FromRoute] int id)
         {
             var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
-                foreach(var releaseBatchItem in releaseBatch.Items)
+                foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    var release = _octopusProxy.CreateReleaseFromNuget(releaseBatchItem.ProjectId);
+                    var nugetSteps = _octopusProxy.GetNuGetDeploymentStepResources(releaseBatchItem.ProjectId).ToList();
+                    var nugetPackageIds = _octopusProxy.GetNugetPackageIdsFromSteps(nugetSteps);
+                    var nugetPackageInfo = nugetPackageIds.ToDictionary(i => i, i => _nuGetProxy.GetLatestVersionForPackage(i));
+
+                    var release = _octopusProxy.CreateReleases(releaseBatchItem.ProjectId, nugetSteps, nugetPackageInfo);
                     if (release != null)
                     {
                         releaseBatchItem.ReleaseId = release.Id;
@@ -382,5 +387,6 @@ namespace Kraken.Controllers.Api
 
         private readonly ApplicationDbContext _context;
         private readonly IOctopusProxy _octopusProxy;
+        private readonly INuGetProxy _nuGetProxy ;
     }
 }

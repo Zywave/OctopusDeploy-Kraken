@@ -66,14 +66,14 @@
             return $.ajax({
                 type: 'POST',
                 url: context.basePath + 'api/releasebatches/' + batchId + '/deploy',
-                data: JSON.stringify({ environmentId: environmentId, allowRedeploy: allowRedeploy }),
+                data: JSON.stringify(environmentId),
                 contentType: 'application/json'
             });
         },
-        createReleasesFromNuget: function (batchId) {
+        createReleases: function (batchId) {
             return $.ajax({
                 type: 'POST',
-                url: context.basePath + 'api/releasebatches/' + batchId + '/releasefromnuget',
+                url: context.basePath + 'api/releasebatches/' + batchId + '/createreleases',
                 contentType: 'application/json'
             });
         }

@@ -5,20 +5,12 @@
         description: 'Makes new releases for every project in a batch from the latest nuget package',
         usage: 'NUBATCH batchid',
         main: function (batchId) {
-            var fail = function(xhr, error, message) {
-                this.shell.writeLine(message, 'error');
-                if (xhr.responseText) {
-                    this.shell.writeLine(xhr.responseText, 'error');
-                }
-                this.shell.writeLine('Operation Failed', 'error');
-            }.bind(this);
-
             if (!batchId) {
                 this.shell.writeLine('Batch id required', 'error');
                 return;
             }
 
-            return releaseBatchesService.createReleasesFromNuget(batchId).then(function (data) {
+            return releaseBatchesService.createReleases(batchId).then(function (data) {
                 this.shell.writeLine('Release batch updated and releases created', 'success');
                 this.shell.writeLine();
                 this.shell.writeLine("Batch name: " + data.name);
