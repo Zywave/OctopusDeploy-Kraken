@@ -18,7 +18,7 @@
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
             var apiKey = httpContextAccessor.HttpContext.User.GetOctopusApiKey();
-            
+
             var endpoint = new OctopusServerEndpoint(settings.Value.OctopusServerAddress, apiKey);
             _octopusRepository = new OctopusRepository(endpoint);
             _nugetRepository = PackageRepositoryFactory.Default.CreateRepository(settings.Value.NugetServerAddress);
@@ -56,7 +56,7 @@
         }
 
         public DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedeploy = true)
-        { 
+        {
             var deploymentResource = new DeploymentResource
             {
                 ReleaseId = releaseId,
@@ -67,11 +67,11 @@
             if (!allowRedeploy)
             {
                 var checkDeploy = _octopusRepository.Deployments.FindOne(d => d.ReleaseId == releaseId && d.EnvironmentId == environmentId);
-                
+
                 if (checkDeploy != null)
                 {
                     var task = _octopusRepository.Tasks.Get(checkDeploy.TaskId);
-                    
+
                     // if the task hasn't completed, don't queue up another deploy
                     if (!task.IsCompleted)
                     {
@@ -99,53 +99,52 @@
         {
             var project = GetProject(projectId);
             var deploymentProcess = _octopusRepository.DeploymentProcesses.Get(project.DeploymentProcessId);
-            var nugetStep = deploymentProcess.Steps.FirstOrDefault(s => s.Actions.Any(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId")));
+            var nugetSteps = deploymentProcess.Steps.Where(s => s.Actions.Any(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId")));
 
-            if (nugetStep != null)
+            if (nugetSteps != null && nugetSteps.Any())
             {
-                var actions = nugetStep.Actions;
-                var nugetPackageId = actions.Select(a => a.Properties["Octopus.Action.Package.NuGetPackageId"]).FirstOrDefault();
-
-                // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NugetPackage}"
-                string regexPattern = @"\#\{[a-zA-Z]+\}";
-                var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-                var match = regex.Match(nugetPackageId);
-                if (match.Success)
-                {
-                    // TODO: clean up this refKey nonsense
-                    var refKey = nugetPackageId.Replace("#{", "").Replace("}", "");
-                    nugetPackageId = actions.Select(a => a.Properties[refKey]).FirstOrDefault();
-                }
-
-                var latestNugetPackage = _nugetRepository.FindPackagesById(nugetPackageId).OrderByDescending(n => n.Published).FirstOrDefault();
-                var version = latestNugetPackage.Version.ToString();
-
+                var selectedPackages = new List<SelectedPackage>();
                 var checkRelease = _octopusRepository.Releases.FindOne(r => r.ProjectId == project.Id);
 
-                // assume the last deployed release is less than or equal to the latest package in nuget
-                if (checkRelease == null || checkRelease.Version != version)
+                foreach (var nugetStep in nugetSteps)
                 {
-                    var selectedPackages = new List<SelectedPackage>
-                    {
-                        new SelectedPackage
-                        {
-                            StepName = nugetStep.Name,
-                            Version = version
-                        }
-                    };
+                    var actions = nugetStep.Actions;
+                    var nugetPackageId = actions.Select(a => a.Properties["Octopus.Action.Package.NuGetPackageId"]).FirstOrDefault();
 
-                    var release = new ReleaseResource
+                    // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NugetPackage}"
+                    string regexPattern = @"\#\{[a-zA-Z]+\}";
+                    var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
+                    var match = regex.Match(nugetPackageId);
+                    if (match.Success)
                     {
-                        ProjectId = project.Id,
-                        Version = version,
-                        ReleaseNotes = "Release created with Kraken",
-                        SelectedPackages = selectedPackages
-                    };
+                        // TODO: clean up this refKey nonsense
+                        var refKey = nugetPackageId.Replace("#{", "").Replace("}", "");
+                        nugetPackageId = actions.Select(a => a.Properties[refKey]).FirstOrDefault();
+                    }
 
-                    release = _octopusRepository.Releases.Create(release);
-                    return release;
+                    var latestNugetPackage = _nugetRepository.FindPackagesById(nugetPackageId).OrderByDescending(n => n.Published).FirstOrDefault();
+                    var version = latestNugetPackage.Version.ToString();
+
+                    // assume the last deployed release is less than or equal to the latest package in nuget
+                    if (checkRelease != null && checkRelease.Version == version) return checkRelease;
+
+                    selectedPackages.Add(new SelectedPackage
+                    {
+                        StepName = nugetStep.Name,
+                        Version = version
+                    });
                 }
-                return checkRelease;
+
+                var release = new ReleaseResource
+                {
+                    ProjectId = project.Id,
+                    Version = selectedPackages.First().Version,
+                    ReleaseNotes = "Release created with Kraken",
+                    SelectedPackages = selectedPackages
+                };
+
+                release = _octopusRepository.Releases.Create(release);
+                return release;
             }
             return null;
         }
