@@ -2,15 +2,15 @@
 
     return new cmdr.Definition({
         name: 'NUBATCH',
-        description: 'Makes new releases for every project in a batch from the latest nuget package',
-        usage: 'NUBATCH batchid',
-        main: function (batchId) {
+        description: 'Makes new releases for every project in a batch from the latest nuget package. Give a version to change from the default version when creating a new release.',
+        usage: 'NUBATCH batchid [version]',
+        main: function (batchId, version) {
             if (!batchId) {
                 this.shell.writeLine('Batch id required', 'error');
                 return;
             }
 
-            return releaseBatchesService.createReleases(batchId).then(function (data) {
+            return releaseBatchesService.createReleases(batchId, version).then(function (data) {
                 this.shell.writeLine('Release batch updated and releases created', 'success');
                 this.shell.writeLine();
                 this.shell.writeLine("Batch name: " + data.name);

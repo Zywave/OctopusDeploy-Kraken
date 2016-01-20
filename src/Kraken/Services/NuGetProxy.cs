@@ -14,7 +14,7 @@
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            _nuGetPackageRepository = PackageRepositoryFactory.Default.CreateRepository(settings.Value.NugetServerAddress);
+            _nuGetPackageRepository = PackageRepositoryFactory.Default.CreateRepository(settings.Value.NuGetServerAddress);
         }
 
         public string GetLatestVersionForPackage(string packageId)

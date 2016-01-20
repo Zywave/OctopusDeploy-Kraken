@@ -62,7 +62,7 @@
                 contentType: 'application/json'
             });
         },
-        deployReleaseBatch: function (batchId, environmentId, allowRedeploy) {
+        deployReleaseBatch: function (batchId, environmentId) {
             return $.ajax({
                 type: 'POST',
                 url: context.basePath + 'api/releasebatches/' + batchId + '/deploy',
@@ -70,10 +70,11 @@
                 contentType: 'application/json'
             });
         },
-        createReleases: function (batchId) {
+        createReleases: function (batchId, version) {
             return $.ajax({
                 type: 'POST',
                 url: context.basePath + 'api/releasebatches/' + batchId + '/createreleases',
+                data: JSON.stringify(version),
                 contentType: 'application/json'
             });
         }

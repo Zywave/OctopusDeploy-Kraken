@@ -117,17 +117,16 @@
             return nugetPackageIds;
         }
 
-        public ReleaseResource CreateReleases(string projectId, IEnumerable<DeploymentStepResource> steps, Dictionary<string, string> nugetPackageInfo)
+        public ReleaseResource CreateRelease(string projectId, IEnumerable<DeploymentStepResource> steps, Dictionary<string, string> nugetPackageInfo, string releaseVersion = null)
         {
             var project = GetProject(projectId);
             var versioningStrategy = project.VersioningStrategy;
-            string releaseVersion = null;
             var selectedPackages = new List<SelectedPackage>();
 
             foreach (var step in steps)
             {
                 var actions = step.Actions.Where(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId"));
-                if (!string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
+                if (string.IsNullOrEmpty(releaseVersion) && !string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
                     versioningStrategy.DonorPackageStepId == step.Id)
                 {
                     var nugetPackageId = GetNugetPackageIdFromAction(actions.First());
@@ -140,7 +139,7 @@
                     if (!string.IsNullOrEmpty(nugetPackageId))
                     {
                         var version = nugetPackageInfo[nugetPackageId];
-                        if (!string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
+                        if (string.IsNullOrEmpty(releaseVersion) && !string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
                             versioningStrategy.DonorPackageStepId == action.Id)
                         {
                             releaseVersion = version;
