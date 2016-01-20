@@ -327,9 +327,9 @@ namespace Kraken.Controllers.Api
             return Ok(deployments);
         }
 
-        // POST api/ReleaseBatches/5/ReleaseFromNuget
+        // POST api/ReleaseBatches/5/CreateReleases
         [HttpPost("{id}/CreateReleases")]
-        public async Task<IActionResult> CreateReleases([FromRoute] int id)
+        public async Task<IActionResult> CreateReleases([FromRoute] int id, [FromBody] string version = null)
         {
             var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
 
@@ -341,16 +341,19 @@ namespace Kraken.Controllers.Api
                     var nugetPackageIds = _octopusProxy.GetNugetPackageIdsFromSteps(nugetSteps);
                     var nugetPackageInfo = nugetPackageIds.ToDictionary(i => i, i => _nuGetProxy.GetLatestVersionForPackage(i));
 
-                    var release = _octopusProxy.CreateReleases(releaseBatchItem.ProjectId, nugetSteps, nugetPackageInfo);
+                    var release = _octopusProxy.CreateRelease(releaseBatchItem.ProjectId, nugetSteps, nugetPackageInfo, version);
                     if (release != null)
                     {
                         releaseBatchItem.ReleaseId = release.Id;
                         releaseBatchItem.ReleaseVersion = release.Version;
                     }
                 }
-
-                _context.Entry(releaseBatch).State = EntityState.Modified;
             }
+
+            releaseBatch.SyncDateTime = DateTimeOffset.Now;
+            releaseBatch.SyncEnvironmentId = null;
+            releaseBatch.SyncEnvironmentName = "(Latest)";
+            releaseBatch.SyncUserName = User.Identity.Name;
 
             try
             {
