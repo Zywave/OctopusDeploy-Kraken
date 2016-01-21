@@ -3,18 +3,11 @@
     return new cmdr.Definition({
         name: 'BATCH',
         description: 'Lists all release batches or lists all projects linked to a batch.',
-        usage: 'BATCH/nBATCH [batchid]',
-        main: function (batchId) {
-            var fail = function(xhr, error, message) {
-                this.shell.writeLine(message, 'error');
-                if (xhr.responseText) {
-                    this.shell.writeLine(xhr.responseText, 'error');
-                }
-                this.shell.writeLine('Operation Failed', 'error');
-            }.bind(this);
-
-            if (batchId) {
-                return releaseBatchesService.getReleaseBatch(batchId).then(function (data) {
+        usage: 'BATCH/nBATCH [batchIdOrName]',
+        main: function (batchIdOrName) {
+            
+            if (batchIdOrName) {
+                return releaseBatchesService.getReleaseBatch(batchIdOrName).then(function (data) {
                     this.shell.writeLine(data.name);
                     this.shell.writeLine();
                     this.shell.writeTable(data.items, ['projectId:20:project id', 'projectName:50:project name', 'releaseVersion:*:release version'], true);
@@ -28,7 +21,7 @@
                     if (data.deployDateTime) {
                         this.shell.writeLine("Last deployed to " + data.deployEnvironmentName + " by " + data.deployUserName + " at " + moment(data.deployDateTime).format('l LTS'));
                     }
-                }.bind(this)).fail(fail);
+                }.bind(this)).fail(this.fail.bind(this));
             }
 
             return releaseBatchesService.getReleaseBatches().then(function (data) {
@@ -40,8 +33,9 @@
                     return item;
                 });
                 this.shell.writeTable(displayData, ['id:10', 'name:30', 'syncEnvironmentName:15:sync env', 'displaySyncDateTime:25:sync timestamp', 'deployEnvironmentName:15:deploy env', 'displayDeployDateTime:*:deploy timestamp'], true);
-            }.bind(this)).fail(fail);
-        }
+            }.bind(this)).fail(this.fail.bind(this));
+        },
+        autocompleteKeys: ['releaseBatches']
     });
 
 });

@@ -1,17 +1,16 @@
-﻿define(['cmdr', 'bus', 'services/releaseBatches'], function (cmdr, bus, releaseBatchesService) {
+﻿define(['cmdr', 'services/releaseBatches'], function (cmdr, releaseBatchesService) {
 
     return new cmdr.Definition({
         name: 'DEPLOYBATCH',
         description: 'Deploys all items in a release batch',
-        usage: 'DEPLOYBATCH batchId environmentIdOrName [allowRedeploy]\n\nEnvironment id can be full (Environments-123) or short (123)',
-        main: function (batchId, environmentIdOrName, allowRedeploy) {
-            if (!batchId || !environmentIdOrName) {
-                this.shell.writeLine('Batch id and environment id or name required', 'error');
+        usage: 'DEPLOYBATCH batchIdOrName environmentIdOrName [allowRedeploy]\n\nEnvironment id can be full (Environments-123) or short (123)',
+        main: function (batchIdOrName, environmentIdOrName, allowRedeploy) {
+            if (!batchIdOrName || !environmentIdOrName) {
+                this.shell.writeLine('Batch id or name and environment id or name required', 'error');
                 return;
             }
-
-            return releaseBatchesService.deployReleaseBatch(batchId, environmentIdOrName, !!allowRedeploy).then(function (data) {
-                bus.publish('releasebatches:deploy', batchId);
+            
+            return releaseBatchesService.deployReleaseBatch(batchIdOrName, environmentIdOrName, !!allowRedeploy).then(function (data) {
                 this.shell.writeLine();
                 this.shell.writeLine('                $$$$$$$');
                 this.shell.writeLine('            $$$$$$$$$$$$$$');
@@ -36,14 +35,9 @@
                 this.shell.writeLine();
                 this.shell.writeLine('Release batch deploys started.  Check Octopus for status.', 'success');
                 return data;
-            }.bind(this)).fail(function (xhr, error, message) {
-                this.shell.writeLine(message, 'error');
-                if (xhr.responseText) {
-                    this.shell.writeLine(xhr.responseText, 'error');
-                }
-                this.shell.writeLine('Operation Failed', 'error');
-            }.bind(this));
-        }
+            }.bind(this)).fail(this.fail.bind(this));
+        },
+        autocompleteKeys: ['releaseBatches', 'environments']
     });
 
 });
