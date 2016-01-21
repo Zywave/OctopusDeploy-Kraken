@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Kraken.Filters;
     using Microsoft.AspNet.Builder;
     using Microsoft.AspNet.Hosting;
     using Microsoft.Data.Entity;
@@ -59,6 +60,8 @@
             services.AddTransient<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
             services.AddTransient<IOctopusProxy, OctopusProxy>();
             services.AddTransient<INuGetProxy, NuGetProxy>();
+
+            services.AddTransient<ResponseTextExceptionFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
