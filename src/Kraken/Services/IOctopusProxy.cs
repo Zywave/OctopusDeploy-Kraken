@@ -23,6 +23,6 @@ using Octopus.Client.Model;
 
         IEnumerable<string> GetNugetPackageIdsFromSteps(IEnumerable<DeploymentStepResource> nugetSteps);
 
-        ReleaseResource CreateReleases(string projectId, IEnumerable<DeploymentStepResource> steps, Dictionary<string, string> nugetPackageInfo);
+        ReleaseResource CreateRelease(string projectId, IEnumerable<DeploymentStepResource> steps, Dictionary<string, string> nugetPackageInfo, string releaseVersion = null);
     }
 }

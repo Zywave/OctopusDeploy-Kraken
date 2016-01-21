@@ -68,7 +68,7 @@
                 bus.publish('releasebatches:sync', idOrName);
             });;
         },
-        deployReleaseBatch: function (idOrName, environmentId, allowRedeploy) {
+        deployReleaseBatch: function (idOrName, environmentId) {
             return $.ajax({
                 type: 'POST',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/deploy',
@@ -78,14 +78,15 @@
                 bus.publish('releasebatches:deploy', idOrName);
             });
         },
-        createReleases: function (idOrName) {
+        createReleases: function (idOrName, version) {
             return $.ajax({
                 type: 'POST',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/createreleases',
+                data: JSON.stringify(version),
                 contentType: 'application/json'
             }).then(function () {
                 bus.publish('releasebatches:sync', idOrName);
-            });;
+            });
         }
     };
 
