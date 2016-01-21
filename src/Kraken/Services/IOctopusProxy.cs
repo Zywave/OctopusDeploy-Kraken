@@ -17,12 +17,12 @@ using Octopus.Client.Model;
 
         ReleaseResource GetLastDeployedRelease(string projectId, string environmentId);
 
+        DeploymentProcessResource GetDeploymentProcessForProject(string projectId);
+
         DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedploy = true);
 
-        IEnumerable<DeploymentStepResource> GetNuGetDeploymentStepResources(string projectId);
+        ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages);
 
-        IEnumerable<string> GetNugetPackageIdsFromSteps(IEnumerable<DeploymentStepResource> nugetSteps);
-
-        ReleaseResource CreateRelease(string projectId, IEnumerable<DeploymentStepResource> steps, Dictionary<string, string> nugetPackageInfo, string releaseVersion = null);
+        string GetNugetPackageIdFromAction(DeploymentActionResource action);
     }
 }

@@ -55,6 +55,13 @@
             return deployment != null ? _octopusRepository.Releases.Get(deployment.ReleaseId) : null;
         }
 
+        public DeploymentProcessResource GetDeploymentProcessForProject(string projectId)
+        {
+            var project = GetProject(projectId);
+            return _octopusRepository.DeploymentProcesses.Get(project.DeploymentProcessId);
+        }
+
+
         public DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedeploy = true)
         {
             var deploymentResource = new DeploymentResource
@@ -95,72 +102,19 @@
             return _octopusRepository.Deployments.Create(deploymentResource);
         }
 
-        public IEnumerable<DeploymentStepResource> GetNuGetDeploymentStepResources(string projectId)
+        public ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages)
         {
-            var project = GetProject(projectId);
-            var deploymentProcess = _octopusRepository.DeploymentProcesses.Get(project.DeploymentProcessId);
-            return deploymentProcess.Steps.Where(
-                s => s.Actions.Any(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId"))).ToList();
-        }
-
-        public IEnumerable<string> GetNugetPackageIdsFromSteps(IEnumerable<DeploymentStepResource> nugetSteps)
-        {
-            var nugetPackageIds = new List<string>();
-            if (nugetSteps.Any())
-            {
-                foreach (var nugetStep in nugetSteps)
-                {
-                    var actions = nugetStep.Actions.Where(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId"));
-                    nugetPackageIds.AddRange(actions.Select(GetNugetPackageIdFromAction).Where(nugetPackageId => nugetPackageId != null));
-                }
-            }
-            return nugetPackageIds;
-        }
-
-        public ReleaseResource CreateRelease(string projectId, IEnumerable<DeploymentStepResource> steps, Dictionary<string, string> nugetPackageInfo, string releaseVersion = null)
-        {
-            var project = GetProject(projectId);
-            var versioningStrategy = project.VersioningStrategy;
-            var selectedPackages = new List<SelectedPackage>();
-
-            foreach (var step in steps)
-            {
-                var actions = step.Actions.Where(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId"));
-                if (string.IsNullOrEmpty(releaseVersion) && !string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
-                    versioningStrategy.DonorPackageStepId == step.Id)
-                {
-                    var nugetPackageId = GetNugetPackageIdFromAction(actions.First());
-                    releaseVersion = nugetPackageInfo[nugetPackageId];
-                }
-
-                foreach (var action in actions)
-                {
-                    var nugetPackageId = GetNugetPackageIdFromAction(action);
-                    if (!string.IsNullOrEmpty(nugetPackageId))
-                    {
-                        var version = nugetPackageInfo[nugetPackageId];
-                        if (string.IsNullOrEmpty(releaseVersion) && !string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
-                            versioningStrategy.DonorPackageStepId == action.Id)
-                        {
-                            releaseVersion = version;
-                        }
-                        selectedPackages.Add(new SelectedPackage(action.Name, version));
-                    }
-                }
-                
-            }
-
             var release = new ReleaseResource
             {
-                Version = releaseVersion,
+                Version = version,
                 ProjectId = projectId,
-                SelectedPackages = selectedPackages
+                SelectedPackages = selectedPackages.ToList()
             };
 
             return _octopusRepository.Releases.Create(release);
         }
 
-        private string GetNugetPackageIdFromAction(DeploymentActionResource action)
+        public string GetNugetPackageIdFromAction(DeploymentActionResource action)
         {
             string nugetPackageId;
             if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nugetPackageId))

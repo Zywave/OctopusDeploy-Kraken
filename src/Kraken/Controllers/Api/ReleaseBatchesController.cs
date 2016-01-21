@@ -17,7 +17,7 @@ namespace Kraken.Controllers.Api
     [Route("api/releasebatches")]
     public class ReleaseBatchesController : Controller
     {
-        public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy, INuGetProxy nuGetProxy)
+        public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy, INuGetProxy nuGetProxy, IOctopusReleaseService octopusReleaseService)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (octopusProxy == null) throw new ArgumentNullException(nameof(octopusProxy));
@@ -25,6 +25,7 @@ namespace Kraken.Controllers.Api
             _context = context;
             _octopusProxy = octopusProxy;
             _nuGetProxy = nuGetProxy;
+            _octopusReleaseService = octopusReleaseService;
         }
 
         // GET: api/ReleaseBatches
@@ -306,11 +307,7 @@ namespace Kraken.Controllers.Api
             {
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    var nugetSteps = _octopusProxy.GetNuGetDeploymentStepResources(releaseBatchItem.ProjectId).ToList();
-                    var nugetPackageIds = _octopusProxy.GetNugetPackageIdsFromSteps(nugetSteps);
-                    var nugetPackageInfo = nugetPackageIds.ToDictionary(i => i, i => _nuGetProxy.GetLatestVersionForPackage(i));
-
-                    var release = _octopusProxy.CreateRelease(releaseBatchItem.ProjectId, nugetSteps, nugetPackageInfo, version);
+                    var release = _octopusReleaseService.CreateRelease(releaseBatchItem.ProjectId, version);
                     if (release != null)
                     {
                         releaseBatchItem.ReleaseId = release.Id;
@@ -365,5 +362,6 @@ namespace Kraken.Controllers.Api
         private readonly ApplicationDbContext _context;
         private readonly IOctopusProxy _octopusProxy;
         private readonly INuGetProxy _nuGetProxy ;
+        private readonly IOctopusReleaseService _octopusReleaseService;
     }
 }
