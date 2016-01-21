@@ -45,8 +45,6 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest(ModelState);
             }
 
-            throw new Exception("suck it");
-
             var releaseBatch = await GetReleaseBatch(idOrName, true);
 
             if (releaseBatch == null)
