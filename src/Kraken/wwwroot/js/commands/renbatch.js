@@ -1,25 +1,19 @@
-﻿define(['cmdr', 'bus', 'services/releaseBatches'], function(cmdr, bus, releaseBatchesService) {
+﻿define(['cmdr', 'services/releaseBatches'], function (cmdr, releaseBatchesService) {
 
     return new cmdr.Definition({
         name: 'RENBATCH',
         description: 'Renames a release batch.',
-        usage: 'RENBATCH id name',
-        main: function (id, name) {
-            if (!id || !name) {
-                this.shell.writeLine('Project batch id and name required', 'error');
+        usage: 'RENBATCH batchIdOrName newName',
+        main: function (batchIdOrName, name) {
+            if (!batchIdOrName || !name) {
+                this.shell.writeLine('Project batch id or name and new name required', 'error');
                 return;
             }
-            return releaseBatchesService.putReleaseBatch(id, { id: id, name: name }).then(function () {
-                bus.publish('releasebatches:update', id);
+            return releaseBatchesService.putReleaseBatch(batchIdOrName, { name: name }).then(function () {
                 this.shell.writeLine('Batch updated', 'success');
-            }.bind(this)).fail(function (xhr, error, message) {
-                this.shell.writeLine(message, 'error');
-                if (xhr.responseText) {
-                    this.shell.writeLine(xhr.responseText, 'error');
-                }
-                this.shell.writeLine('Operation Failed', 'error');
-            }.bind(this));
-        }
+            }.bind(this)).fail(this.fail.bind(this));
+        },
+        autocompleteKeys: ['releaseBatches']
     });
 
 });

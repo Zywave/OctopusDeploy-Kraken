@@ -35,15 +35,15 @@ namespace Kraken.Controllers.Api
         }
 
         // GET: api/ReleaseBatches/5
-        [HttpGet("{id}", Name = "GetReleaseBatch")]
-        public async Task<IActionResult> GetReleaseBatch([FromRoute] int id)
+        [HttpGet("{idOrName}", Name = "GetReleaseBatch")]
+        public async Task<IActionResult> GetReleaseBatch([FromRoute] string idOrName)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
+            var releaseBatch = await GetReleaseBatch(idOrName, true);
 
             if (releaseBatch == null)
             {
@@ -54,47 +54,26 @@ namespace Kraken.Controllers.Api
         }
 
         // PUT: api/ReleaseBatches/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutReleaseBatch([FromRoute] int id, [FromBody] ReleaseBatch releaseBatch)
+        [HttpPut("{idOrName}")]
+        public async Task<IActionResult> PutReleaseBatch([FromRoute] string idOrName, [FromBody] ReleaseBatch releaseBatch)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            if (id != releaseBatch.Id)
+            var existingReleaseBatch = await GetReleaseBatch(idOrName, false);
+            if (existingReleaseBatch == null)
             {
-                return HttpBadRequest();
+                return HttpNotFound();
             }
 
-            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
-            releaseBatch.UpdateUserName = User.Identity.Name;
+            existingReleaseBatch.Name = releaseBatch.Name;
 
-            _context.Entry(releaseBatch).State = EntityState.Modified;
-            _context.Entry(releaseBatch).Property(b => b.SyncDateTime).IsModified = false;
-            _context.Entry(releaseBatch).Property(b => b.SyncEnvironmentId).IsModified = false;
-            _context.Entry(releaseBatch).Property(b => b.SyncEnvironmentName).IsModified = false;
-            _context.Entry(releaseBatch).Property(b => b.SyncUserName).IsModified = false;
-            _context.Entry(releaseBatch).Property(b => b.DeployDateTime).IsModified = false;
-            _context.Entry(releaseBatch).Property(b => b.DeployEnvironmentId).IsModified = false;
-            _context.Entry(releaseBatch).Property(b => b.DeployEnvironmentName).IsModified = false;
-            _context.Entry(releaseBatch).Property(b => b.DeployUserName).IsModified = false;
+            existingReleaseBatch.UpdateDateTime = DateTimeOffset.Now;
+            existingReleaseBatch.UpdateUserName = User.Identity.Name;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReleaseBatchExists(id))
-                {
-                    return HttpNotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
@@ -118,7 +97,7 @@ namespace Kraken.Controllers.Api
             }
             catch (DbUpdateException)
             {
-                if (ReleaseBatchExists(releaseBatch.Id))
+                if (_context.ReleaseBatches.Count(e => e.Id == releaseBatch.Id) > 0)
                 {
                     return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -128,19 +107,19 @@ namespace Kraken.Controllers.Api
                 }
             }
 
-            return CreatedAtRoute("GetReleaseBatch", new { id = releaseBatch.Id }, releaseBatch);
+            return CreatedAtRoute("GetReleaseBatch", new { idOrName = releaseBatch.Id }, releaseBatch);
         }
 
         // DELETE: api/ReleaseBatches/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReleaseBatch([FromRoute] int id)
+        [HttpDelete("{idOrName}")]
+        public async Task<IActionResult> DeleteReleaseBatch([FromRoute] string idOrName)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            var releaseBatch = await _context.ReleaseBatches.SingleAsync(m => m.Id == id);
+            var releaseBatch = await GetReleaseBatch(idOrName, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -153,15 +132,15 @@ namespace Kraken.Controllers.Api
         }
 
         // PUT: api/ReleaseBatches/5/LinkProject
-        [HttpPut("{id}/LinkProject")]
-        public async Task<IActionResult> LinkProjectToReleaseBatch([FromRoute] int id, [FromBody] string projectIdOrSlugOrName)
+        [HttpPut("{idOrName}/LinkProject")]
+        public async Task<IActionResult> LinkProjectToReleaseBatch([FromRoute] string idOrName, [FromBody] string projectIdOrSlugOrName)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            var releaseBatch = await _context.ReleaseBatches.SingleAsync(m => m.Id == id);
+            var releaseBatch = await GetReleaseBatch(idOrName, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -178,7 +157,7 @@ namespace Kraken.Controllers.Api
 
             var releaseBatchItem = new ReleaseBatchItem
             {
-                ReleaseBatchId = id,
+                ReleaseBatchId = releaseBatch.Id,
                 ProjectId = projectResource.Id,
                 ProjectName = projectResource.Name
             };
@@ -191,15 +170,15 @@ namespace Kraken.Controllers.Api
         }
 
         // PUT: api/ReleaseBatches/5/UnlinkProject
-        [HttpPut("{id}/UnlinkProject")]
-        public async Task<IActionResult> UnlinkProjectFromReleaseBatch([FromRoute] int id, [FromBody] string projectIdOrSlugOrName)
+        [HttpPut("{idOrName}/UnlinkProject")]
+        public async Task<IActionResult> UnlinkProjectFromReleaseBatch([FromRoute] string idOrName, [FromBody] string projectIdOrSlugOrName)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            var releaseBatch = await _context.ReleaseBatches.SingleAsync(m => m.Id == id);
+            var releaseBatch = await GetReleaseBatch(idOrName, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -214,7 +193,7 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest("Project Not Found");
             }
 
-            var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == id && e.ProjectId == projectResource.Id);
+            var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == releaseBatch.Id && e.ProjectId == projectResource.Id);
             if (releaseBatchItem != null)
             {
                 _context.ReleaseBatchItems.Remove(releaseBatchItem);
@@ -230,15 +209,15 @@ namespace Kraken.Controllers.Api
         }
 
         // PUT: api/ReleaseBatches/5/Sync
-        [HttpPut("{id}/Sync")]
-        public async Task<IActionResult> SyncReleaseBatch([FromRoute] int id, [FromBody] string environmentIdOrName = null)
+        [HttpPut("{idOrName}/Sync")]
+        public async Task<IActionResult> SyncReleaseBatch([FromRoute] string idOrName, [FromBody] string environmentIdOrName = null)
         {
-            if (!ReleaseBatchExists(id))
+            var releaseBatch = await GetReleaseBatch(idOrName, true);
+            if (releaseBatch == null)
             {
-                return new HttpStatusCodeResult(StatusCodes.Status404NotFound);
+                return HttpNotFound();
             }
 
-            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
                 EnvironmentResource environment = null;
@@ -272,30 +251,16 @@ namespace Kraken.Controllers.Api
                 releaseBatch.SyncUserName = User.Identity.Name;
             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReleaseBatchExists(id))
-                {
-                    return HttpNotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return Ok(releaseBatch);
         }
 
         // POST api/ReleaseBatches/5/Deploy
-        [HttpPost("{id}/Deploy")]
-        public async Task<IActionResult> DeployReleaseBatch([FromRoute] int id, [FromBody] string environmentIdOrName, [FromBody] bool allowRedeploy = false)
+        [HttpPost("{idOrName}/Deploy")]
+        public async Task<IActionResult> DeployReleaseBatch([FromRoute] string idOrName, [FromBody] string environmentIdOrName, [FromBody] bool allowRedeploy = false)
         {
-            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleOrDefaultAsync(m => m.Id == id);
+            var releaseBatch = await GetReleaseBatch(idOrName, true);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -328,10 +293,14 @@ namespace Kraken.Controllers.Api
         }
 
         // POST api/ReleaseBatches/5/ReleaseFromNuget
-        [HttpPost("{id}/CreateReleases")]
-        public async Task<IActionResult> CreateReleases([FromRoute] int id)
+        [HttpPost("{idOrName}/CreateReleases")]
+        public async Task<IActionResult> CreateReleases([FromRoute] string idOrName)
         {
-            var releaseBatch = await _context.ReleaseBatches.Include(e => e.Items).SingleAsync(m => m.Id == id);
+            var releaseBatch = await GetReleaseBatch(idOrName, true);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
@@ -352,21 +321,7 @@ namespace Kraken.Controllers.Api
                 _context.Entry(releaseBatch).State = EntityState.Modified;
             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReleaseBatchExists(id))
-                {
-                    return HttpNotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return Ok(releaseBatch);
         }
@@ -380,9 +335,29 @@ namespace Kraken.Controllers.Api
             base.Dispose(disposing);
         }
 
-        private bool ReleaseBatchExists(int id)
+        private async Task<ReleaseBatch> GetReleaseBatch(string idOrName, bool includeItems)
         {
-            return _context.ReleaseBatches.Count(e => e.Id == id) > 0;
+            ReleaseBatch releaseBatch = null;
+
+            IQueryable<ReleaseBatch> query = _context.ReleaseBatches;
+
+            if (includeItems)
+            {
+                query = query.Include(b => b.Items);
+            }
+
+            int id;
+            if (int.TryParse(idOrName, out id))
+            {
+                releaseBatch = await query.SingleOrDefaultAsync(b => b.Id == id);
+            }
+
+            if (releaseBatch == null)
+            {
+                releaseBatch = await query.SingleOrDefaultAsync(b => b.Name == idOrName);
+            }
+
+            return releaseBatch;
         }
 
         private readonly ApplicationDbContext _context;

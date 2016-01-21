@@ -4,7 +4,6 @@ namespace Kraken.Models
 
     public class ReleaseBatchItem
     {
-        [Key]
         public int Id { get; set; }
         
         public int ReleaseBatchId { get; set; }

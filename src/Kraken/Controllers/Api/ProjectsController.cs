@@ -21,9 +21,9 @@ namespace Kraken.Controllers.Api
 
         // GET: api/projects
         [HttpGet]
-        public IEnumerable<ProjectResource> GetProjects([FromQuery] string searchQuery = "")
+        public IEnumerable<ProjectResource> GetProjects([FromQuery] string nameFilter = "")
         {
-            return _octopusProxy.GetProjects(searchQuery);
+            return _octopusProxy.GetProjects(nameFilter);
         }
 
         private readonly IOctopusProxy _octopusProxy;

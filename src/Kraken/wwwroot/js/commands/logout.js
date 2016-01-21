@@ -1,4 +1,4 @@
-﻿define(['cmdr', 'bus'], function(cmdr, bus) {
+﻿define(['cmdr'], function(cmdr) {
 
     return new cmdr.Definition({
         name: 'LOGOUT',

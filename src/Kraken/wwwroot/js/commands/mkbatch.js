@@ -1,4 +1,4 @@
-﻿define(['cmdr', 'bus', 'services/releaseBatches'], function(cmdr, bus, releaseBatchesService) {
+﻿define(['cmdr', 'services/releaseBatches'], function (cmdr, releaseBatchesService) {
 
     return new cmdr.Definition({
         name: 'MKBATCH',
@@ -9,16 +9,10 @@
                 this.shell.writeLine('Project batch name required', 'error');
                 return;
             }
+
             return releaseBatchesService.postReleaseBatch({ name: name }).then(function (data) {
-                bus.publish('releasebatches:add', data.id);
                 this.shell.writeLine('Batch created', 'success');
-            }.bind(this)).fail(function (xhr, error, message) {
-                this.shell.writeLine(message, 'error');
-                if (xhr.responseText) {
-                    this.shell.writeLine(xhr.responseText, 'error');
-                }
-                this.shell.writeLine('Operation Failed', 'error');
-            }.bind(this));
+            }.bind(this)).fail(this.fail.bind(this));
         }
     });
 

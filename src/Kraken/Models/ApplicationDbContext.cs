@@ -15,8 +15,13 @@ namespace Kraken.Models
 
             modelBuilder.HasDefaultSchema("kraken");
 
-            modelBuilder.Entity<ReleaseBatchItem>().HasOne(e => e.Batch).WithMany(e => e.Items).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ApplicationUser>().HasKey(e => e.UserName);
 
+            modelBuilder.Entity<ReleaseBatch>().HasKey(e => e.Id);
+            modelBuilder.Entity<ReleaseBatch>().HasIndex(e => e.Name).IsUnique();
+
+            modelBuilder.Entity<ReleaseBatch>().HasKey(e => e.Id);
+            modelBuilder.Entity<ReleaseBatchItem>().HasOne(e => e.Batch).WithMany(e => e.Items).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<ReleaseBatchItem>().HasAlternateKey(e => new { e.ReleaseBatchId, e.ProjectId });
         }
     }

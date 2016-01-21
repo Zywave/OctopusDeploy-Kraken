@@ -4,8 +4,8 @@
         getReleaseBatches: function() {
             return $.get(context.basePath + 'api/releasebatches');
         },
-        getReleaseBatch: function (id) {
-            return $.get(context.basePath + 'api/releasebatches/' + id);
+        getReleaseBatch: function (idOrName) {
+            return $.get(context.basePath + 'api/releasebatches/' + encodeURI(idOrName));
         },
         postReleaseBatch: function (releaseBatch) {
             return $.ajax({
@@ -18,64 +18,74 @@
                 return data;
             });
         },
-        putReleaseBatch: function (id, releaseBatch) {
+        putReleaseBatch: function (idOrName, releaseBatch) {
             return $.ajax({
                 type: 'PUT',
-                url: context.basePath + 'api/releasebatches/' + id,
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName),
                 data: JSON.stringify(releaseBatch),
                 contentType: 'application/json'
             }).then(function (data) {
-                bus.publish('releasebatches:update', id);
+                bus.publish('releasebatches:update', idOrName);
                 return data;
             });
         },
-        deleteReleaseBatch: function(id) {
+        deleteReleaseBatch: function (idOrName) {
             return $.ajax({
-                url: context.basePath + 'api/releasebatches/' + id,
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName),
                 type: 'DELETE'
             }).then(function (data) {
-                bus.publish('releasebatches:delete', id);
+                bus.publish('releasebatches:delete', idOrName);
                 return data;
             });
         },
-        linkProject: function(batchId, projectId) {
+        linkProject: function (idOrName, projectId) {
             return $.ajax({
                 type: 'PUT',
-                url: context.basePath + 'api/releasebatches/' + batchId + '/linkproject',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/linkproject',
                 data: JSON.stringify(projectId),
                 contentType: 'application/json'
+            }).then(function () {
+                bus.publish('releasebatches:update', idOrName);
             });
         },
-        unlinkProject: function(batchId, projectId) {
+        unlinkProject: function (idOrName, projectId) {
             return $.ajax({
                 type: 'PUT',
-                url: context.basePath + 'api/releasebatches/' + batchId + '/unlinkproject',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/unlinkproject',
                 data: JSON.stringify(projectId),
                 contentType: 'application/json'
+            }).then(function () {
+                bus.publish('releasebatches:update', idOrName);
             });
         },
-        syncReleaseBatch: function (batchId, environmentId) {
+        syncReleaseBatch: function (idOrName, environmentId) {
             return $.ajax({
                 type: 'PUT',
-                url: context.basePath + 'api/releasebatches/' + batchId + '/sync',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/sync',
                 data: JSON.stringify(environmentId),
                 contentType: 'application/json'
-            });
+            }).then(function () {
+                bus.publish('releasebatches:sync', idOrName);
+            });;
         },
-        deployReleaseBatch: function (batchId, environmentId, allowRedeploy) {
+        deployReleaseBatch: function (idOrName, environmentId, allowRedeploy) {
             return $.ajax({
                 type: 'POST',
-                url: context.basePath + 'api/releasebatches/' + batchId + '/deploy',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/deploy',
                 data: JSON.stringify(environmentId),
                 contentType: 'application/json'
+            }).then(function() {
+                bus.publish('releasebatches:deploy', idOrName);
             });
         },
-        createReleases: function (batchId) {
+        createReleases: function (idOrName) {
             return $.ajax({
                 type: 'POST',
-                url: context.basePath + 'api/releasebatches/' + batchId + '/createreleases',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/createreleases',
                 contentType: 'application/json'
-            });
+            }).then(function () {
+                bus.publish('releasebatches:sync', idOrName);
+            });;
         }
     };
 

@@ -1,8 +1,8 @@
 ﻿define(['jquery', 'context'], function ($, context) {
 
     return {
-        getProjects: function (searchQuery) {
-            return $.get(context.basePath + 'api/projects', { searchQuery: searchQuery });
+        getProjects: function (nameFilter) {
+            return $.get(context.basePath + 'api/projects', { nameFilter: nameFilter });
         }
     };
 

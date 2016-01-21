@@ -39,9 +39,9 @@
             return _octopusRepository.Projects.FindOne(p => p.Id == idOrSlugOrName || p.Id == "Projects-" + idOrSlugOrName || p.Slug == idOrSlugOrName || p.Name == idOrSlugOrName);
         }
 
-        public IEnumerable<ProjectResource> GetProjects(string searchQuery)
+        public IEnumerable<ProjectResource> GetProjects(string nameFilter)
         {
-            return _octopusRepository.Projects.FindMany(p => string.IsNullOrEmpty(searchQuery) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, searchQuery, CompareOptions.IgnoreCase) >= 0);
+            return _octopusRepository.Projects.FindMany(p => string.IsNullOrEmpty(nameFilter) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, nameFilter, CompareOptions.IgnoreCase) >= 0);
         }
 
         public ReleaseResource GetLastestRelease(string projectId)

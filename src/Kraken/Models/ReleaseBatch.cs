@@ -6,7 +6,6 @@ namespace Kraken.Models
 
     public sealed class ReleaseBatch
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
