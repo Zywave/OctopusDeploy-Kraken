@@ -2,6 +2,7 @@ namespace Kraken.Controllers.Api
 {
     using System;
     using System.Collections.Generic;
+    using Kraken.Filters;
     using Microsoft.AspNet.Authorization;
     using Microsoft.AspNet.Mvc;
     using Octopus.Client.Model;
@@ -9,6 +10,7 @@ namespace Kraken.Controllers.Api
 
     [Authorize]
     [Produces("application/json")]
+    [ServiceFilter(typeof(ResponseTextExceptionFilter))]
     [Route("api/projects")]
     public class ProjectsController : Controller
     {

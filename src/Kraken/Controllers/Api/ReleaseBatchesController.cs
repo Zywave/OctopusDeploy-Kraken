@@ -4,6 +4,7 @@ namespace Kraken.Controllers.Api
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Kraken.Filters;
     using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Mvc;
     using Microsoft.Data.Entity;
@@ -14,6 +15,7 @@ namespace Kraken.Controllers.Api
 
     [Authorize]
     [Produces("application/json")]
+    [ServiceFilter(typeof(ResponseTextExceptionFilter))]
     [Route("api/releasebatches")]
     public class ReleaseBatchesController : Controller
     {

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Kraken.Filters;
     using Microsoft.AspNet.Authorization;
     using Microsoft.AspNet.Mvc;
     using Octopus.Client.Model;
@@ -9,6 +10,7 @@
 
     [Authorize]
     [Produces("application/json")]
+    [ServiceFilter(typeof(ResponseTextExceptionFilter))]
     [Route("api/environments")]
     public class EnvironmentsController : Controller
     {
