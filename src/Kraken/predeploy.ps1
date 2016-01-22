@@ -1,0 +1,1 @@
+﻿Rename-Item .\appsettings.deploy-template.json .\appsettings.deploy.json
