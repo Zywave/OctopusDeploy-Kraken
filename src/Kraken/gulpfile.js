@@ -34,7 +34,7 @@ gulp.task("build", function () {
     
     requirejs.optimize({
         baseUrl: "./wwwroot/js",
-        name: "../../node_modules/almond/almond",
+        name: "app",
         paths: {
             context: "empty:",
             jquery: "empty:",
@@ -47,7 +47,7 @@ gulp.task("build", function () {
 
             text: "../../node_modules/requirejs-text/text"
         },
-        include: ["app"].concat(htmlIncludes),
+        include: htmlIncludes,
         inlineText: true,
         stubModules: ["text"],
         wrap: true,
