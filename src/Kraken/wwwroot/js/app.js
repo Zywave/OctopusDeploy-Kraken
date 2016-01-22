@@ -2,12 +2,12 @@
     paths: {
         html: '../html',
 
-        text : '../lib/text/text',
-        cmdr: '../lib/cmdrjs/dist/cmdr',
-        jquery: '../lib/jquery/dist/jquery',
-        knockout: '../lib/knockout/dist/knockout',
-        bootstrap: '../lib/bootstrap/dist/js/bootstrap',
-        moment: '../lib/moment/moment'
+        jquery: ['//ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min', '../lib/jquery/dist/jquery.min'],
+        knockout: ['//ajax.aspnetcdn.com/ajax/knockout/knockout-3.4.0', '../lib/knockout/dist/knockout'],
+        bootstrap: ['//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min', '../lib/bootstrap/dist/js/bootstrap.min'],
+        cmdr: '../lib/cmdrjs/dist/cmdr.min',
+        moment: '../lib/moment/min/moment.min',
+        text: '../lib/text/text'
     }
 });
 
