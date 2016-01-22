@@ -1,5 +1,6 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="../gulpfile.js" />
+/// <reference path="js/app.built.js" />
 /// <reference path="js/app.js" />
 /// <reference path="js/bus.js" />
 /// <reference path="js/commands/autocompleteprovider.js" />

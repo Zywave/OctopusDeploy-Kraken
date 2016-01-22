@@ -2,10 +2,13 @@
   "name": "ASP.NET",
   "version": "0.0.0",
   "devDependencies": {
+    "almond": "^0.3.1",
+    "glob": "^6.0.4",
     "gulp": "3.8.11",
     "gulp-concat": "2.5.2",
     "gulp-cssmin": "0.1.7",
-    "gulp-uglify": "1.2.0",
+    "requirejs": "^2.1.22",
+    "requirejs-text": "^2.0.12",
     "rimraf": "2.2.8"
   }
 }
