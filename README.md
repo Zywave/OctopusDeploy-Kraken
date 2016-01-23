@@ -1,6 +1,6 @@
 # OctopusDeploy-Kraken
 
-[![Gitter](https://badges.gitter.im/Zywave/OctopusDeploy-Kraken.svg)](https://gitter.im/Zywave/OctopusDeploy-Kraken?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
+[![Build status](https://ci.appveyor.com/api/projects/status/pc3qmlqlqne6n1jy/branch/master?svg=true)](https://ci.appveyor.com/project/JohnCruikshank/octopusdeploy-kraken/branch/master)
 
 Alpha release available!
 
