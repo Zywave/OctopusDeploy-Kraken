@@ -259,7 +259,7 @@ namespace Kraken.Controllers.Api
             return Ok(releaseBatch);
         }
 
-        // POST api/ReleaseBatches/5/Deploy
+        // POST: api/ReleaseBatches/5/Deploy
         [HttpPost("{idOrName}/Deploy")]
         public async Task<IActionResult> DeployReleaseBatch([FromRoute] string idOrName, [FromBody] string environmentIdOrName, [FromBody] bool allowRedeploy = false)
         {
@@ -294,10 +294,33 @@ namespace Kraken.Controllers.Api
 
             return Ok(deployments);
         }
-        
-        // POST api/ReleaseBatches/5/CreateReleases
+
+        // GET: api/ReleaseBatches/5/GetNextReleases
+        [HttpGet("{idOrName}/GetNextReleases")]
+        public async Task<IActionResult> GetNextReleases([FromRoute] string idOrName)
+        {
+            var releaseBatch = await GetReleaseBatch(idOrName, true);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+
+            var releases = new List<ReleaseResource>();
+
+            if (releaseBatch.Items != null && releaseBatch.Items.Any())
+            {
+                foreach (var releaseBatchItem in releaseBatch.Items)
+                {
+                    releases.Add(_octopusReleaseService.GetNextRelease(releaseBatchItem.ProjectId));
+                }
+            }
+
+            return Ok(releases);
+        }
+
+        // POST: api/ReleaseBatches/CreateReleases
         [HttpPost("{idOrName}/CreateReleases")]
-        public async Task<IActionResult> CreateReleases([FromRoute] string idOrName, [FromBody] string version = null)
+        public async Task<IActionResult> CreateReleases([FromRoute] string idOrName, [FromBody] IEnumerable<ReleaseResource> releases)
         {
             var releaseBatch = await GetReleaseBatch(idOrName, true);
             if (releaseBatch == null)
@@ -309,7 +332,8 @@ namespace Kraken.Controllers.Api
             {
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    var release = _octopusReleaseService.CreateRelease(releaseBatchItem.ProjectId, version);
+                    var release = _octopusProxy.CreateRelease(releases.First(r => r.ProjectId == releaseBatchItem.ProjectId));
+                    release = _octopusProxy.CreateRelease(release);
                     if (release != null)
                     {
                         releaseBatchItem.ReleaseId = release.Id;

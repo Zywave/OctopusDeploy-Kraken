@@ -114,24 +114,9 @@
             return _octopusRepository.Releases.Create(release);
         }
 
-        public string GetNugetPackageIdFromAction(DeploymentActionResource action)
+        public ReleaseResource CreateRelease(ReleaseResource release)
         {
-            string nugetPackageId;
-            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nugetPackageId))
-            {
-                // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NugetPackage}"
-                string regexPattern = @"\#\{[a-zA-Z]+\}";
-                var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-                var match = regex.Match(nugetPackageId);
-                if (match.Success)
-                {
-                    // TODO: clean up this refKey nonsense
-                    var refKey = nugetPackageId.Replace("#{", "").Replace("}", "");
-                    nugetPackageId = action.Properties[refKey];
-                }
-                return nugetPackageId;
-            }
-            return null;
+            return _octopusRepository.Releases.Create(release);
         }
 
         private readonly OctopusRepository _octopusRepository;

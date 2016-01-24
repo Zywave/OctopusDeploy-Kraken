@@ -4,6 +4,6 @@
 
     public interface IOctopusReleaseService
     {
-        ReleaseResource CreateRelease(string projectId, string version = null);
+        ReleaseResource GetNextRelease(string projectId);
     }
 }

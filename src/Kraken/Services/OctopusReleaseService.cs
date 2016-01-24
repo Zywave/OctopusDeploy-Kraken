@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Octopus.Client.Model;
+    using System.Text.RegularExpressions;
 
     public class OctopusReleaseService : IOctopusReleaseService
     {
@@ -12,8 +13,9 @@
             _nuGetProxy = nuGetProxy;
         }
 
-        public ReleaseResource CreateRelease(string projectId, string version = null)
+        public ReleaseResource GetNextRelease(string projectId)
         {
+            string version = null;
             var project = _octopusProxy.GetProject(projectId);
             var versioningStrategy = project.VersioningStrategy;
             var deploymentProcess = _octopusProxy.GetDeploymentProcessForProject(projectId);
@@ -26,13 +28,13 @@
                 if (string.IsNullOrEmpty(version) && !string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
                     versioningStrategy.DonorPackageStepId == step.Id)
                 {
-                    var nugetPackageId = _octopusProxy.GetNugetPackageIdFromAction(actions.First());
+                    var nugetPackageId = GetNugetPackageIdFromAction(actions.First());
                     version = _nuGetProxy.GetLatestVersionForPackage(nugetPackageId);
                 }
 
                 foreach (var action in actions)
                 {
-                    var nugetPackageId = _octopusProxy.GetNugetPackageIdFromAction(action);
+                    var nugetPackageId = GetNugetPackageIdFromAction(action);
                     if (!string.IsNullOrEmpty(nugetPackageId))
                     {
                         var nugetPackageVersion = _nuGetProxy.GetLatestVersionForPackage(nugetPackageId);
@@ -47,7 +49,32 @@
 
             }
 
-            return _octopusProxy.CreateRelease(projectId, version, selectedPackages);
+            return new ReleaseResource
+            {
+                ProjectId = projectId,
+                Version = version,
+                SelectedPackages = selectedPackages
+            };
+        }
+
+        private string GetNugetPackageIdFromAction(DeploymentActionResource action)
+        {
+            string nugetPackageId;
+            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nugetPackageId))
+            {
+                // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NugetPackage}"
+                string regexPattern = @"\#\{[a-zA-Z]+\}";
+                var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
+                var match = regex.Match(nugetPackageId);
+                if (match.Success)
+                {
+                    // TODO: clean up this refKey nonsense
+                    var refKey = nugetPackageId.Replace("#{", "").Replace("}", "");
+                    nugetPackageId = action.Properties[refKey];
+                }
+                return nugetPackageId;
+            }
+            return null;
         }
 
         private readonly IOctopusProxy _octopusProxy;

@@ -1,7 +1,7 @@
 ﻿namespace Kraken.Services
 {
-using System.Collections.Generic;
-using Octopus.Client.Model;
+    using System.Collections.Generic;
+    using Octopus.Client.Model;
 
     public interface IOctopusProxy
     {
@@ -23,6 +23,6 @@ using Octopus.Client.Model;
 
         ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages);
 
-        string GetNugetPackageIdFromAction(DeploymentActionResource action);
+        ReleaseResource CreateRelease(ReleaseResource release);
     }
 }
