@@ -1,0 +1,48 @@
+version: '{build}'
+os: Visual Studio 2015 RC
+build_script:
+- cmd: >-
+    @echo off
+
+
+    setlocal EnableExtensions
+
+
+    dnu restore || set errorlevel=1
+
+    dnu build src\Kraken || set errorlevel=1
+
+
+    exit /b %errorlevel%
+test: off
+before_deploy:
+- cmd: >-
+    @echo off
+
+
+    setlocal EnableExtensions
+
+
+    npm install -g bower
+
+    npm install -g gulp
+
+
+    dnu publish src\Kraken || set errorlevel=1
+
+    nuget pack src\Kraken\deploy.nuspec -Version %APPVEYOR_REPO_TAG_NAME% -NoPackageAnalysis || set errorlevel=1
+
+
+    appveyor PushArtifact Kraken.%APPVEYOR_REPO_TAG_NAME%.nupkg -DeploymentName GitHub
+
+
+    exit /b %errorlevel%
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: ttUANtrgmx3KYQ8JqCQ1t2FnA8vCEFH9WBlmdGmxoBjSb6o55ZnSoqaKWf2HZLMV
+  artifact: GitHub
+  draft: false
+  prerelease: false
+  on:
+    appveyor_repo_tag: true
