@@ -75,7 +75,7 @@
         private string GetNugetFeedId(DeploymentActionResource action)
         {
             string nugetFeed;
-            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nugetFeed))
+            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetFeedId", out nugetFeed))
             {
                 return nugetFeed;
             }
