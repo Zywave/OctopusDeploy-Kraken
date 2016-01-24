@@ -29,19 +29,22 @@
                 }.bind(this));
             }.bind(this);
 
-            releaseBatchesService.getNextReleases(batchIdOrName).then(function (releases) {
+            var checkVersionedOrUnversioned = function(releases) {
                 var release;
-                while (true) {
-                    if (!releases.length) {
-                        break;
-                    }
-                    release = releases.pop();
-                    if (release.version) {
-                        versionedReleases.push(release);
-                    } else {
-                        unversionedReleases.push(release);
-                    }
+                if (!releases.length) {
+                    return;
                 }
+                release = releases.pop();
+                if (release.version) {
+                    versionedReleases.push(release);
+                } else {
+                    unversionedReleases.push(release);
+                }
+                checkVersionedOrUnversioned(releases);
+            }
+
+            releaseBatchesService.getNextReleases(batchIdOrName).then(function (releases) {
+                checkVersionedOrUnversioned(releases);
                 if (unversionedReleases.length) {
                     getVersionForRelease(unversionedReleases.pop());
                 } else {
