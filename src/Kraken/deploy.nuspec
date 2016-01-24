@@ -9,11 +9,9 @@
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
   </metadata>
   <files>
-    <files>
-        <file src="bin\output\approot\**\*.*" target="approot" />
-        <file src="bin\output\wwwroot\**\*.*" target="wwwroot" />
-        <file src="predeploy.ps1" target="" />
-        <file src="postdeploy.ps1" target="" />
-    </files>
+      <file src="bin\output\approot\**\*.*" target="approot" />
+      <file src="bin\output\wwwroot\**\*.*" target="wwwroot" />
+      <file src="predeploy.ps1" target="" />
+      <file src="postdeploy.ps1" target="" /> 
   </files>
 </package>
