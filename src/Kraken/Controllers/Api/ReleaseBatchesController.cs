@@ -333,7 +333,6 @@ namespace Kraken.Controllers.Api
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
                     var release = _octopusProxy.CreateRelease(releases.First(r => r.ProjectId == releaseBatchItem.ProjectId));
-                    release = _octopusProxy.CreateRelease(release);
                     if (release != null)
                     {
                         releaseBatchItem.ReleaseId = release.Id;
