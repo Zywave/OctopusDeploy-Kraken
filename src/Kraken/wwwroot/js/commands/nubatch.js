@@ -11,12 +11,26 @@
             }
 
             var deferred = this.defer();
+            var versionedReleases = [];
+            var unversionedReleases = [];
 
-            // TODO clean up
+            var getVersionForRelease = function (release) {
+                this.shell.writeLine('Could not determine a version for project \'' + release.projectId + '\'. Please enter a version.');
+                this.shell.readLine(function (value) {
+                    release.version = value;
+                    versionedReleases.push(release);
+                    if (!unversionedReleases.length) {
+                        return releaseBatchesService.createReleases(batchIdOrName, versionedReleases).then(function (data) {
+                            this.shell.writeLine('Releases created and batch synced with latest', 'success');
+                            deferred.resolve();
+                        }.bind(this)).fail(this.fail.bind(this));
+                    }
+                    getVersionForRelease(unversionedReleases.pop());
+                }.bind(this));
+            }.bind(this);
+
             releaseBatchesService.getNextReleases(batchIdOrName).then(function (releases) {
                 var release;
-                var versionedReleases = [];
-                var unversionedReleases = [];
                 while (true) {
                     if (!releases.length) {
                         break;
@@ -29,22 +43,7 @@
                     }
                 }
                 if (unversionedReleases.length) {
-                    release = unversionedReleases.pop();
-                    this.shell.writeLine('Could not determine a version for project \'' + release.projectId + '\'. Please enter a version.');
-                    this.shell.readLine(function (value) {
-                        while (true) {
-                            release.version = value;
-                            versionedReleases.push(release);
-                            if (!unversionedReleases.length) {
-                                return releaseBatchesService.createReleases(batchIdOrName, versionedReleases).then(function (data) {
-                                    this.shell.writeLine('Releases created and batch synced with latest', 'success');
-                                    deferred.resolve();
-                                }.bind(this)).fail(this.fail.bind(this));
-                            }
-                            release = unversionedReleases.pop();
-                            this.shell.writeLine('Could not determine a version for project \'' + release.projectId + '\'. Please enter a version.');
-                        }
-                    }.bind(this));
+                    getVersionForRelease(unversionedReleases.pop());
                 } else {
                     releaseBatchesService.createReleases(batchIdOrName, versionedReleases).then(function (data) {
                         this.shell.writeLine('Releases created and batch synced with latest', 'success');
