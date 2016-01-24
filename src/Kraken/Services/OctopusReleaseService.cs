@@ -25,19 +25,14 @@
             foreach (var step in deploymentProcess.Steps)
             {
                 var actions = step.Actions.Where(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId")).ToList();
-                if (string.IsNullOrEmpty(version) && !string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
-                    versioningStrategy.DonorPackageStepId == step.Id)
-                {
-                    var nugetPackageId = GetNugetPackageIdFromAction(actions.First());
-                    version = _nuGetProxy.GetLatestVersionForPackage(nugetPackageId);
-                }
-
                 foreach (var action in actions)
                 {
                     var nugetPackageId = GetNugetPackageIdFromAction(action);
                     if (!string.IsNullOrEmpty(nugetPackageId))
                     {
-                        var nugetPackageVersion = _nuGetProxy.GetLatestVersionForPackage(nugetPackageId);
+                        var feedId = GetNugetFeedId(action);
+                        var feed = _octopusProxy.GetFeed(feedId);
+                        var nugetPackageVersion = _nuGetProxy.GetLatestVersionForPackage(nugetPackageId, feed.FeedUri);
                         if (string.IsNullOrEmpty(version) && !string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
                             versioningStrategy.DonorPackageStepId == action.Id)
                         {
@@ -73,6 +68,16 @@
                     nugetPackageId = action.Properties[refKey];
                 }
                 return nugetPackageId;
+            }
+            return null;
+        }
+
+        private string GetNugetFeedId(DeploymentActionResource action)
+        {
+            string nugetFeed;
+            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nugetFeed))
+            {
+                return nugetFeed;
             }
             return null;
         }

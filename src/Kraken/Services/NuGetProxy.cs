@@ -10,19 +10,11 @@
 
     public class NuGetProxy : INuGetProxy
     {
-        public NuGetProxy(IOptions<AppSettings> settings)
+        public string GetLatestVersionForPackage(string packageId, string nuGetSource)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-
-            _nuGetPackageRepository = PackageRepositoryFactory.Default.CreateRepository(settings.Value.NuGetServerAddress);
-        }
-
-        public string GetLatestVersionForPackage(string packageId)
-        {
-            var latestNugetPackage = _nuGetPackageRepository.FindPackagesById(packageId).ToList().OrderByDescending(n => n.Published).First();
+            var nuGetPackageRepository = PackageRepositoryFactory.Default.CreateRepository(nuGetSource);
+            var latestNugetPackage = nuGetPackageRepository.FindPackagesById(packageId).ToList().OrderByDescending(n => n.Published).First();
             return latestNugetPackage.Version.ToString();
         }
-
-        private readonly IPackageRepository _nuGetPackageRepository;
     }
 }

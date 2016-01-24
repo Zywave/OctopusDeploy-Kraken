@@ -2,6 +2,6 @@
 {
     public interface INuGetProxy
     {
-        string GetLatestVersionForPackage(string packageId);
+        string GetLatestVersionForPackage(string packageId, string nuGetSource);
     }
 }

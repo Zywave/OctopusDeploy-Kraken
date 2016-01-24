@@ -19,6 +19,8 @@
 
         DeploymentProcessResource GetDeploymentProcessForProject(string projectId);
 
+        FeedResource GetFeed(string feedIdOrName);
+
         DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedploy = true);
 
         ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages);

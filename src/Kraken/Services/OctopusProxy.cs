@@ -61,6 +61,10 @@
             return _octopusRepository.DeploymentProcesses.Get(project.DeploymentProcessId);
         }
 
+        public FeedResource GetFeed(string feedIdOrName)
+        {
+            return _octopusRepository.Feeds.FindOne(f => f.Id == feedIdOrName || f.Name == feedIdOrName);
+        }
 
         public DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedeploy = true)
         {
