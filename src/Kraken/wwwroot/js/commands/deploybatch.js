@@ -2,7 +2,7 @@
 
     return new cmdr.Definition({
         name: 'DEPLOYBATCH',
-        description: 'Deploys all items in a release batch',
+        description: 'Deploys all items in a release batch.',
         usage: 'DEPLOYBATCH batchIdOrName environmentIdOrName [allowRedeploy]\n\nEnvironment id can be full (Environments-123) or short (123)',
         main: function (batchIdOrName, environmentIdOrName, allowRedeploy) {
             if (!batchIdOrName || !environmentIdOrName) {

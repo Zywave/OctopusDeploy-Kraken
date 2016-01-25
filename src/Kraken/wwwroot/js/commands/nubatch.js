@@ -15,7 +15,7 @@
             var unversionedReleases = [];
 
             var getVersionForRelease = function (release) {
-                this.shell.writeLine('Could not determine a version for project \'' + release.projectId + '\'. Please enter a version.');
+                this.shell.write('Could not determine a version for project \'' + release.projectId + '\'. Please enter a release version: ');
                 this.shell.readLine(function (value) {
                     release.version = value;
                     versionedReleases.push(release);
