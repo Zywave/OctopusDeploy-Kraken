@@ -95,7 +95,7 @@
             }
 
             app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
-
+            
             app.UseStaticFiles();
             
             app.UseCookieAuthentication(new CookieAuthenticationOptions

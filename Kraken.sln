@@ -5,14 +5,22 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3B1F49B4-A738-43AE-B2A4-346E26735C4F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6E1D3CA4-2CAF-4FF8-B318-CB5D865879EF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "~", "~", "{6E1D3CA4-2CAF-4FF8-B318-CB5D865879EF}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		appveyor.yml = appveyor.yml
 		global.json = global.json
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Kraken", "src\Kraken\Kraken.xproj", "{CD797F0B-7546-4046-A8C4-A82D65EA68B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{989A0CED-263A-487C-BF4A-CC19F0E67AED}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\Kraken.deploy.nuspec = deploy\Kraken.deploy.nuspec
+		deploy\Kraken.postdeploy.ps1 = deploy\Kraken.postdeploy.ps1
+		deploy\Kraken.predeploy.ps1 = deploy\Kraken.predeploy.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
