@@ -28,9 +28,13 @@ gulp.task("min", ["min:css"]);
 
 gulp.task("build", function () {
 
-    var htmlIncludes = glob.sync("html/**/*.html", { cwd: process.cwd() + "/wwwroot" }).map(function (path) {
+    var includes = [];
+    includes = includes.concat(glob.sync("html/views/**/*.html", { cwd: process.cwd() + "/wwwroot" }).map(function (path) {
         return "text!" + path;
-    });
+    }));
+    includes = includes.concat(glob.sync("views/**/*.js", { cwd: process.cwd() + "/wwwroot/js" }).map(function (path) {
+        return path.slice(0, -3);
+    }));
     
     requirejs.optimize({
         baseUrl: "./wwwroot/js",
@@ -47,7 +51,7 @@ gulp.task("build", function () {
 
             text: "../../node_modules/requirejs-text/text"
         },
-        include: htmlIncludes,
+        include: includes,
         inlineText: true,
         stubModules: ["text"],
         wrap: true,

@@ -1,13 +1,22 @@
 ﻿Write-Host "Writing appsettings.deploy.json file"
-@"
+$contents = @"
 {
-  "AppSettings": {
-    "OctopusServerAddress": "$OctopusServerAddress"
-  },
-  "Data": {
-    "DefaultConnection": {
-      "ConnectionString": "$DatabaseConnectionString"
-    }
-  }
+	"AppSettings": {
+		"OctopusServerAddress": "$OctopusServerAddress"
+	}
+"@
+If (-Not [string]::IsNullOrEmpty($DatabaseConnectionString)) {
+$contents = $contents + @"
+,
+	"Data": {
+		"DefaultConnection": {
+			"ConnectionString": "$DatabaseConnectionString"
+		}
+	}
+"@
 }
-"@ | Out-File ".\approot\src\Kraken\appsettings.deploy.json"
+$contents = $contents + @"
+
+}
+"@
+$contents | Out-File "appsettings.deploy.json"

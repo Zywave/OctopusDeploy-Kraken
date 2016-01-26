@@ -30,6 +30,7 @@
 
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel",
+    "web-prod": "Microsoft.AspNet.Server.Kestrel --Hosting:Environment Production",
     "ef": "EntityFramework.Commands"
   },
 

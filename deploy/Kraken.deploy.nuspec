@@ -11,6 +11,5 @@
   <files>
       <file src="..\src\Kraken\bin\output\**\*.*" target="" />
       <file src="Kraken.predeploy.ps1" target="predeploy.ps1" />
-      <file src="Kraken.postdeploy.ps1" target="postdeploy.ps1" /> 
   </files>
 </package>

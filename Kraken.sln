@@ -18,7 +18,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{989A0CED-263A-487C-BF4A-CC19F0E67AED}"
 	ProjectSection(SolutionItems) = preProject
 		deploy\Kraken.deploy.nuspec = deploy\Kraken.deploy.nuspec
-		deploy\Kraken.postdeploy.ps1 = deploy\Kraken.postdeploy.ps1
 		deploy\Kraken.predeploy.ps1 = deploy\Kraken.predeploy.ps1
 	EndProjectSection
 EndProject

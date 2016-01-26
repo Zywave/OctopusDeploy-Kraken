@@ -19,6 +19,7 @@
     using Microsoft.Extensions.OptionsModel;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
+
     public class Startup
     {
         public Startup(IHostingEnvironment env)
