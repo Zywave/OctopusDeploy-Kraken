@@ -4,6 +4,10 @@
 
 Alpha release available!
 
+### Installation
+
+See [Installation Guide](https://github.com/Zywave/OctopusDeploy-Kraken/wiki/Installation)
+
 ### Notes
 
 - New site setup with Asp.Net5 MVC6 RC1
