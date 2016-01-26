@@ -19,4 +19,4 @@ $contents = $contents + @"
 
 }
 "@
-$contents | Out-File "appsettings.deploy.json"
+$contents | Out-File "./approot/src/Kraken/appsettings.deploy.json"
