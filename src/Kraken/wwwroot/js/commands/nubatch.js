@@ -30,11 +30,10 @@
             }.bind(this);
 
             var checkVersionedOrUnversioned = function(releases) {
-                var release;
                 if (!releases.length) {
                     return;
                 }
-                release = releases.pop();
+                var release = releases.pop();
                 if (release.version) {
                     versionedReleases.push(release);
                 } else {

@@ -61,9 +61,9 @@
             return _octopusRepository.DeploymentProcesses.Get(project.DeploymentProcessId);
         }
 
-        public FeedResource GetFeed(string feedIdOrName)
+        public FeedResource GetFeed(string feedId)
         {
-            return _octopusRepository.Feeds.FindOne(f => f.Id == feedIdOrName || f.Name == feedIdOrName);
+            return _octopusRepository.Feeds.Get(feedId);
         }
 
         public DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedeploy = true)
@@ -120,7 +120,11 @@
 
         public ReleaseResource CreateRelease(ReleaseResource release)
         {
-            return _octopusRepository.Releases.Create(release);
+            var checkRelease =
+                _octopusRepository.Releases.FindOne(
+                    r => r.ProjectId == release.ProjectId && r.Version == release.Version);
+
+            return checkRelease ?? _octopusRepository.Releases.Create(release);
         }
 
         private readonly OctopusRepository _octopusRepository;
