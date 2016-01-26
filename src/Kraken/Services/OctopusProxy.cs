@@ -122,9 +122,9 @@
         {
             var checkRelease =
                 _octopusRepository.Releases.FindOne(
-                    r => r.ProjectId == release.ProjectId && r.Version == release.Version);
+                    r => r.ProjectId == release.ProjectId && new Version(r.Version) <= new Version(release.Version));
 
-            return checkRelease ?? _octopusRepository.Releases.Create(release);
+            return checkRelease.Version == release.Version ? checkRelease : _octopusRepository.Releases.Create(release);
         }
 
         private readonly OctopusRepository _octopusRepository;
