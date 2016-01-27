@@ -46,12 +46,25 @@
 
         public ReleaseResource GetLastestRelease(string projectId)
         {
-            return _octopusRepository.Releases.FindOne(r => r.ProjectId == projectId);
+            var project = GetProject(projectId);
+            var releases = _octopusRepository.Projects.GetReleases(project).Items;
+            return releases.FirstOrDefault();
         }
 
         public ReleaseResource GetLastDeployedRelease(string projectId, string environmentId)
         {
-            var deployment = _octopusRepository.Deployments.FindOne(d => d.ProjectId == projectId && (string.IsNullOrEmpty(environmentId) || d.EnvironmentId == environmentId));
+            var project = GetProject(projectId);
+            var releases = _octopusRepository.Projects.GetReleases(project).Items;
+            DeploymentResource deployment;
+            foreach (var release in releases)
+            {
+                deployment =
+                    _octopusRepository.Releases.GetDeployments(release)
+                        .Items.FirstOrDefault(d => d.EnvironmentId == environmentId);
+
+                if (deployment != null) break;
+            }
+            deployment = _octopusRepository.Deployments.FindOne(d => d.ProjectId == projectId && (string.IsNullOrEmpty(environmentId) || d.EnvironmentId == environmentId));
             return deployment != null ? _octopusRepository.Releases.Get(deployment.ReleaseId) : null;
         }
 
@@ -120,11 +133,10 @@
 
         public ReleaseResource CreateRelease(ReleaseResource release)
         {
-            var checkRelease =
-                _octopusRepository.Releases.FindOne(
-                    r => r.ProjectId == release.ProjectId && new Version(r.Version) <= new Version(release.Version));
+            var project = GetProject(release.ProjectId);
+            var checkRelease = _octopusRepository.Projects.GetReleaseByVersion(project, release.Version);
 
-            return checkRelease.Version == release.Version ? checkRelease : _octopusRepository.Releases.Create(release);
+            return checkRelease ?? _octopusRepository.Releases.Create(release);
         }
 
         private readonly OctopusRepository _octopusRepository;
