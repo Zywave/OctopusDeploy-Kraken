@@ -27,18 +27,18 @@
                 var actions = step.Actions.Where(a => a.Properties.ContainsKey("Octopus.Action.Package.NuGetPackageId")).ToList();
                 foreach (var action in actions)
                 {
-                    var nugetPackageId = GetNugetPackageIdFromAction(action);
-                    if (!string.IsNullOrEmpty(nugetPackageId))
+                    var nuGetPackageId = GetNuGetPackageIdFromAction(action);
+                    if (!string.IsNullOrEmpty(nuGetPackageId))
                     {
-                        var feedId = GetNugetFeedId(action);
+                        var feedId = GetNuGetFeedIdFromAction(action);
                         var feed = _octopusProxy.GetFeed(feedId);
-                        var nugetPackageVersion = _nuGetProxy.GetLatestVersionForPackage(nugetPackageId, feed.FeedUri);
+                        var nuGetPackageVersion = _nuGetProxy.GetLatestVersionForPackage(nuGetPackageId, feed.FeedUri);
                         if (string.IsNullOrEmpty(version) && !string.IsNullOrEmpty(versioningStrategy.DonorPackageStepId) &&
                             versioningStrategy.DonorPackageStepId == action.Id)
                         {
-                            version = nugetPackageVersion;
+                            version = nuGetPackageVersion;
                         }
-                        selectedPackages.Add(new SelectedPackage(action.Name, version));
+                        selectedPackages.Add(new SelectedPackage(action.Name, nuGetPackageVersion));
                     }
                 }
 
@@ -52,34 +52,29 @@
             };
         }
 
-        private string GetNugetPackageIdFromAction(DeploymentActionResource action)
+        private static string GetNuGetPackageIdFromAction(DeploymentActionResource action) 
         {
-            string nugetPackageId;
-            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nugetPackageId))
+            string nuGetPackageId;
+            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nuGetPackageId))
             {
-                // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NugetPackage}"
-                string regexPattern = @"\#\{[a-zA-Z]+\}";
+                // some packages are actually referenced by hashes (so a.Properties["Octopus.Action.Package.NuGetPackageId"] = "{#NuGetPackage}")
+                var regexPattern = @"\#\{[a-zA-Z]+\}";
                 var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-                var match = regex.Match(nugetPackageId);
+                var match = regex.Match(nuGetPackageId);
                 if (match.Success)
                 {
                     // TODO: clean up this refKey nonsense
-                    var refKey = nugetPackageId.Replace("#{", "").Replace("}", "");
-                    nugetPackageId = action.Properties[refKey];
+                    var refKey = nuGetPackageId.Replace("#{", "").Replace("}", "");
+                    nuGetPackageId = action.Properties[refKey];
                 }
-                return nugetPackageId;
             }
-            return null;
+            return nuGetPackageId;
         }
 
-        private string GetNugetFeedId(DeploymentActionResource action)
+        private static string GetNuGetFeedIdFromAction(DeploymentActionResource action)
         {
-            string nugetFeed;
-            if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetFeedId", out nugetFeed))
-            {
-                return nugetFeed;
-            }
-            return null;
+            string nuGetFeed;
+            return action.Properties.TryGetValue("Octopus.Action.Package.NuGetFeedId", out nuGetFeed) ? nuGetFeed : null;
         }
 
         private readonly IOctopusProxy _octopusProxy;
