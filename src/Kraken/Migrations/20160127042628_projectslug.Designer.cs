@@ -8,9 +8,10 @@ using Kraken.Models;
 namespace Kraken.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160127042628_projectslug")]
+    partial class projectslug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -41,9 +42,6 @@ namespace Kraken.Migrations
 
                     b.Property<string>("DeployUserName")
                         .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("Description")
-                        .HasAnnotation("MaxLength", 250);
 
                     b.Property<string>("Name")
                         .IsRequired()

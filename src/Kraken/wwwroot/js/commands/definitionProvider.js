@@ -4,13 +4,14 @@
     'commands/proj',
     'commands/batch',
     'commands/mkbatch',
-    'commands/renbatch',
+    'commands/updbatch',
     'commands/rmbatch',
     'commands/linkproj',
     'commands/unlinkproj',
     'commands/syncbatch',
     'commands/deploybatch',
-    'commands/nubatch'
+    'commands/nubatch',
+    'commands/logout'
 ],
 function (cmdr) {
     var provider = new cmdr.DefinitionProvider();

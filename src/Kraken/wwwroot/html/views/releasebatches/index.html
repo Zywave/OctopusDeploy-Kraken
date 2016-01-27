@@ -1,20 +1,20 @@
-﻿<div class="hint">
-    <div class="alert alert-info" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <span class="glyphicon glyphicon-console"></span>&nbsp;&nbsp;Manage release batches with the command console by pressing the ( `/~ ) key.
-    </div>
-</div>
-
-<div class="view">
+﻿<div class="view">
     <header class="view__header page-header">
-        <h1>Release Batches</h1>
+
+        <div class="pull-right">
+            <button type="button" class="btn btn-default" data-bind="click: manage"><span class="glyphicon glyphicon-console"></span> Manage</button>
+        </div>
+
+        <h2>Release Batches</h2>
     </header>
     <section class="view__body">
-        <ul class="release-batch-list" data-bind="foreach: releaseBatches">
-            <li class="release-batch-list__item">
-                <h3>
-                    <a data-bind="text: name, attr: { href: viewUrl }"></a>
-                </h3>
+        <ul class="batch-list" data-bind="foreach: releaseBatches">
+            <li class="batch-list__item"> 
+                <a data-bind="attr: { href: detailsUrl }">
+                    <img data-bind="attr: { src: logoUrl, alt: name }" />
+                    <span data-bind="text: name"></span>
+                    <p data-bind="text: description"></p>
+                </a>
             </li>
         </ul>
     </section>

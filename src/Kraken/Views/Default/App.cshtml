@@ -1,9 +1,12 @@
-﻿<div data-bind="component: { name: '@Html.Raw(ViewData["View"])', params: @Html.Raw(ViewData["Params"]) }"></div>
+﻿@inject Microsoft.Extensions.OptionsModel.IOptions<AppSettings> AppSettings
+
+<div data-bind="component: { name: '@Html.Raw(ViewData["View"])', params: @Html.Raw(ViewData["Params"]) }"></div>
 
 @section Scripts {
     <script>
         window.appContext = {
-            basePath: '@Url.Content("~/")'
+            basePath: '@Url.Content("~/")',
+            octopusServerAddress: '@AppSettings.Value.OctopusServerAddress'
         };
     </script>
     <environment names="Development">

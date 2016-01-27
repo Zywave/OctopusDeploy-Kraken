@@ -1,10 +1,15 @@
-﻿define(['knockout', 'bus', 'services/releaseBatches', 'context'], function(ko, bus, releaseBatchesService, context) {
+﻿define(['knockout', 'shell', 'bus', 'services/releaseBatches', 'context'], function(ko, shell, bus, releaseBatchesService, context) {
     return function(params) {
 
         this.releaseBatches = ko.observableArray();
 
+        this.manage = function () {
+            shell.open();
+        }.bind(this);
+
         var mapReleaseBatch = function(batch) {
-            batch.viewUrl = context.basePath + 'app/releasebatches/details?id=' + batch.id;
+            batch.detailsUrl = context.basePath + 'app/releasebatches/details?id=' + batch.id;
+            batch.logoUrl = context.basePath + 'images/batch-logo.png';
             return batch;
         }
 

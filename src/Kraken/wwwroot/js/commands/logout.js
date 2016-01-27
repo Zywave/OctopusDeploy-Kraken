@@ -1,4 +1,4 @@
-﻿define(['cmdr'], function(cmdr) {
+﻿define(['cmdr', 'context'], function(cmdr, context) {
 
     return new cmdr.Definition({
         name: 'LOGOUT',
@@ -11,7 +11,7 @@
                     deferred.resolve();
                     return;
                 }
-                document.location = app.basePath + 'logout';
+                document.location = context.basePath + 'logout';
                 deferred.resolve();
             }.bind(this));
             return deferred;

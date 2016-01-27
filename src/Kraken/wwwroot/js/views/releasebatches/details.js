@@ -1,13 +1,14 @@
-﻿define(['knockout', 'bootstrap', 'shell', 'services/releaseBatches', 'services/environments'], function(ko, bs, shell, releaseBatchesService, environmentsService) {
+﻿define(['knockout', 'bootstrap', 'moment', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'context'], function(ko, bs, moment, shell, bus, releaseBatchesService, environmentsService, context) {
     return function(params) {
 
-        this.releaseBatch = ko.observable();
         this.environments = ko.observableArray();
-
+        this.releaseBatch = ko.observable();
+        
         var releaseBatch = this.releaseBatch;
 
         this.loadReleaseBatch = function() {
-            releaseBatchesService.getReleaseBatch(params.id).then(function(data) {
+            releaseBatchesService.getReleaseBatch(params.id).then(function (data) {
+                data.logoUrl = context.basePath + 'images/batch-logo.png';
                 this.releaseBatch(data);
             }.bind(this));
         }.bind(this);
@@ -19,14 +20,66 @@
         }.bind(this);
 
         this.deploy = function (environment) {
-            shell.execute('DEPLOYBATCH', params.id, environment.id);
+            shell.open();
+            shell.execute('DEPLOYBATCH', params.id, environment.id).then(function () {
+                this.loadReleaseBatch();
+            }.bind(this));
         }.bind(this);
 
-        this.sync = function (environment) {
-            shell.execute('SYNCBATCH', params.id, environment.id).then(function (data) {
-                releaseBatch(data);
-            });
+        this.syncEnvironment = function (environment) {
+            shell.open();
+            shell.execute('SYNCBATCH', params.id, environment.id).then(function () {
+                this.loadReleaseBatch();
+            }.bind(this));
         }.bind(this);
+
+        this.syncReleases = function () {
+            shell.open();
+            shell.execute('SYNCBATCH', params.id).then(function () {
+                this.loadReleaseBatch();
+            }.bind(this));
+        }.bind(this);
+
+        this.syncPackages = function () {
+            shell.open();
+            shell.execute('NUBATCH', params.id).then(function () {
+                this.loadReleaseBatch();
+            }.bind(this));
+        }.bind(this);
+
+        this.getAuditInfo = function (action, userName, dateTime, environmentName) {
+            var info = '';
+            info += 'Last ' + action;
+            if (environmentName) {
+                info += ' to ' + environmentName;
+            }
+            info += ' by ' + userName;
+            info += ' at ' + moment(dateTime).format('l LTS');
+            return info;
+        }.bind(this);
+
+        this.getProjectUrl = function (item) {
+            return context.octopusServerAddress + '/app#/projects/' + item.projectSlug;
+        }.bind(this);
+
+        this.getReleaseUrl = function (item) {
+            return this.getProjectUrl(item) + '/releases/' + item.releaseVersion;
+        }.bind(this);
+        
+        this.manage = function () {
+            shell.open();
+        }.bind(this);
+        
+        bus.subscribe('releasebatches:update', function (idOrName) {
+            if (releaseBatch().id === idOrName || releaseBatch().name === idOrName) {
+                this.loadReleaseBatch();
+            }
+        }.bind(this));
+        bus.subscribe('releasebatches:delete', function (idOrName) {
+            if (releaseBatch().id === idOrName || releaseBatch().name === idOrName) {
+                document.location = context.basePath + 'app';
+            }
+        }.bind(this));
 
         this.loadReleaseBatch();
         this.loadEnvironments();

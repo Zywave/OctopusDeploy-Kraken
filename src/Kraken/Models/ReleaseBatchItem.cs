@@ -16,6 +16,10 @@ namespace Kraken.Models
         [StringLength(50)]
         public string ProjectName { get; set; }
 
+        [Required]
+        [StringLength(50)]
+        public string ProjectSlug { get; set; }
+
         [StringLength(20)]
         public string ReleaseId { get; set; }
 

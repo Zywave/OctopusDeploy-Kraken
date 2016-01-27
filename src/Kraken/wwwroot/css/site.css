@@ -31,18 +31,82 @@ textarea {
     z-index: 10000;
 }
 
-.release-batch-list {
+.batch-list {
     list-style: none;
+    padding: 0;
 }
 
-.hint {
-    text-align: center;
-}
-
-.hint .alert {
+.batch-list__item {
     display: inline-block;
+    vertical-align: top;
 }
 
-.hint .alert .close {
-    margin-left: 20px;
+.batch-list__item a {
+    width: 280px;
+    height: 280px;
+    margin-right: 20px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    display: block;
+    padding: 18px;
+    text-align: center;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.batch-list__item a:hover {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    text-decoration: none;
+}
+
+.batch-list__item img {
+    display: inline-block;
+    height: 100px;
+    max-width: 250px;
+    border-radius: 4px;
+}
+
+.batch-list__item span {
+    display: block;
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 1.2;
+    color: inherit;
+    margin-bottom: 7pt;
+    font-size: 13pt;
+    max-height: 65px;
+    overflow: hidden;
+    margin-top: 18px;
+    width: 100%;
+}
+
+.batch-list__item p {
+    overflow: hidden;
+    max-height: 65px;
+    display: block;
+    text-overflow: ellipsis;
+    margin: 0 0 12pt;
+    color: #777;
+}
+
+.view__header {
+    margin-top: 10px;
+}
+
+.view__header h2 {
+    margin-top: 10px;
+    color: #555;
+}
+
+.view__header .batch-logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.view__footer {  
+    margin-top: 40px;  
+    padding-top: 9px;
+    border-top: 1px solid #eee;
+    color: #777;
 }

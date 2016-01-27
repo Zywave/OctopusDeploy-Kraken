@@ -71,7 +71,15 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
-            existingReleaseBatch.Name = releaseBatch.Name;
+            const string ignore = "__IGNORE__";
+            if (releaseBatch.Name != ignore)
+            {
+                existingReleaseBatch.Name = releaseBatch.Name;
+            }
+            if (releaseBatch.Description != ignore)
+            {
+                existingReleaseBatch.Description = releaseBatch.Description;
+            }
 
             existingReleaseBatch.UpdateDateTime = DateTimeOffset.Now;
             existingReleaseBatch.UpdateUserName = User.Identity.Name;
@@ -162,7 +170,8 @@ namespace Kraken.Controllers.Api
             {
                 ReleaseBatchId = releaseBatch.Id,
                 ProjectId = projectResource.Id,
-                ProjectName = projectResource.Name
+                ProjectName = projectResource.Name,
+                ProjectSlug = projectResource.Slug
             };
             
             _context.ReleaseBatchItems.Add(releaseBatchItem);
