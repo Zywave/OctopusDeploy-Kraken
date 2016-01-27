@@ -11,6 +11,7 @@
     using Octopus.Client.Model;
     using NuGet;
     using System.Globalization;
+    using Octopus.Client.Exceptions;
 
     public class OctopusProxy : IOctopusProxy
     {
@@ -134,9 +135,14 @@
         public ReleaseResource CreateRelease(ReleaseResource release)
         {
             var project = GetProject(release.ProjectId);
-            var checkRelease = _octopusRepository.Projects.GetReleaseByVersion(project, release.Version);
-
-            return checkRelease ?? _octopusRepository.Releases.Create(release);
+            try
+            {
+                return _octopusRepository.Projects.GetReleaseByVersion(project, release.Version);
+            }
+            catch (OctopusResourceNotFoundException)
+            {
+                return _octopusRepository.Releases.Create(release);
+            }
         }
 
         private readonly OctopusRepository _octopusRepository;
