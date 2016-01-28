@@ -20,6 +20,8 @@ See [Installation Guide](https://github.com/Zywave/OctopusDeploy-Kraken/wiki/Ins
 
 ### Getting started
 
+Navigate to where you deploy your instance of Kraken and login using Octopus credentials.
+
 You will quicly notice that there is very little in the way of UI for maintaining batches. That is because all of the functionality is exposed via commands in [cmdrjs](https://github.com/cmdrjs). If you click **Manage** or press the (~/`) key (Quake style), you will be presented with a console.  This console is where you will manage batches. There are various commands available to you and I would recommend using the help (/?) feature of the commands to determine usage.  
 
 Once you have created a batch and linked projects to that batch, you can go ahead and sync from the appropriate source and subsequently deploy by using more commands or using the menus in the UI (which simply invoke commands for you).
