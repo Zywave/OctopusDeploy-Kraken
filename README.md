@@ -31,3 +31,7 @@ Keep in mind that a sync is a point in time sync and there is nothing that will 
 ### Project status
 
 The project is currently in alpha and under active development, which means releases may not be stable or long lived. We would love feedback.
+
+### P.S.
+
+How good a name is Kraken for an Octopus addon that releases things en masse?... its almost too perfect. Go ahead... you can say it.
