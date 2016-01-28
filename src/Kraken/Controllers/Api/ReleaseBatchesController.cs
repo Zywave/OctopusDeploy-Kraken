@@ -270,7 +270,7 @@ namespace Kraken.Controllers.Api
 
         // POST: api/ReleaseBatches/5/Deploy
         [HttpPost("{idOrName}/Deploy")]
-        public async Task<IActionResult> DeployReleaseBatch([FromRoute] string idOrName, [FromBody] string environmentIdOrName, [FromBody] bool allowRedeploy = false)
+        public async Task<IActionResult> DeployReleaseBatch([FromRoute] string idOrName, [FromQuery] string environmentIdOrName, [FromQuery] bool allowRedeploy = false)
         {
             var releaseBatch = await GetReleaseBatch(idOrName, true);
             if (releaseBatch == null)
