@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Linq;
+
 namespace Kraken.Controllers.Api
 {
     using System;
@@ -270,8 +272,11 @@ namespace Kraken.Controllers.Api
 
         // POST: api/ReleaseBatches/5/Deploy
         [HttpPost("{idOrName}/Deploy")]
-        public async Task<IActionResult> DeployReleaseBatch([FromRoute] string idOrName, [FromQuery] string environmentIdOrName, [FromQuery] bool allowRedeploy = false)
+        public async Task<IActionResult> DeployReleaseBatch([FromRoute] string idOrName, [FromBody] JObject deployRequest)
         {
+            string environmentIdOrName = deployRequest[nameof(environmentIdOrName)].ToObject<string>();
+            bool allowRedeploy = deployRequest[nameof(allowRedeploy)].ToObject<bool>();
+
             var releaseBatch = await GetReleaseBatch(idOrName, true);
             if (releaseBatch == null)
             {

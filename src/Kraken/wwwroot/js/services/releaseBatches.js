@@ -72,10 +72,7 @@
             return $.ajax({
                 type: 'POST',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/deploy',
-                data: {
-                    environmentId: environmentId,
-                    allowRedeploy: !!allowRedeploy
-                },
+                data: JSON.stringify({ environmentIdOrName: environmentId, allowRedeploy: !!allowRedeploy }),
                 contentType: 'application/json'
             }).then(function() {
                 bus.publish('releasebatches:deploy', idOrName);
