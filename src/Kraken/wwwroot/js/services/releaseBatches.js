@@ -68,11 +68,11 @@
                 bus.publish('releasebatches:sync', idOrName);
             });;
         },
-        deployReleaseBatch: function (idOrName, environmentId) {
+        deployReleaseBatch: function (idOrName, environmentId, allowRedeploy) {
             return $.ajax({
                 type: 'POST',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/deploy',
-                data: JSON.stringify(environmentId),
+                data: JSON.stringify({ environmentIdOrName: environmentId, allowRedeploy: !!allowRedeploy }),
                 contentType: 'application/json'
             }).then(function() {
                 bus.publish('releasebatches:deploy', idOrName);

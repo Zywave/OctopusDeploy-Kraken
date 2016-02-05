@@ -91,7 +91,16 @@
 
             if (!allowRedeploy)
             {
-                var checkDeploy = _octopusRepository.Deployments.FindOne(d => d.EnvironmentId == environmentId);
+                var release = _octopusRepository.Releases.Get(releaseId);
+                DeploymentResource checkDeploy;
+                try
+                {
+                    checkDeploy = _octopusRepository.Releases.GetDeployments(release).Items.FirstOrDefault(d => d.EnvironmentId == environmentId);
+                }
+                catch (OctopusResourceNotFoundException)
+                {
+                    checkDeploy = null;
+                }
 
                 if (checkDeploy != null && checkDeploy.ReleaseId == releaseId)
                 {
@@ -106,7 +115,6 @@
                     // if the task has finished successfully, only redeploy if there have been modifications made to the release since the deploy
                     if (task.FinishedSuccessfully)
                     {
-                        var release = _octopusRepository.Releases.Get(releaseId);
 
                         // if no modifications have been made to a successful deploy since its creation, assume it's a redeploy
                         if (release.LastModifiedOn <= checkDeploy.Created)
@@ -129,7 +137,7 @@
                 SelectedPackages = selectedPackages.ToList()
             };
 
-            return _octopusRepository.Releases.Create(release);
+            return CreateRelease(release);
         }
 
         public ReleaseResource CreateRelease(ReleaseResource release)
