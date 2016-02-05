@@ -12,7 +12,11 @@ build_script:
     dnu build src\Kraken --configuration Release || set errorlevel=1
 
     exit /b %errorlevel%
-test: off
+
+test:
+  assemblies:
+    - 'src\**\bin\*.Tests.dll'
+
 before_deploy:
 - cmd: >-
     @echo off
