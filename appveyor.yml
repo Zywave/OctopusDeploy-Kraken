@@ -18,7 +18,9 @@ test_script:
 
     setlocal EnableExtensions
 
-    dnx test\Kraken.Tests test || set errorlevel=1
+    cd test\Kraken.Tests
+
+    dnx test || set errorlevel=1
 
     exit /b %errorlevel%
 before_deploy:
