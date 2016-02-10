@@ -7,6 +7,10 @@ var gulp = require("gulp"),
     cssmin = require("gulp-cssmin"),
     requirejs = require("requirejs");
 
+gulp.task("npmlib", function () {
+    return gulp.src(['./node_modules/babel-polyfill/dist/**/*']).pipe(gulp.dest('./wwwroot/lib/babel-polyfill/dist'));
+});
+
 gulp.task("clean:js", function (cb) {
     rimraf("./wwwroot/js/app.built.js", cb);
 });

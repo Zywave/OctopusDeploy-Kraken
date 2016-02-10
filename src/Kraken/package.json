@@ -9,5 +9,8 @@
     "requirejs": "^2.1.22",
     "requirejs-text": "^2.0.12",
     "rimraf": "2.2.8"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.5.0"
   }
 }

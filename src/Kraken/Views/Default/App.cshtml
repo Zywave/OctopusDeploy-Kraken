@@ -9,10 +9,17 @@
             octopusServerAddress: '@AppSettings.Value.OctopusServerAddress'
         };
     </script>
+    
     <environment names="Development">
+        <ie>
+            <script src="~/lib/babel-polyfill/dist/polyfill.js"></script>
+        </ie>
         <script data-main="@Url.Content("~/js/app.js")" src="~/lib/requirejs/require.js"></script>
     </environment>
     <environment names="Staging,Production">
+        <ie>
+            <script src="~/lib/babel-polyfill/dist/polyfill.min.js"></script>
+        </ie>
         <script data-main="@Url.Content("~/js/app.built.js")" src="~/lib/requirejs/require.js"></script>
     </environment>
 }

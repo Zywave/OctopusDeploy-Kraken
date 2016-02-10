@@ -8,7 +8,7 @@
     "jquery-validation-unobtrusive": "3.2.4",
     "knockout-select2v4": "~1.0.7",
     "select2": "4.0.0",
-    "cmdrjs": "~1.1.11-beta",
+    "cmdrjs": "~1.1.12-beta",
     "requirejs": "2.1.20",
     "knockout": "~3.4.0",
     "text": "requirejs-text#~2.0.14",
