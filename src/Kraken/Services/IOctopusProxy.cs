@@ -13,9 +13,9 @@
 
         IEnumerable<ProjectResource> GetProjects(string nameFilter);
 
-        ReleaseResource GetLastestRelease(string projectId);
+        ReleaseResource GetLatestRelease(string projectId);
 
-        ReleaseResource GetLastDeployedRelease(string projectId, string environmentId);
+        ReleaseResource GetLatestDeployedRelease(string projectId, string environmentId);
 
         DeploymentProcessResource GetDeploymentProcessForProject(string projectId);
 
