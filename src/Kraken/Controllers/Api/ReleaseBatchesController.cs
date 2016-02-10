@@ -246,15 +246,7 @@ namespace Kraken.Controllers.Api
 
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    ReleaseResource releaseResource;
-                    if (environment == null)
-                    {
-                        releaseResource = _octopusProxy.GetLastestRelease(releaseBatchItem.ProjectId);
-                    }
-                    else
-                    {      
-                        releaseResource = _octopusProxy.GetLastDeployedRelease(releaseBatchItem.ProjectId, environment.Id);
-                    }
+                    var releaseResource = environment == null ? _octopusProxy.GetLatestRelease(releaseBatchItem.ProjectId) : _octopusProxy.GetLatestDeployedRelease(releaseBatchItem.ProjectId, environment.Id);
                     releaseBatchItem.ReleaseId = releaseResource?.Id;
                     releaseBatchItem.ReleaseVersion = releaseResource?.Version;
                 }

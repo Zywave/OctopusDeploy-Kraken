@@ -45,27 +45,16 @@
             return _octopusRepository.Projects.FindMany(p => string.IsNullOrEmpty(nameFilter) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, nameFilter, CompareOptions.IgnoreCase) >= 0);
         }
 
-        public ReleaseResource GetLastestRelease(string projectId)
+        public ReleaseResource GetLatestRelease(string projectId)
         {
             var project = GetProject(projectId);
             var releases = _octopusRepository.Projects.GetReleases(project).Items;
             return releases.FirstOrDefault();
         }
 
-        public ReleaseResource GetLastDeployedRelease(string projectId, string environmentId)
+        public ReleaseResource GetLatestDeployedRelease(string projectId, string environmentId)
         {
-            var project = GetProject(projectId);
-            var releases = _octopusRepository.Projects.GetReleases(project).Items;
-            DeploymentResource deployment;
-            foreach (var release in releases)
-            {
-                deployment =
-                    _octopusRepository.Releases.GetDeployments(release)
-                        .Items.FirstOrDefault(d => d.EnvironmentId == environmentId);
-
-                if (deployment != null) break;
-            }
-            deployment = _octopusRepository.Deployments.FindOne(d => d.ProjectId == projectId && (string.IsNullOrEmpty(environmentId) || d.EnvironmentId == environmentId));
+            var deployment = _octopusRepository.Deployments.FindAll(new[] { projectId }, new[] { environmentId }).Items.FirstOrDefault();
             return deployment != null ? _octopusRepository.Releases.Get(deployment.ReleaseId) : null;
         }
 
