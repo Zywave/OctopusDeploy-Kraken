@@ -56,7 +56,7 @@
                     var user = await GetOrAddUserAsync(model.UserName);
                     var octopusApiKey = user.OctopusApiKey;
 
-                    if (String.IsNullOrEmpty(octopusApiKey))
+                    if (String.IsNullOrEmpty(octopusApiKey) || !OctopusAuthenticationProxy.ValidateApiKey(model.UserName, octopusApiKey))
                     {
                         octopusApiKey = OctopusAuthenticationProxy.CreateApiKey();
 
