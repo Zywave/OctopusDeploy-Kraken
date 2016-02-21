@@ -90,6 +90,12 @@ textarea {
     color: #777;
 }
 
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
 .view__header {
     margin-top: 10px;
 }

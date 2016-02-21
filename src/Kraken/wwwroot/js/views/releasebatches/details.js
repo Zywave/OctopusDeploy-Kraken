@@ -1,7 +1,8 @@
-﻿define(['knockout', 'bootstrap', 'moment', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'context'], function(ko, bs, moment, shell, bus, releaseBatchesService, environmentsService, context) {
+﻿define(['knockout', 'bootstrap', 'moment', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'context'], function(ko, bs, moment, shell, bus, releaseBatchesService, environmentsService, projectsService, context) {
     return function(params) {
 
         this.environments = ko.observableArray();
+        this.projects = ko.observableArray();
         this.releaseBatch = ko.observable();
         
         var releaseBatch = this.releaseBatch;
@@ -19,6 +20,12 @@
             }.bind(this));
         }.bind(this);
 
+        this.loadProjects = function() {
+            projectsService.getProjects().then(function(data) {
+                this.projects(data);
+            }.bind(this));
+        }.bind(this);
+
         this.deploy = function (environment) {
             shell.open();
             shell.execute('DEPLOYBATCH', params.id, environment.id).then(function () {
@@ -29,6 +36,13 @@
         this.syncEnvironment = function (environment) {
             shell.open();
             shell.execute('SYNCBATCH', params.id, environment.id).then(function () {
+                this.loadReleaseBatch();
+            }.bind(this));
+        }.bind(this);
+
+        this.linkProject = function(project) {
+            shell.open();
+            shell.execute('LINKPROJ', params.id, project.id).then(function() {
                 this.loadReleaseBatch();
             }.bind(this));
         }.bind(this);
@@ -83,5 +97,6 @@
 
         this.loadReleaseBatch();
         this.loadEnvironments();
+        this.loadProjects();
     };
 });
