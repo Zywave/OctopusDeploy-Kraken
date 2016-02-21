@@ -32,12 +32,12 @@
 
         public EnvironmentResource GetEnvironment(string idOrName)
         {
-            return _octopusRepository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Environments-" + idOrName || e.Name == idOrName);
+            return _octopusRepository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Environments-" + idOrName || string.Equals(e.Name, idOrName, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public ProjectResource GetProject(string idOrSlugOrName)
         {
-            return _octopusRepository.Projects.FindOne(p => p.Id == idOrSlugOrName || p.Id == "Projects-" + idOrSlugOrName || p.Slug == idOrSlugOrName || p.Name == idOrSlugOrName);
+            return _octopusRepository.Projects.FindOne(p => p.Id == idOrSlugOrName || p.Id == "Projects-" + idOrSlugOrName || p.Slug == idOrSlugOrName || string.Equals(p.Name, idOrSlugOrName, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public IEnumerable<ProjectResource> GetProjects(string nameFilter)
