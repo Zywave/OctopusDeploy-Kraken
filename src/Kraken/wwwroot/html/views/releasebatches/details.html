@@ -3,14 +3,7 @@
 
         <div class="pull-right">
             <button type="button" class="btn btn-default" data-bind="click: $parent.manage"><span class="glyphicon glyphicon-console"></span> Manage</button>
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="glyphicon glyphicon-plus"></span> Link Project <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu scrollable-menu pull-right" data-bind="foreach: $parent.projects">
-                    <li><a href="#" data-bind="text: name, click: $component.linkProject"></a></li>
-                </ul>
-            </div>
+            
             <div class="btn-group">
                 <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="glyphicon glyphicon-refresh"></span> Sync <span class="caret"></span>
@@ -40,25 +33,34 @@
     </header>
 
     <div class="view__body">
-        
+
         <table class="table table-bordered batch-item-table">
             <thead>
-                <tr>
-                    <th>Project</th>
-                    <th>Release</th>
-                </tr>
+            <tr>
+                <th>Project</th>
+                <th>Release</th>
+            </tr>
             </thead>
             <tbody data-bind="foreach: items">
-                <tr>
-                    <td class="project-name">
-                        <a target="_blank" data-bind="text: projectName, attr: { href: $parents[1].getProjectUrl($data) }"></a>
-                    </td>
-                    <td class="release-version">
-                        <a target="_blank" data-bind="text: releaseVersion, attr: { href: $parents[1].getReleaseUrl($data) }"></a>
-                    </td>
-                </tr>
+            <tr>
+                <td class="project-name">
+                    <a target="_blank" data-bind="text: projectName, attr: { href: $parents[1].getProjectUrl($data) }"></a>
+                </td>
+                <td class="release-version">
+                    <a target="_blank" data-bind="text: releaseVersion, attr: { href: $parents[1].getReleaseUrl($data) }"></a>
+                </td>
+            </tr>
             </tbody>
         </table>
+        <!-- ko ifnot: $parent.projectsOptions().data -->
+        <select class="select2__link-project" data-bind="value: $parent.selectedProject, select2: $parent.projectsOptions" disabled></select>
+        <!-- /ko -->
+        <!-- ko if: $parent.projectsOptions().data -->
+        <select class="select2__link-project" data-bind="value: $parent.selectedProject, select2: $parent.projectsOptions"></select>
+        <!-- /ko -->
+        <button type="button" class="btn btn-primary" aria-haspopup="true" aria-expanded="false" data-bind="enable: $parent.selectedProject, click: $component.linkProject">
+            <span class="glyphicon glyphicon-plus"></span> Link Project
+        </button>
                 
         <div class="audit-info">
             <p data-bind="visible: updateDateTime, text: $parent.getAuditInfo('updated', updateUserName, updateDateTime)"></p>

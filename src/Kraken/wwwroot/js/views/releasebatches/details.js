@@ -1,8 +1,11 @@
-﻿define(['knockout', 'bootstrap', 'moment', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'context'], function(ko, bs, moment, shell, bus, releaseBatchesService, environmentsService, projectsService, context) {
+﻿define(['knockout', 'bootstrap', 'select2', 'koselect2', 'moment', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'context'], function(ko, bs, select2, koselect2, moment, shell, bus, releaseBatchesService, environmentsService, projectsService, context) {
     return function(params) {
 
         this.environments = ko.observableArray();
-        this.projects = ko.observableArray();
+        this.selectedProject = ko.observable();
+        this.projectsOptions = ko.observable({
+            placeholder: 'Loading projects...',
+        });
         this.releaseBatch = ko.observable();
         
         var releaseBatch = this.releaseBatch;
@@ -21,8 +24,18 @@
         }.bind(this);
 
         this.loadProjects = function() {
-            projectsService.getProjects().then(function(data) {
-                this.projects(data);
+            projectsService.getProjects().then(function (data) {
+                data = $.map(data, function (obj) {
+                    obj.text = obj.text || obj.name;
+
+                    return obj;
+                });
+
+                this.projectsOptions({
+                    placeholder: 'Link project...',
+                    data: data,
+                    allowClear: true
+                });
             }.bind(this));
         }.bind(this);
 
@@ -40,9 +53,9 @@
             }.bind(this));
         }.bind(this);
 
-        this.linkProject = function(project) {
+        this.linkProject = function() {
             shell.open();
-            shell.execute('LINKPROJ', params.id, project.id).then(function() {
+            shell.execute('LINKPROJ', params.id, this.selectedProject()).then(function() {
                 this.loadReleaseBatch();
             }.bind(this));
         }.bind(this);

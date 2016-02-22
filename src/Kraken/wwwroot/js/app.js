@@ -7,6 +7,8 @@
         bootstrap: ['//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min', '../lib/bootstrap/dist/js/bootstrap.min'],
         cmdr: '../lib/cmdrjs/dist/cmdr.min',
         moment: '../lib/moment/min/moment.min',
+        koselect2: '../lib/knockout-select2v4/dist/knockout-select2',
+        select2: '../lib/select2/dist/js/select2',
         text: '../lib/text/text'
     }
 });

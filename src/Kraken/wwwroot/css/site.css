@@ -90,10 +90,8 @@ textarea {
     color: #777;
 }
 
-.scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: hidden;
+.select2__link-project {
+    width: 80%;
 }
 
 .view__header {
