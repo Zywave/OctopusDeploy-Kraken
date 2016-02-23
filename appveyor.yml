@@ -37,13 +37,13 @@ before_deploy:
 
     dnu publish src\Kraken --runtime active --configuration Release --iis-command web-prod || set errorlevel=1
 
-    choco install GitReleaseNotes
+    choco install GitReleaseNotes.Portable
 
-    gitreleasenotes /o releasenotes.md
+    GitReleaseNotes.exe /OutputFile ReleaseNotes.md
 
     set release_notes=
 
-    for /f "delims=" %%i in ('releasenotes.md') do set release_notes=%release_notes% %%i
+    for /f "delims=" %%i in ('ReleaseNotes.md') do set release_notes=%release_notes% %%i
 
     nuget pack deploy\Kraken.deploy.nuspec -Version %APPVEYOR_REPO_TAG_NAME% -Prop "release_notes=%release_notes%" -NoPackageAnalysis || set errorlevel=1
 
