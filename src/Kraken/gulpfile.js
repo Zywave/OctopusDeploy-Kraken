@@ -50,6 +50,8 @@ gulp.task("build", function () {
             bootstrap: "empty:",
             cmdr: "empty:",
             moment: "empty:",
+            select2: "empty:",
+            koselect2: "empty:",
 
             html: "../html",
 
