@@ -57,6 +57,6 @@ deploy:
     secure: ttUANtrgmx3KYQ8JqCQ1t2FnA8vCEFH9WBlmdGmxoBjSb6o55ZnSoqaKWf2HZLMV
   artifact: GitHub
   draft: false
-  prerelease: false
+  prerelease: true
   on:
     appveyor_repo_tag: true
