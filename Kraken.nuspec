@@ -1,16 +1,15 @@
-<?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<?xml version="1.0"?><package>
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.0.0</version>
+    <version>1.0.0.0-prerelease</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
-    <releaseNotes>$release_notes$</releaseNotes>
+    <releaseNotes></releaseNotes>
   </metadata>
   <files>
-      <file src="..\src\Kraken\bin\output\**\*.*" target="" />
-      <file src="Kraken.predeploy.ps1" target="predeploy.ps1" />
+      <file src="src\Kraken\bin\output\**\*.*" target=""/>
+      <file src="predeploy.ps1" target=""/>
   </files>
 </package>

@@ -35,19 +35,15 @@ before_deploy:
 
     npm install -g gulp
 
-    dnu publish src\Kraken --runtime active --configuration Release --iis-command web-prod || set errorlevel=1
+    dnu publish src\Kraken --runtime active --configuration Release --iis-command web-prod || set errorlevel=1	
 
-    choco install GitReleaseNotes.Portable
+    nuget pack Kraken.nuspec -NoPackageAnalysis || set errorlevel=1
 
-    GitReleaseNotes.exe /OutputFile ReleaseNotes.md
+    appveyor PushArtifact Kraken.*.nupkg -DeploymentName GitHub
 
     set release_notes=
 
-    for /f "delims=" %%i in ('ReleaseNotes.md') do set release_notes=%release_notes% %%i
-
-    nuget pack deploy\Kraken.deploy.nuspec -Version %APPVEYOR_REPO_TAG_NAME% -Prop "release_notes=%release_notes%" -NoPackageAnalysis || set errorlevel=1
-
-    appveyor PushArtifact Kraken.%APPVEYOR_REPO_TAG_NAME%.nupkg -DeploymentName GitHub
+    for /f "delims=" %%i in ('RELEASENOTES.md') do set release_notes=%release_notes% %%i
 
     exit /b %errorlevel%
 deploy:
