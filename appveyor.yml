@@ -11,6 +11,10 @@ build_script:
 
     dnu build src\Kraken --configuration Release || set errorlevel=1
 
+    set release_notes=
+
+    for /f "delims=" %%i in ('RELEASENOTES.md') do set release_notes=%release_notes% %%i
+
     exit /b %errorlevel%
 test_script:
 - cmd: >-
@@ -41,14 +45,10 @@ before_deploy:
 
     appveyor PushArtifact Kraken.*.nupkg -DeploymentName GitHub
 
-    set release_notes=
-
-    for /f "delims=" %%i in ('RELEASENOTES.md') do set release_notes=%release_notes% %%i
-
     exit /b %errorlevel%
 deploy:
 - provider: GitHub
-  description: '{release_notes}'
+  description: $(release_notes)
   auth_token:
     secure: ttUANtrgmx3KYQ8JqCQ1t2FnA8vCEFH9WBlmdGmxoBjSb6o55ZnSoqaKWf2HZLMV
   artifact: GitHub
