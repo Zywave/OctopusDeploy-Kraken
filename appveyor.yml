@@ -43,7 +43,7 @@ before_deploy:
 
     nuget pack Kraken.nuspec -NoPackageAnalysis || set errorlevel=1
 
-    appveyor PushArtifact Kraken.*.nupkg -DeploymentName GitHub
+    appveyor PushArtifact *.nupkg -DeploymentName GitHub
 
     exit /b %errorlevel%
 deploy:
