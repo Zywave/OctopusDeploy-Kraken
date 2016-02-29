@@ -2,53 +2,36 @@ version: '{build}'
 os: Visual Studio 2015 RC
 cache: C:\Users\appveyor\.dnx\packages
 build_script:
-- cmd: >-
-    @echo off
+- ps: >-
+    dnu restore
 
-    setlocal EnableExtensions
+    dnu build src\Kraken --configuration Release
 
-    dnu restore || set errorlevel=1
+    $rnp = Resolve-Path(".\RELEASENOTES.md")
 
-    dnu build src\Kraken --configuration Release || set errorlevel=1
+    $rnc = [IO.File]::ReadAllText($rnp)
 
-    exit /b %errorlevel%
-test_script:
-- cmd: >-
-    @echo off
-
-    setlocal EnableExtensions
-
+    Set-AppveyorBuildVariable -Name release_notes -Value $rnctest_script:
+- ps: >-
     cd test\Kraken.Tests
 
-    dnx test || set errorlevel=1
+    dnx test
 
     cd ..\..\
-
-    exit /b %errorlevel%
 before_deploy:
-- cmd: >-
-    @echo off
-
-    setlocal EnableExtensions
-
+- ps: >-
     npm install -g bower
 
     npm install -g gulp
 
-    dnu publish src\Kraken --runtime active --configuration Release --iis-command web-prod || set errorlevel=1	
+    dnu publish src\Kraken --runtime active --configuration Release --iis-command web-prod
 
-    nuget pack Kraken.nuspec -NoPackageAnalysis || set errorlevel=1
+    nuget pack Kraken.nuspec -NoPackageAnalysis
 
-    appveyor PushArtifact Kraken.*.nupkg -DeploymentName GitHub
-
-    set release_notes=
-
-    for /f "delims=" %%i in ('RELEASENOTES.md') do set release_notes=%release_notes% %%i
-
-    exit /b %errorlevel%
+    Get-ChildItem .\Kraken.*.nupkg | % { Push-AppveyorArtifact $_ -FileName $_.FullName -DeploymentName GitHub }
 deploy:
 - provider: GitHub
-  description: '{release_notes}'
+  description: $(release_notes)
   auth_token:
     secure: ttUANtrgmx3KYQ8JqCQ1t2FnA8vCEFH9WBlmdGmxoBjSb6o55ZnSoqaKWf2HZLMV
   artifact: GitHub
