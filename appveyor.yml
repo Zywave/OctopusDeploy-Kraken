@@ -27,7 +27,7 @@ before_deploy:
 
     nuget pack Kraken.nuspec -NoPackageAnalysis
 
-	Get-ChildItem .\Kraken.*.nupkg | % { Push-AppveyorArtifact $_ -FileName $_.FullName -DeploymentName GitHub }
+    Get-ChildItem .\Kraken.*.nupkg | % { Push-AppveyorArtifact $_ -FileName $_.FullName -DeploymentName GitHub }
 deploy:
 - provider: GitHub
   description: $(release_notes)
