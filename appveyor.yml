@@ -5,7 +5,7 @@ build_script:
 - ps: >-
     dnu restore
 
-    dnu build src\Kraken --configuration Release || set errorlevel=1
+    dnu build src\Kraken --configuration Release
 
     set release_notes=
 
