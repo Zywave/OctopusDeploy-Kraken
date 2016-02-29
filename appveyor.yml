@@ -7,10 +7,9 @@ build_script:
 
     dnu build src\Kraken --configuration Release
 
-    set release_notes=
+    $releaseNotes = [IO.File]::ReadAllText(".\RELEASENOTES.md")
 
-    for /f "delims=" %%i in ('RELEASENOTES.md') do set release_notes=%release_notes% %%i
-test_script:
+    Set-AppveyorBuildVariable -Name release_notes -Value $releaseNotestest_script:
 - ps: >-
     cd test\Kraken.Tests
 
