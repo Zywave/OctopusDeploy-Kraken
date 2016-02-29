@@ -52,12 +52,7 @@
             </tr>
             </tbody>
         </table>
-        <!-- ko ifnot: $parent.projectsOptions().data -->
-        <select class="select2__link-project" data-bind="value: $parent.selectedProject, select2: $parent.projectsOptions" disabled></select>
-        <!-- /ko -->
-        <!-- ko if: $parent.projectsOptions().data -->
         <select class="select2__link-project" data-bind="value: $parent.selectedProject, select2: $parent.projectsOptions"></select>
-        <!-- /ko -->
         <button type="button" class="btn btn-primary" aria-haspopup="true" aria-expanded="false" data-bind="enable: $parent.selectedProject, click: $component.linkProject">
             <span class="glyphicon glyphicon-plus"></span> Link Project
         </button>

@@ -6,13 +6,13 @@ namespace Kraken.Controllers.Api
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Kraken.Filters;
+    using Filters;
     using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Mvc;
     using Microsoft.Data.Entity;
     using Microsoft.AspNet.Authorization;
-    using Kraken.Models;
-    using Kraken.Services;
+    using Models;
+    using Services;
     using Octopus.Client.Model;
 
     [Authorize]
@@ -21,14 +21,13 @@ namespace Kraken.Controllers.Api
     [Route("api/releasebatches")]
     public class ReleaseBatchesController : Controller
     {
-        public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy, INuGetProxy nuGetProxy, IOctopusReleaseService octopusReleaseService)
+        public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy, IOctopusReleaseService octopusReleaseService)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (octopusProxy == null) throw new ArgumentNullException(nameof(octopusProxy));
 
             _context = context;
             _octopusProxy = octopusProxy;
-            _nuGetProxy = nuGetProxy;
             _octopusReleaseService = octopusReleaseService;
         }
 
@@ -392,7 +391,6 @@ namespace Kraken.Controllers.Api
 
         private readonly ApplicationDbContext _context;
         private readonly IOctopusProxy _octopusProxy;
-        private readonly INuGetProxy _nuGetProxy ;
         private readonly IOctopusReleaseService _octopusReleaseService;
     }
 }

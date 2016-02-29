@@ -1,11 +1,32 @@
 ﻿define(['knockout', 'bootstrap', 'select2', 'koselect2', 'moment', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'context'], function(ko, bs, select2, koselect2, moment, shell, bus, releaseBatchesService, environmentsService, projectsService, context) {
     return function(params) {
-
+        
         this.environments = ko.observableArray();
         this.selectedProject = ko.observable();
         this.projectsOptions = ko.observable({
-            placeholder: 'Loading projects...',
+            placeholder: 'Link project...',
+            ajax: {
+                url: context.basePath + 'api/projects',
+                data: function(params) {
+                    return {
+                        nameFilter: params.term
+                    };
+                },
+                dataType: 'json',
+                processResults: function(data) {
+                    data = $.map(data, function(obj) {
+                        obj.text = obj.text || obj.name;
+
+                        return obj;
+                    });
+                    return {
+                        results: data
+                    };
+                },
+                minimumInputLength: 3
+            }
         });
+
         this.releaseBatch = ko.observable();
         
         var releaseBatch = this.releaseBatch;
@@ -20,22 +41,6 @@
         this.loadEnvironments = function() {
             environmentsService.getEnvironments().then(function(data) {
                 this.environments(data);
-            }.bind(this));
-        }.bind(this);
-
-        this.loadProjects = function() {
-            projectsService.getProjects().then(function (data) {
-                data = $.map(data, function (obj) {
-                    obj.text = obj.text || obj.name;
-
-                    return obj;
-                });
-
-                this.projectsOptions({
-                    placeholder: 'Link project...',
-                    data: data,
-                    allowClear: true
-                });
             }.bind(this));
         }.bind(this);
 
@@ -110,6 +115,5 @@
 
         this.loadReleaseBatch();
         this.loadEnvironments();
-        this.loadProjects();
     };
 });
