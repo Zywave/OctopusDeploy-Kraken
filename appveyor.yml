@@ -24,7 +24,7 @@ before_deploy:
 
     npm install -g gulp
 
-    dnu publish src\Kraken --runtime active --configuration Release --iis-command web-prod]
+    dnu publish src\Kraken --runtime active --configuration Release --iis-command web-prod
 
     nuget pack Kraken.nuspec -NoPackageAnalysis
 
