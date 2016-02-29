@@ -7,9 +7,11 @@ build_script:
 
     dnu build src\Kraken --configuration Release
 
-    $releaseNotes = [IO.File]::ReadAllText("RELEASENOTES.md")
+    $rnp = Resolve-Path(".\RELEASENOTES.md")
 
-    Set-AppveyorBuildVariable -Name release_notes -Value $releaseNotestest_script:
+    $rnc = [IO.File]::ReadAllText($rnp)
+
+    Set-AppveyorBuildVariable -Name release_notes -Value $rnctest_script:
 - ps: >-
     cd test\Kraken.Tests
 
