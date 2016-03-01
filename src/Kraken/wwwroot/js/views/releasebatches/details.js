@@ -3,7 +3,8 @@
         
         this.environments = ko.observableArray();
         this.selectedProject = ko.observable();
-        this.projectsOptions = ko.observable({
+        this.projectsSelect2Options = ko.observable({
+            width: 'off',
             placeholder: 'Link project...',
             ajax: {
                 url: context.basePath + 'api/projects',
@@ -16,19 +17,18 @@
                 processResults: function(data) {
                     data = $.map(data, function(obj) {
                         obj.text = obj.text || obj.name;
-
                         return obj;
                     });
                     return {
                         results: data
                     };
                 },
-                minimumInputLength: 3
-            }
+                minimumInputLength: 1
+            },
+            theme: 'bootstrap'
         });
 
-        this.releaseBatch = ko.observable();
-        
+        this.releaseBatch = ko.observable();        
         var releaseBatch = this.releaseBatch;
 
         this.loadReleaseBatch = function() {

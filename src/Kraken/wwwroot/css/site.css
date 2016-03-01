@@ -27,6 +27,14 @@ textarea {
     width: 100%;
 }
 
+.sub-container {
+    padding: 0;
+}
+
+.sub-container .col {
+    padding: 0 0 20px 0;
+}
+
 .cmdr-overlay {
     z-index: 10000;
 }
@@ -109,8 +117,13 @@ textarea {
 }
 
 .view__footer {  
-    margin-top: 40px;  
+    margin-top: 20px;  
     padding-top: 9px;
     border-top: 1px solid #eee;
     color: #777;
 }
+
+.audit-info {
+    text-align: right;
+}
+

@@ -52,15 +52,25 @@
             </tr>
             </tbody>
         </table>
-        <select class="select2__link-project" data-bind="value: $parent.selectedProject, select2: $parent.projectsOptions"></select>
-        <button type="button" class="btn btn-primary" aria-haspopup="true" aria-expanded="false" data-bind="enable: $parent.selectedProject, click: $component.linkProject">
-            <span class="glyphicon glyphicon-plus"></span> Link Project
-        </button>
-                
-        <div class="audit-info">
-            <p data-bind="visible: updateDateTime, text: $parent.getAuditInfo('updated', updateUserName, updateDateTime)"></p>
-            <p data-bind="visible: syncDateTime, text: $parent.getAuditInfo('synced', syncUserName, syncDateTime, syncEnvironmentName)"></p>
-            <p data-bind="visible: deployDateTime, text: $parent.getAuditInfo('deployed',deployUserName, deployDateTime, deployEnvironmentName)"></p>
+
+        <div class="container sub-container">
+            <div class="col col-lg-6">
+                <div class="input-group input-group select2-bootstrap-append">
+                    <select class="form-control" data-bind="value: $parent.selectedProject, select2: $parent.projectsSelect2Options"></select>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary" aria-haspopup="true" aria-expanded="false" data-bind="enable: $parent.selectedProject, click: $component.linkProject">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="col col-lg-6">
+                <div class="audit-info">
+                    <p data-bind="visible: updateDateTime, text: $parent.getAuditInfo('updated', updateUserName, updateDateTime)"></p>
+                    <p data-bind="visible: syncDateTime, text: $parent.getAuditInfo('synced', syncUserName, syncDateTime, syncEnvironmentName)"></p>
+                    <p data-bind="visible: deployDateTime, text: $parent.getAuditInfo('deployed',deployUserName, deployDateTime, deployEnvironmentName)"></p>
+                </div>
+            </div>
         </div>
         
     </div>
