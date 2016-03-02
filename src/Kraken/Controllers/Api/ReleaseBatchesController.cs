@@ -248,6 +248,10 @@ namespace Kraken.Controllers.Api
                     var releaseResource = environment == null ? _octopusProxy.GetLatestRelease(releaseBatchItem.ProjectId) : _octopusProxy.GetLatestDeployedRelease(releaseBatchItem.ProjectId, environment.Id);
                     releaseBatchItem.ReleaseId = releaseResource?.Id;
                     releaseBatchItem.ReleaseVersion = releaseResource?.Version;
+
+                    var projectResource = _octopusProxy.GetProject(releaseBatchItem.ProjectId);
+                    releaseBatchItem.ProjectName = projectResource.Name;
+                    releaseBatchItem.ProjectSlug = projectResource.Slug;
                 }
 
                 releaseBatch.SyncDateTime = DateTimeOffset.Now;
