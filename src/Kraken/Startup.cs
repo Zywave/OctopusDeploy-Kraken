@@ -1,22 +1,17 @@
 ﻿namespace Kraken
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Kraken.Filters;
+    using Kraken.Models;
+    using Kraken.Security;
+    using Kraken.Services;
+    using Microsoft.AspNet.Authentication.Cookies;
     using Microsoft.AspNet.Builder;
     using Microsoft.AspNet.Hosting;
+    using Microsoft.AspNet.Http;
     using Microsoft.Data.Entity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Kraken.Models;
-    using Microsoft.AspNet.Authentication.Cookies;
-    using Microsoft.AspNet.Http;
-    using Kraken.Services;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.Extensions.OptionsModel;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
 
@@ -85,11 +80,9 @@
                 // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
                 try
                 {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
-                        .CreateScope())
+                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
                     {
-                        serviceScope.ServiceProvider.GetService<ApplicationDbContext>()
-                             .Database.Migrate();
+                        serviceScope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
                     }
                 }
                 catch { }
@@ -98,15 +91,17 @@
             app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
             
             app.UseStaticFiles();
-            
+
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 LoginPath = new PathString("/login"),
                 AccessDeniedPath = new PathString("/accessdenied"),
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
-                AuthenticationScheme = "Cookies"                
+                AuthenticationScheme = "Cookies"
             });
+
+            app.UseMiddleware<ApiKeyMiddleware>(); 
             
             app.UseMvc(routes =>
             {

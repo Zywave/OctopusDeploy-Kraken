@@ -5,6 +5,7 @@
     using Octopus.Client;
     using Octopus.Client.Model;
     using Octopus.Client.Exceptions;
+
     public class OctopusAuthenticationProxy : IOctopusAuthenticationProxy
     {
         public OctopusAuthenticationProxy(IOptions<AppSettings> settings)
@@ -56,6 +57,25 @@
             }
 
             return user.Username == userName;
+        }
+
+        public bool ValidateApiKey(string apiKey, out string userName)
+        {
+            var repository = new OctopusRepository(new OctopusServerEndpoint(_octopusServerAddress, apiKey));
+
+            UserResource user;
+            try
+            {
+                user = repository.Users.GetCurrent();
+            }
+            catch (OctopusSecurityException)
+            {
+                userName = null;
+                return false;
+            }
+
+            userName = user.Username;
+            return true;
         }
 
         private readonly string _octopusServerAddress;

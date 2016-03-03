@@ -1,18 +1,17 @@
-using Newtonsoft.Json.Linq;
-
 namespace Kraken.Controllers.Api
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Filters;
+    using Kraken.Filters;
+    using Kraken.Models;
+    using Kraken.Services;
+    using Microsoft.AspNet.Authorization;
     using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Mvc;
     using Microsoft.Data.Entity;
-    using Microsoft.AspNet.Authorization;
-    using Models;
-    using Services;
+    using Newtonsoft.Json.Linq;
     using Octopus.Client.Model;
 
     [Authorize]
