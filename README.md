@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/Zywave/OctopusDeploy-Kraken.png?label=ready&title=Ready)](https://waffle.io/Zywave/OctopusDeploy-Kraken)
 # OctopusDeploy-Kraken
 
 [![Build status](https://ci.appveyor.com/api/projects/status/pc3qmlqlqne6n1jy/branch/master?svg=true)](https://ci.appveyor.com/project/JohnCruikshank/octopusdeploy-kraken/branch/master)
