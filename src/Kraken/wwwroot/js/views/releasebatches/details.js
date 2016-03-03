@@ -58,13 +58,6 @@
             }.bind(this));
         }.bind(this);
 
-        this.linkProject = function() {
-            shell.open();
-            shell.execute('LINKPROJ', params.id, this.selectedProject()).then(function() {
-                this.loadReleaseBatch();
-            }.bind(this));
-        }.bind(this);
-
         this.syncReleases = function () {
             shell.open();
             shell.execute('SYNCBATCH', params.id).then(function () {
@@ -76,6 +69,14 @@
             shell.open();
             shell.execute('NUBATCH', params.id).then(function () {
                 this.loadReleaseBatch();
+            }.bind(this));
+        }.bind(this);
+
+        this.linkProject = function () {
+            shell.execute('LINKPROJ', params.id, this.selectedProject()).then(function () {
+                this.loadReleaseBatch();
+            }.bind(this), function () {
+                shell.open();
             }.bind(this));
         }.bind(this);
 
