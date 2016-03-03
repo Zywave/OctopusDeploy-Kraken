@@ -54,17 +54,17 @@
                 UserResource userResource;
                 if (OctopusAuthenticationProxy.Login(model.UserName, model.Password, out userResource))
                 {
-                    var user = await GetOrAddUserAsync(userResource.Username);
-                    var octopusApiKey = user.OctopusApiKey;
+                    var appUser = await ResolveApplicationUserAsync(userResource);
+                    var octopusApiKey = appUser.OctopusApiKey;
 
-                    if (String.IsNullOrEmpty(octopusApiKey) || !OctopusAuthenticationProxy.ValidateApiKey(user.UserName, octopusApiKey))
+                    if (String.IsNullOrEmpty(octopusApiKey) || !OctopusAuthenticationProxy.ValidateApiKey(appUser.UserName, octopusApiKey))
                     {
                         octopusApiKey = OctopusAuthenticationProxy.CreateApiKey();
 
-                        await SetUserOctopusApiKey(user.UserName, octopusApiKey);
+                        await SetApplicationUserOctopusApiKey(appUser.UserName, octopusApiKey);
                     }
 
-                    await HttpContext.Authentication.SignInAsync("Cookies", ClaimsPrincipalHelpers.CreatePrincipal(user.UserName, octopusApiKey));
+                    await HttpContext.Authentication.SignInAsync("Cookies", ClaimsPrincipalHelpers.CreatePrincipal(appUser.UserName, octopusApiKey));
 
                     if (String.IsNullOrEmpty(returnUrl))
                     {
@@ -95,21 +95,26 @@
             return View();
         }
 
-        private async Task<ApplicationUser> GetOrAddUserAsync(string userName)
+        private async Task<ApplicationUser> ResolveApplicationUserAsync(UserResource userResource)
         {
-            var user = await DbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == userName);
+            var user = await DbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == userResource.Username);
 
             if (user == null)
             {
-                user = new ApplicationUser { UserName = userName };
+                user = new ApplicationUser { UserName = userResource.Username, DisplayName = userResource.DisplayName };
                 DbContext.ApplicationUsers.Add(user);
+                await DbContext.SaveChangesAsync();
+            }
+            else if (user.DisplayName != userResource.DisplayName)
+            {
+                user.DisplayName = userResource.DisplayName;
                 await DbContext.SaveChangesAsync();
             }
 
             return user;
         }
 
-        private async Task SetUserOctopusApiKey(string userName, string octopusApiKey)
+        private async Task SetApplicationUserOctopusApiKey(string userName, string octopusApiKey)
         {
             var user = await DbContext.ApplicationUsers.FirstAsync(u => u.UserName == userName);
 

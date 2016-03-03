@@ -1,4 +1,4 @@
-﻿define(['knockout', 'bootstrap', 'select2', 'koselect2', 'moment', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'context'], function(ko, bs, select2, koselect2, moment, shell, bus, releaseBatchesService, environmentsService, projectsService, context) {
+﻿define(['knockout', 'bootstrap', 'select2', 'koselect2', 'moment', 'utils/koAsyncExtender', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'services/users', 'context'], function (ko, bs, select2, koselect2, moment, koAsyncExtender, shell, bus, releaseBatchesService, environmentsService, projectsService, usersService, context) {
     return function(params) {
         
         this.environments = ko.observableArray();
@@ -79,13 +79,26 @@
             }.bind(this));
         }.bind(this);
 
+        var displayNames = {};
+        function getUserDisplayName(userName) {
+            if (!userName) return null;
+            if (!displayNames.hasOwnProperty(userName)) {
+                displayNames[userName] = ko.computed(function () {
+                    return usersService.getUser(userName).then(function (user) {
+                        return user.displayName || user.userName;
+                    });
+                }).extend({ async: userName });
+            }
+            return displayNames[userName]();
+        }
+
         this.getAuditInfo = function (action, userName, dateTime, environmentName) {
             var info = '';
             info += 'Last ' + action;
             if (environmentName) {
                 info += ' to ' + environmentName;
             }
-            info += ' by ' + userName;
+            info += ' by ' + getUserDisplayName(userName);
             info += ' at ' + moment(dateTime).format('l LTS');
             return info;
         }.bind(this);
