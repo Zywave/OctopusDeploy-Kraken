@@ -1,7 +1,7 @@
-[![Stories in Ready](https://badge.waffle.io/Zywave/OctopusDeploy-Kraken.png?label=ready&title=Ready)](https://waffle.io/Zywave/OctopusDeploy-Kraken)
 # OctopusDeploy-Kraken
 
 [![Build status](https://ci.appveyor.com/api/projects/status/pc3qmlqlqne6n1jy/branch/master?svg=true)](https://ci.appveyor.com/project/JohnCruikshank/octopusdeploy-kraken/branch/master)
+[![Stories in Ready](https://badge.waffle.io/Zywave/OctopusDeploy-Kraken.png?label=ready&title=Ready)](https://waffle.io/Zywave/OctopusDeploy-Kraken)
 
 Kraken is a companion tool for Octopus Deploy that facilitates deploying multiple projects at once. Kraken uses the Octopus Deploy API and even authenticates users using Octopus rather than keeping its own user store.  Kraken maintains a collection of release batches. A release batch is a collection of project releases that can be deployed to a target environment with a single command. All deploys are triggered at once, allowing the built-in Octopus deploy queue to work through them.
 
