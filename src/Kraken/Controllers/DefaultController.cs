@@ -12,7 +12,7 @@
     using Microsoft.AspNet.Mvc;
     using Microsoft.Data.Entity;
     using Newtonsoft.Json;
-
+    using Octopus.Client.Model;
     [Authorize]
     public class DefaultController : Controller
     {
@@ -51,19 +51,20 @@
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                if (OctopusAuthenticationProxy.Login(model.UserName, model.Password))
+                UserResource userResource;
+                if (OctopusAuthenticationProxy.Login(model.UserName, model.Password, out userResource))
                 {
-                    var user = await GetOrAddUserAsync(model.UserName);
+                    var user = await GetOrAddUserAsync(userResource.Username);
                     var octopusApiKey = user.OctopusApiKey;
 
-                    if (String.IsNullOrEmpty(octopusApiKey) || !OctopusAuthenticationProxy.ValidateApiKey(model.UserName, octopusApiKey))
+                    if (String.IsNullOrEmpty(octopusApiKey) || !OctopusAuthenticationProxy.ValidateApiKey(user.UserName, octopusApiKey))
                     {
                         octopusApiKey = OctopusAuthenticationProxy.CreateApiKey();
 
-                        await SetUserOctopusApiKey(model.UserName, octopusApiKey);
+                        await SetUserOctopusApiKey(user.UserName, octopusApiKey);
                     }
 
-                    await HttpContext.Authentication.SignInAsync("Cookies", ClaimsPrincipalHelpers.CreatePrincipal(model.UserName, octopusApiKey));
+                    await HttpContext.Authentication.SignInAsync("Cookies", ClaimsPrincipalHelpers.CreatePrincipal(user.UserName, octopusApiKey));
 
                     if (String.IsNullOrEmpty(returnUrl))
                     {

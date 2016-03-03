@@ -16,7 +16,7 @@
             _repository = new OctopusRepository(new OctopusServerEndpoint(_octopusServerAddress));
         }
 
-        public bool Login(string userName, string password)
+        public bool Login(string userName, string password, out UserResource user)
         {
             var loginCommand = new LoginCommand()
             {
@@ -30,9 +30,11 @@
             }
             catch
             {
+                user = null;
                 return false;
             }
-
+            
+            user = _repository.Users.GetCurrent();
             return true;
         }
 

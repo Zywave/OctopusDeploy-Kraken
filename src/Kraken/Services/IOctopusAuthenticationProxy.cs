@@ -1,8 +1,10 @@
+using Octopus.Client.Model;
+
 namespace Kraken.Services
 {
     public interface IOctopusAuthenticationProxy
     {
-        bool Login(string username, string password);
+        bool Login(string username, string password, out UserResource user);
 
         string CreateApiKey();
 
