@@ -1,3 +1,13 @@
+<a name="1.0.0-prerelease.3"></a>
+# [1.0.0-prerelease.3](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.2...v1.0.0-prerelease.3) (2016-03-04)
+
+
+### Bug Fixes
+
+* appveyor artifact push fix ([53111a8](https://github.com/zywave/OctopusDeploy-Kraken/commit/53111a8)), closes [#31](https://github.com/zywave/OctopusDeploy-Kraken/issues/31)
+
+
+
 <a name="1.0.0-prerelease.2"></a>
 # [1.0.0-prerelease.2](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.1...v1.0.0-prerelease.2) (2016-03-04)
 

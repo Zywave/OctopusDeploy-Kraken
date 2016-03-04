@@ -2,14 +2,13 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.0-prerelease02</version>
+    <version>1.0.0-prerelease03</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
     <releaseNotes>### Bug Fixes
 
-* increase request timeout from 2 to 5 mins ([290ba55](https://github.com/zywave/OctopusDeploy-Kraken/commit/290ba55))
-* nuget/semver prerelease version ([a75574e](https://github.com/zywave/OctopusDeploy-Kraken/commit/a75574e)), closes [#31](https://github.com/zywave/OctopusDeploy-Kraken/issues/31)</releaseNotes>
+* appveyor artifact push fix ([53111a8](https://github.com/zywave/OctopusDeploy-Kraken/commit/53111a8)), closes [#31](https://github.com/zywave/OctopusDeploy-Kraken/issues/31)</releaseNotes>
   </metadata>
   <files>
       <file src="src\Kraken\bin\output\**\*.*" target=""/>
