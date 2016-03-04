@@ -15,10 +15,10 @@ function getVersion(nuget) {
     var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 
     if (nuget) {
-        // nuget doesn't support semver prerelease numbers so converting 1.2.3-prerelease.1 to 1.2.3.1-prerelease
-        var match = /((?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*))(?:-([\da-z\-]+)\.(0|[1-9][0-9]*))?/i.exec(version);
+        // nuget doesn't support semver prerelease numbers so converting 1.2.3-prerelease.1 to 1.2.3-prerelease01
+        var match = /((?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*))(?:-([\da-z\-]+)\.(0|[1-9][0-9]?))?/i.exec(version);
         if (match[2]) {
-            version = match[1] + '.' + match[3] + '-' + match[2];
+            version = match[1] + '-' + match[2] + ('0' + match[3]).slice(-2);
         }
     };
 
