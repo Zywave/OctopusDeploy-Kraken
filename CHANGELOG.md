@@ -1,14 +1,3 @@
-<a name="1.0.0"></a>
-# [1.0.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.1...v1.0.0) (2016-03-04)
-
-
-### Bug Fixes
-
-* increase request timeout from 2 to 5 mins ([290ba55](https://github.com/zywave/OctopusDeploy-Kraken/commit/290ba55))
-* nuget/semver prerelease version ([a75574e](https://github.com/zywave/OctopusDeploy-Kraken/commit/a75574e)), closes [#31](https://github.com/zywave/OctopusDeploy-Kraken/issues/31)
-
-
-
 <a name="1.0.0-prerelease.1"></a>
 # [1.0.0-prerelease.1](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.0...v1.0.0-prerelease.1) (2016-03-04)
 
