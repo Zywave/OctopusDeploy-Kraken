@@ -2,7 +2,7 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.0</version>
+    <version>1.0.0-prerelease02</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
