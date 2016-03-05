@@ -43,5 +43,7 @@ namespace Kraken.Models
         public DateTimeOffset? DeployDateTime { get; set; }
 
         public List<ReleaseBatchItem> Items { get; set; }
+
+        public ReleaseBatchLogo Logo { get; set; }
     }
 }

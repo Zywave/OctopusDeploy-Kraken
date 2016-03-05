@@ -2,7 +2,10 @@
 
     return new cmdr.CommandHandler({
         contextExtensions: {
-            fail: function(xhr, error, message) {
+            fail: function (xhr, error, message) {
+                if (typeof xhr === 'string') {
+                    message = xhr;
+                }
                 if (message) {
                     this.shell.writeLine(message, 'error');
                 }

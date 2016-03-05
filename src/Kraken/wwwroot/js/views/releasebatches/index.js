@@ -9,7 +9,7 @@
 
         var mapReleaseBatch = function(batch) {
             batch.detailsUrl = context.basePath + 'app/releasebatches/details?id=' + batch.id;
-            batch.logoUrl = context.basePath + 'images/batch-logo.png';
+            batch.logoUrl = context.basePath + 'api/releasebatches/' + batch.id + '/logo?cb=' + new Date(batch.updateDateTime).getTime();
             return batch;
         }
 

@@ -46,7 +46,7 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest(ModelState);
             }
 
-            var releaseBatch = await GetReleaseBatch(idOrName, true);
+            var releaseBatch = await GetReleaseBatch(idOrName, true, false);
 
             if (releaseBatch == null)
             {
@@ -54,6 +54,29 @@ namespace Kraken.Controllers.Api
             }
 
             return Ok(releaseBatch);
+        }
+
+        // GET: api/ReleaseBatches/5/Logo
+        [HttpGet("{idOrName}/Logo")]
+        public async Task<IActionResult> GetReleaseBatchLogo([FromRoute] string idOrName)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+
+            var releaseBatch = await GetReleaseBatch(idOrName, false, true);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+            
+            if (releaseBatch.Logo != null)
+            {
+                return File(releaseBatch.Logo.Content, releaseBatch.Logo.ContentType);
+            }
+
+            return File("~/images/batch-logo.png", "images/png");
         }
 
         // PUT: api/ReleaseBatches/5
@@ -65,24 +88,67 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest(ModelState);
             }
 
-            var existingReleaseBatch = await GetReleaseBatch(idOrName, false);
+            var existingReleaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (existingReleaseBatch == null)
             {
                 return HttpNotFound();
             }
-
-            const string ignore = "__IGNORE__";
-            if (releaseBatch.Name != ignore)
+            
+            if (releaseBatch.Name != null)
             {
                 existingReleaseBatch.Name = releaseBatch.Name;
             }
-            if (releaseBatch.Description != ignore)
+            if (releaseBatch.Description != null)
             {
                 existingReleaseBatch.Description = releaseBatch.Description;
             }
 
             existingReleaseBatch.UpdateDateTime = DateTimeOffset.Now;
             existingReleaseBatch.UpdateUserName = User.Identity.Name;
+
+            await _context.SaveChangesAsync();
+
+            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+        }
+
+        // PUT: api/ReleaseBatches/5/Logo
+        [HttpPut("{idOrName}/Logo")]
+        public async Task<IActionResult> PutReleaseBatchLogo([FromRoute] string idOrName, [FromBody] ReleaseBatchLogo releaseBatchLogo = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+            
+            var releaseBatch = await GetReleaseBatch(idOrName, false, true);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+            
+            if (releaseBatch.Logo == null)
+            {
+                if (releaseBatchLogo != null)
+                {
+                    releaseBatchLogo.ReleaseBatchId = releaseBatch.Id;
+                    _context.ReleaseBatchLogos.Add(releaseBatchLogo);
+                }
+            }
+            else
+            {
+                if (releaseBatchLogo != null)
+                {
+                    releaseBatch.Logo.Content = releaseBatchLogo.Content;
+                    releaseBatch.Logo.ContentType = releaseBatchLogo.ContentType;
+                }
+                else
+                {
+                    _context.ReleaseBatchLogos.Remove(releaseBatch.Logo);
+                }
+            }
+
+            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
+            releaseBatch.UpdateUserName = User.Identity.Name;
 
             await _context.SaveChangesAsync();
 
@@ -130,7 +196,7 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest(ModelState);
             }
 
-            var releaseBatch = await GetReleaseBatch(idOrName, false);
+            var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -151,7 +217,7 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest(ModelState);
             }
 
-            var releaseBatch = await GetReleaseBatch(idOrName, false);
+            var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -190,7 +256,7 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest(ModelState);
             }
 
-            var releaseBatch = await GetReleaseBatch(idOrName, false);
+            var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -224,7 +290,7 @@ namespace Kraken.Controllers.Api
         [HttpPut("{idOrName}/Sync")]
         public async Task<IActionResult> SyncReleaseBatch([FromRoute] string idOrName, [FromBody] string environmentIdOrName = null)
         {
-            var releaseBatch = await GetReleaseBatch(idOrName, true);
+            var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -271,7 +337,7 @@ namespace Kraken.Controllers.Api
             string environmentIdOrName = deployRequest[nameof(environmentIdOrName)].ToObject<string>();
             bool allowRedeploy = deployRequest[nameof(allowRedeploy)].ToObject<bool>();
 
-            var releaseBatch = await GetReleaseBatch(idOrName, true);
+            var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -307,7 +373,7 @@ namespace Kraken.Controllers.Api
         [HttpGet("{idOrName}/GetNextReleases")]
         public async Task<IActionResult> GetNextReleases([FromRoute] string idOrName)
         {
-            var releaseBatch = await GetReleaseBatch(idOrName, true);
+            var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -330,7 +396,7 @@ namespace Kraken.Controllers.Api
         [HttpPost("{idOrName}/CreateReleases")]
         public async Task<IActionResult> CreateReleases([FromRoute] string idOrName, [FromBody] IEnumerable<ReleaseResource> releases)
         {
-            var releaseBatch = await GetReleaseBatch(idOrName, true);
+            var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
@@ -367,7 +433,7 @@ namespace Kraken.Controllers.Api
             base.Dispose(disposing);
         }
 
-        private async Task<ReleaseBatch> GetReleaseBatch(string idOrName, bool includeItems)
+        private async Task<ReleaseBatch> GetReleaseBatch(string idOrName, bool includeItems, bool includeLogo)
         {
             ReleaseBatch releaseBatch = null;
 
@@ -376,6 +442,11 @@ namespace Kraken.Controllers.Api
             if (includeItems)
             {
                 query = query.Include(b => b.Items);
+            }
+
+            if (includeLogo)
+            {
+                query = query.Include(b => b.Logo);
             }
 
             int id;

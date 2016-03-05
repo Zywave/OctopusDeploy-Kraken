@@ -29,6 +29,17 @@
                 return data;
             });
         },
+        putReleaseBatchLogo: function (idOrName, releaseBatchLogo) {
+            return $.ajax({
+                type: 'PUT',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/logo',
+                data: JSON.stringify(releaseBatchLogo),
+                contentType: 'application/json'
+            }).then(function (data) {
+                bus.publish('releasebatches:update', idOrName);
+                return data;
+            });
+        },
         deleteReleaseBatch: function (idOrName) {
             return $.ajax({
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName),

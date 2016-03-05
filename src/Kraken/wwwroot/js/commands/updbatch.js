@@ -1,9 +1,9 @@
-﻿define(['cmdr', 'services/releaseBatches'], function (cmdr, releaseBatchesService) {
+﻿define(['cmdr', 'jquery', 'services/releaseBatches', 'utils/imagePrompt'], function (cmdr, $, releaseBatchesService, imagePrompt) {
 
     return new cmdr.Definition({
         name: 'UPDBATCH',
         description: 'Updates basic settings for a release batch.',
-        usage: 'UPDBATCH batchIdOrName [-name newName] [-description newDescription]',
+        usage: 'UPDBATCH batchIdOrName [--name newName] [--description newDescription] [--logo-file|--logo-reset]',
         main: function (batchIdOrName) {
             if (!batchIdOrName) {
                 this.shell.writeLine('Project batch id or name required', 'error');
@@ -11,34 +11,56 @@
             }
             
             var args = this.parsed.args.slice(1);
-            function getNamedArg(name) {
+            function getNamedArg(name, flag) {
                 var index = args.indexOf(name);
                 if (index >= 0) {
+                    if (flag) {
+                        return true;
+                    }
                     if ((index + 1) in args) {
                         return args[index + 1];
                     }
-                    else {
-                        throw 'Invalid arguments';
-                    }
+                    throw 'Invalid arguments';
                 }
-                return '__IGNORE__';
+                return null;
             };
-
-            var data;
+            
+            var name, description, logoFile, logoReset;
             try
             {
-                data = {
-                    name: getNamedArg('-name'),
-                    description: getNamedArg('-description')
-                };
+                name = getNamedArg('--name');
+                description = getNamedArg('--description');
+                logoFile = getNamedArg('--logo-file', true);
+                logoReset = getNamedArg('--logo-reset', true);                
             } catch (error) {
                 this.shell.writeLine(error, 'error');
                 return;
             }
+            
+            var tasks = [];
 
-            return releaseBatchesService.putReleaseBatch(batchIdOrName, data).then(function () {
-                this.shell.writeLine('Batch updated', 'success');
-            }.bind(this)).fail(this.fail.bind(this));
+            if (name || description) {
+                tasks.push(releaseBatchesService.putReleaseBatch(batchIdOrName, {
+                    name: name,
+                    description: description
+                }).then(function () {
+                    this.shell.writeLine('Batch name and/or description updated', 'success');
+                }.bind(this)).fail(this.fail.bind(this)));
+            }
+
+            if (logoReset) {
+                tasks.push(releaseBatchesService.putReleaseBatchLogo(batchIdOrName, null).then(function () {
+                    this.shell.writeLine('Batch logo reset', 'success');
+                }.bind(this)).fail(this.fail.bind(this)));
+            } else if (logoFile) {
+                tasks.push(imagePrompt().then(function (logo) {
+                    return releaseBatchesService.putReleaseBatchLogo(batchIdOrName, logo).then(function () {
+                        this.shell.writeLine('Batch logo set', 'success');
+                    }.bind(this));
+                }.bind(this)).fail(this.fail.bind(this)));
+            }
+
+            return $.when.apply($, tasks);
         },
         autocompleteKeys: ['releaseBatches']
     });
