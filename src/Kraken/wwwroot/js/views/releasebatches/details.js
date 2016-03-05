@@ -33,7 +33,7 @@
 
         this.loadReleaseBatch = function() {
             releaseBatchesService.getReleaseBatch(params.id).then(function (data) {
-                data.logoUrl = context.basePath + 'images/batch-logo.png';
+                data.logoUrl = context.basePath + 'api/releasebatches/' + data.id + '/logo?cb=' + new Date(batch.updateDateTime).getTime();
                 this.releaseBatch(data);
             }.bind(this));
         }.bind(this);
