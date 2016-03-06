@@ -69,21 +69,21 @@
                 bus.publish('releasebatches:update', idOrName);
             });
         },
-        syncReleaseBatch: function (idOrName, environmentId) {
+        syncReleaseBatch: function (idOrName, environmentIdOrName) {
             return $.ajax({
                 type: 'PUT',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/sync',
-                data: JSON.stringify(environmentId),
+                data: JSON.stringify(environmentIdOrName),
                 contentType: 'application/json'
             }).then(function () {
                 bus.publish('releasebatches:sync', idOrName);
             });;
         },
-        deployReleaseBatch: function (idOrName, environmentId, allowRedeploy) {
+        deployReleaseBatch: function (idOrName, environmentIdOrName, forceRedeploy) {
             return $.ajax({
                 type: 'POST',
-                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/deploy',
-                data: JSON.stringify({ environmentIdOrName: environmentId, allowRedeploy: !!allowRedeploy }),
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/deploy?forceRedeploy=' + !!forceRedeploy,
+                data: JSON.stringify(environmentIdOrName),
                 contentType: 'application/json'
             }).then(function() {
                 bus.publish('releasebatches:deploy', idOrName);

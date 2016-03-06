@@ -290,6 +290,11 @@ namespace Kraken.Controllers.Api
         [HttpPut("{idOrName}/Sync")]
         public async Task<IActionResult> SyncReleaseBatch([FromRoute] string idOrName, [FromBody] string environmentIdOrName = null)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
@@ -332,11 +337,13 @@ namespace Kraken.Controllers.Api
 
         // POST: api/ReleaseBatches/5/Deploy
         [HttpPost("{idOrName}/Deploy")]
-        public async Task<IActionResult> DeployReleaseBatch([FromRoute] string idOrName, [FromBody] JObject deployRequest)
+        public async Task<IActionResult> DeployReleaseBatch([FromRoute] string idOrName, [FromBody] string environmentIdOrName, [FromQuery] bool forceRedeploy = false)
         {
-            string environmentIdOrName = deployRequest[nameof(environmentIdOrName)].ToObject<string>();
-            bool allowRedeploy = deployRequest[nameof(allowRedeploy)].ToObject<bool>();
-
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+            
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
@@ -355,7 +362,7 @@ namespace Kraken.Controllers.Api
             {
                 foreach (var releaseBatchItem in releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
                 {
-                    deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id, allowRedeploy));
+                    deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id, forceRedeploy));
                 }
             }
 
@@ -373,6 +380,11 @@ namespace Kraken.Controllers.Api
         [HttpGet("{idOrName}/GetNextReleases")]
         public async Task<IActionResult> GetNextReleases([FromRoute] string idOrName)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
@@ -392,10 +404,15 @@ namespace Kraken.Controllers.Api
             return Ok(releases);
         }
 
-        // POST: api/ReleaseBatches/CreateReleases
+        // POST: api/ReleaseBatches/5/CreateReleases
         [HttpPost("{idOrName}/CreateReleases")]
         public async Task<IActionResult> CreateReleases([FromRoute] string idOrName, [FromBody] IEnumerable<ReleaseResource> releases)
         {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
