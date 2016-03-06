@@ -21,7 +21,7 @@
 
         FeedResource GetFeed(string feedIdOrName);
 
-        DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedploy = true);
+        DeploymentResource DeployRelease(string releaseId, string environmentId, bool forceRedeploy);
 
         ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages);
 

@@ -3,14 +3,14 @@
     return new cmdr.Definition({
         name: 'DEPLOYBATCH',
         description: 'Deploys all items in a release batch.',
-        usage: 'DEPLOYBATCH batchIdOrName environmentIdOrName [allowRedeploy]\n\nEnvironment id can be full (Environments-123) or short (123)',
-        main: function (batchIdOrName, environmentIdOrName, allowRedeploy) {
+        usage: 'DEPLOYBATCH batchIdOrName environmentIdOrName [--force]\n\nEnvironment id can be full (Environments-123) or short (123)',
+        main: function (batchIdOrName, environmentIdOrName, force) {
             if (!batchIdOrName || !environmentIdOrName) {
                 this.shell.writeLine('Batch id or name and environment id or name required', 'error');
                 return;
             }
             
-            return releaseBatchesService.deployReleaseBatch(batchIdOrName, environmentIdOrName, !!allowRedeploy).then(function (data) {
+            return releaseBatchesService.deployReleaseBatch(batchIdOrName, environmentIdOrName, force === '--force').then(function (data) {
                 this.shell.writeLine();
                 this.shell.writeLine('                $$$$$$$');
                 this.shell.writeLine('            $$$$$$$$$$$$$$');

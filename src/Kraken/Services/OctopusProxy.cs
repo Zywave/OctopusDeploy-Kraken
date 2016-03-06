@@ -69,7 +69,7 @@
             return _octopusRepository.Feeds.Get(feedId);
         }
 
-        public DeploymentResource DeployRelease(string releaseId, string environmentId, bool allowRedeploy = true)
+        public DeploymentResource DeployRelease(string releaseId, string environmentId, bool forceRedeploy)
         {
             var deploymentResource = new DeploymentResource
             {
@@ -78,7 +78,7 @@
                 Comments = "Deployed with Kraken"
             };
 
-            if (!allowRedeploy)
+            if (!forceRedeploy)
             {
                 var release = _octopusRepository.Releases.Get(releaseId);
                 DeploymentResource checkDeploy;
