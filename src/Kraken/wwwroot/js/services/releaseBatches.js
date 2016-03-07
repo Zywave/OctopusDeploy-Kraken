@@ -49,21 +49,21 @@
                 return data;
             });
         },
-        linkProject: function (idOrName, projectId) {
+        linkProject: function (idOrName, projectIdOrSlugOrName, releaseVersion) {
             return $.ajax({
                 type: 'PUT',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/linkproject',
-                data: JSON.stringify(projectId),
+                data: JSON.stringify({ projectIdOrSlugOrName: projectIdOrSlugOrName, releaseVersion: releaseVersion }),
                 contentType: 'application/json'
             }).then(function () {
                 bus.publish('releasebatches:update', idOrName);
             });
         },
-        unlinkProject: function (idOrName, projectId) {
+        unlinkProject: function (idOrName, projectIdOrSlugOrName) {
             return $.ajax({
                 type: 'PUT',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/unlinkproject',
-                data: JSON.stringify(projectId),
+                data: JSON.stringify(projectIdOrSlugOrName),
                 contentType: 'application/json'
             }).then(function () {
                 bus.publish('releasebatches:update', idOrName);
@@ -99,10 +99,10 @@
                 bus.publish('releasebatches:sync', idOrName);
             });
         },
-        getNextReleases: function (idOrName) {
+        previewReleases: function (idOrName) {
             return $.ajax({
                 type: 'GET',
-                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/getnextreleases',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/previewreleases',
                 contentType: 'application/json'
             }).then(function (data) {
                 return data;

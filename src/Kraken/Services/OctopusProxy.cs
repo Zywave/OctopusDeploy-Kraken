@@ -131,7 +131,7 @@
 
         public ReleaseResource CreateRelease(ReleaseResource release)
         {
-            var project = GetProject(release.ProjectId);
+            var project = _octopusRepository.Projects.Get(release.ProjectId);
             try
             {
                 return _octopusRepository.Projects.GetReleaseByVersion(project, release.Version);
@@ -140,6 +140,23 @@
             {
                 return _octopusRepository.Releases.Create(release);
             }
+        }
+
+        public ReleaseResource GetRelease(string projectId, string releaseVersion)
+        {
+            var project = _octopusRepository.Projects.Get(projectId);
+            if (project != null)
+            {
+                try
+                {
+                    return _octopusRepository.Projects.GetReleaseByVersion(project, releaseVersion);
+                }
+                catch (OctopusResourceNotFoundException)
+                {
+                    return null;
+                }
+            }
+            return null;
         }
 
         private readonly OctopusRepository _octopusRepository;
