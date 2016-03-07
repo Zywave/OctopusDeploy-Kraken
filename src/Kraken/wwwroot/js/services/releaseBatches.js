@@ -107,6 +107,15 @@
             }).then(function (data) {
                 return data;
             });
+        },
+        getProgression : function(idOrName) {
+            return $.ajax({
+                type: 'GET',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/getprogression',
+                contentType: 'application/json'
+            }).then(function (data) {
+                return data;
+            });
         }
     };
 

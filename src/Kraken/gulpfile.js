@@ -52,6 +52,7 @@ gulp.task("build", function () {
             moment: "empty:",
             select2: "empty:",
             koselect2: "empty:",
+            underscore: "empty:",
 
             html: "../html",
 

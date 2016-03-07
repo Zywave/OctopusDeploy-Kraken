@@ -22,7 +22,7 @@
         }
 
         [HttpGet("{permission}")]
-        public IEnumerable<EnvironmentResource> GetEnvironments([FromRoute] Permission permission = Permission.None)
+        public IEnumerable<EnvironmentResource> GetEnvironments([FromRoute] Permission permission = Permission.EnvironmentView)
         {
             return _octopusProxy.GetEnvironments(permission == Permission.None ? Permission.EnvironmentView : permission);
         }

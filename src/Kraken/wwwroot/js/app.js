@@ -9,7 +9,13 @@
         moment: '../lib/moment/min/moment.min',
         select2: '../lib/select2/dist/js/select2',
         koselect2: '../lib/knockout-select2v4/dist/knockout-select2',
-        text: '../lib/text/text'
+        text: '../lib/text/text',
+        underscore: '../lib/underscore/underscore'
+    },
+    shim: {
+        underscore: {
+            exports: '_'
+        }
     }
 });
 

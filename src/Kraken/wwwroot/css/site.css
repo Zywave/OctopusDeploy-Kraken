@@ -31,9 +31,9 @@ textarea {
     padding: 0;
 }
 
-.sub-container .col {
-    padding: 0 0 20px 0;
-}
+    .sub-container .col {
+        padding: 0 0 20px 0;
+    }
 
 .cmdr-overlay {
     z-index: 10000;
@@ -49,54 +49,54 @@ textarea {
     vertical-align: top;
 }
 
-.batch-list__item a {
-    width: 280px;
-    height: 280px;
-    margin-right: 20px;
-    border-radius: 3px;
-    border: 1px solid transparent;
-    display: block;
-    padding: 18px;
-    text-align: center;
-    text-decoration: none;
-    background-color: transparent;
-}
+    .batch-list__item a {
+        width: 280px;
+        height: 280px;
+        margin-right: 20px;
+        border-radius: 3px;
+        border: 1px solid transparent;
+        display: block;
+        padding: 18px;
+        text-align: center;
+        text-decoration: none;
+        background-color: transparent;
+    }
 
-.batch-list__item a:hover {
-    background: #f4f4f4;
-    border: 1px solid #ddd;
-    text-decoration: none;
-}
+        .batch-list__item a:hover {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            text-decoration: none;
+        }
 
-.batch-list__item img {
-    display: inline-block;
-    height: 100px;
-    max-width: 250px;
-    border-radius: 4px;
-}
+    .batch-list__item img {
+        display: inline-block;
+        height: 100px;
+        max-width: 250px;
+        border-radius: 4px;
+    }
 
-.batch-list__item span {
-    display: block;
-    font-family: inherit;
-    font-weight: 400;
-    line-height: 1.2;
-    color: inherit;
-    margin-bottom: 7pt;
-    font-size: 13pt;
-    max-height: 65px;
-    overflow: hidden;
-    margin-top: 18px;
-    width: 100%;
-}
+    .batch-list__item span {
+        display: block;
+        font-family: inherit;
+        font-weight: 400;
+        line-height: 1.2;
+        color: inherit;
+        margin-bottom: 7pt;
+        font-size: 13pt;
+        max-height: 65px;
+        overflow: hidden;
+        margin-top: 18px;
+        width: 100%;
+    }
 
-.batch-list__item p {
-    overflow: hidden;
-    max-height: 65px;
-    display: block;
-    text-overflow: ellipsis;
-    margin: 0 0 12pt;
-    color: #777;
-}
+    .batch-list__item p {
+        overflow: hidden;
+        max-height: 65px;
+        display: block;
+        text-overflow: ellipsis;
+        margin: 0 0 12pt;
+        color: #777;
+    }
 
 .select2__link-project {
     width: 80%;
@@ -106,18 +106,18 @@ textarea {
     margin-top: 10px;
 }
 
-.view__header h2 {
-    margin-top: 10px;
-    color: #555;
-}
+    .view__header h2 {
+        margin-top: 10px;
+        color: #555;
+    }
 
-.view__header .batch-logo {
-    height: 40px;
-    margin-right: 10px;
-}
+    .view__header .batch-logo {
+        height: 40px;
+        margin-right: 10px;
+    }
 
-.view__footer {  
-    margin-top: 20px;  
+.view__footer {
+    margin-top: 20px;
     padding-top: 9px;
     border-top: 1px solid #eee;
     color: #777;
@@ -127,3 +127,39 @@ textarea {
     text-align: right;
 }
 
+.deployment-square {
+    text-align: left;
+    display: block;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    width: 50px;
+}
+
+.status {
+    display: inline-block;
+    width: 37px;
+    height: 37px;
+    padding-top: 3px;
+    border-radius: 2px;
+    background: 0 .1em no-repeat;
+    font-size: 20px;
+    line-height: 30px;
+    margin-right: 7px;
+    text-shadow: none;
+    vertical-align: baseline;
+    position: relative;
+    text-align: center;
+    color: #fff;
+}
+
+.success {
+    background-color: #55ab55;
+}
+
+.failed {
+    background-color: #e45847;
+}
+
+.executing {
+    background-color: #1b80c2;
+}

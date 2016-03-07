@@ -1,21 +1,26 @@
-﻿define(['knockout', 'bootstrap', 'select2', 'koselect2', 'moment', 'utils/koAsyncExtender', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'services/users', 'context'], function (ko, bs, select2, koselect2, moment, koAsyncExtender, shell, bus, releaseBatchesService, environmentsService, projectsService, usersService, context) {
-    return function(params) {
-        
-        this.environments = ko.observableArray();
+﻿define(['knockout', 'bootstrap', 'select2', 'koselect2', 'moment', 'underscore', 'utils/koAsyncExtender', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'services/users', 'context'], function (ko, bs, select2, koselect2, moment, _, koAsyncExtender, shell, bus, releaseBatchesService, environmentsService, projectsService, usersService, context) {
+    return function (params) {
+
+        this.viewEnvironments = ko.observableArray();
+        this.deployEnvironments = ko.observableArray();
+        this.progress = ko.observable();
         this.selectedProject = ko.observable();
+        this.releaseBatch = ko.observable();
+        var releaseBatch = this.releaseBatch;
+
         this.projectsSelect2Options = ko.observable({
             width: 'off',
             placeholder: 'Link project...',
             ajax: {
                 url: context.basePath + 'api/projects',
-                data: function(params) {
+                data: function (params) {
                     return {
                         nameFilter: params.term
                     };
                 },
                 dataType: 'json',
-                processResults: function(data) {
-                    data = $.map(data, function(obj) {
+                processResults: function (data) {
+                    data = $.map(data, function (obj) {
                         obj.text = obj.text || obj.name;
                         return obj;
                     });
@@ -28,19 +33,19 @@
             theme: 'bootstrap'
         });
 
-        this.releaseBatch = ko.observable();        
-        var releaseBatch = this.releaseBatch;
-
-        this.loadReleaseBatch = function() {
+        this.loadReleaseBatch = function () {
             releaseBatchesService.getReleaseBatch(params.id).then(function (data) {
                 data.logoUrl = context.basePath + 'api/releasebatches/' + data.id + '/logo?cb=' + new Date(data.updateDateTime).getTime();
                 this.releaseBatch(data);
             }.bind(this));
         }.bind(this);
 
-        this.loadEnvironments = function() {
-            environmentsService.getEnvironments('DeploymentCreate').then(function(data) {
-                this.environments(data);
+        this.loadEnvironments = function () {
+            environmentsService.getEnvironments('DeploymentCreate').then(function (data) {
+                this.deployEnvironments(data);
+            }.bind(this));
+            environmentsService.getEnvironments('EnvironmentView').then(function (data) {
+                this.viewEnvironments(data);
             }.bind(this));
         }.bind(this);
 
@@ -80,6 +85,14 @@
             }.bind(this));
         }.bind(this);
 
+        this.checkProgress = function () {
+            shell.execute('PROGRESS', params.id).then(function (data) {
+                this.progress(data);
+            }.bind(this), function () {
+                shell.open();
+            }.bind(this));
+        }.bind(this);
+
         var displayNames = {};
         function getUserDisplayName(userName) {
             if (!userName) return null;
@@ -111,11 +124,56 @@
         this.getReleaseUrl = function (item) {
             return this.getProjectUrl(item) + '/releases/' + item.releaseVersion;
         }.bind(this);
-        
+
+        this.getDeploymentUrl = function (item, environment) {
+            var release = this.getProgressDataFromProgression(item, environment);
+            if (release && release.deployments[environment.id.toLowerCase()]) {
+                return this.getReleaseUrl(item) + '/deployments/' + release.deployments[environment.id.toLowerCase()].deploymentId;
+            }
+        }
+
+        this.applyIconsToProgress = function (item, environment) {
+            var release = this.getProgressDataFromProgression(item, environment);
+            if (release) {
+                var state = release.deployments[environment.id.toLowerCase()].state;
+                if (state === 6) { // 'Success'
+                    return 'fa fa-check';
+                } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
+                    return 'fa fa-exclamation-triangle';
+                } else { // 'Cancelling' || 'Executing' || 'Queued'
+                    return 'fa fa-spinner fa-spin';
+                }
+            }
+        }
+
+        this.applyCssToProgress = function (item, environment) {
+            var release = this.getProgressDataFromProgression(item, environment);
+            if (release) {
+                var state = release.deployments[environment.id.toLowerCase()].state;
+                if (state === 6) { // 'Success'
+                    return 'status success';
+                } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
+                    return 'status failed';
+                } else { // 'Cancelling' || 'Executing' || 'Queued'
+                    return 'status executing';
+                }
+            }
+        }
+
+        this.getProgressDataFromProgression = function (item, environment) {
+            if (this.progress()) {
+                var progress = this.progress()[item.projectId.toLowerCase()];
+                var release = _.find(progress.releases, function (releases) {
+                    return releases.deployments[environment.id.toLowerCase()];
+                });
+                return release;
+            }
+        }.bind(this);
+
         this.manage = function () {
             shell.open();
         }.bind(this);
-        
+
         bus.subscribe('releasebatches:update', function (idOrName) {
             if (releaseBatch().id === idOrName || releaseBatch().name === idOrName) {
                 this.loadReleaseBatch();
@@ -129,5 +187,11 @@
 
         this.loadReleaseBatch();
         this.loadEnvironments();
+        this.checkProgress();
+
+        // check progress every 5 seconds
+        setInterval(function () {
+            this.checkProgress();
+        }.bind(this), 5000);
     };
 });

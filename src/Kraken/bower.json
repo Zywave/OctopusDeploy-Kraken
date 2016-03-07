@@ -13,6 +13,8 @@
     "knockout": "~3.4.0",
     "text": "requirejs-text#~2.0.14",
     "moment": "2.10.6",
-    "select2-bootstrap-theme": "~0.1.0-beta.4"
+    "select2-bootstrap-theme": "~0.1.0-beta.4",
+    "font-awesome": "4.4.0",
+    "underscore": "1.5.2"
   }
 }

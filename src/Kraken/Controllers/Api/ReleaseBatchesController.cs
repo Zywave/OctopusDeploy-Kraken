@@ -474,13 +474,14 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
-            var progressions = new List<ProgressionResource>();
+            var progressions = new Dictionary<string, ProgressionResource>();
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
                 foreach (var releaseBatchItem in releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
                 {
-                    progressions.Add(_octopusProxy.GetProgression(releaseBatchItem.ProjectId));
+                    progressions.Add(releaseBatchItem.ProjectId,
+                        _octopusProxy.GetProgression(releaseBatchItem.ProjectId));
                 }
             }
 
