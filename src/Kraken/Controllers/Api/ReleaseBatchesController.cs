@@ -11,7 +11,6 @@ namespace Kraken.Controllers.Api
     using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Mvc;
     using Microsoft.Data.Entity;
-    using Newtonsoft.Json.Linq;
     using Octopus.Client.Model;
 
     [Authorize]
@@ -210,7 +209,7 @@ namespace Kraken.Controllers.Api
 
         // PUT: api/ReleaseBatches/5/LinkProject
         [HttpPut("{idOrName}/LinkProject")]
-        public async Task<IActionResult> LinkProjectToReleaseBatch([FromRoute] string idOrName, [FromBody] string projectIdOrSlugOrName)
+        public async Task<IActionResult> LinkProject([FromRoute] string idOrName, [FromBody] LinkProjectRequestBody requestBody)
         {
             if (!ModelState.IsValid)
             {
@@ -223,24 +222,44 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
-            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
-            releaseBatch.UpdateUserName = User.Identity.Name;
-
-            var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
+            var projectResource = _octopusProxy.GetProject(requestBody.ProjectIdOrSlugOrName);
             if (projectResource == null)
             {
                 return HttpBadRequest("Project Not Found");
             }
 
-            var releaseBatchItem = new ReleaseBatchItem
+            ReleaseResource releaseResource = null;
+            if (requestBody.ReleaseVersion != null)
             {
-                ReleaseBatchId = releaseBatch.Id,
-                ProjectId = projectResource.Id,
-                ProjectName = projectResource.Name,
-                ProjectSlug = projectResource.Slug
-            };
-            
-            _context.ReleaseBatchItems.Add(releaseBatchItem);
+                releaseResource = _octopusProxy.GetRelease(projectResource.Id, requestBody.ReleaseVersion);
+                if (releaseResource == null)
+                {
+                    return HttpBadRequest("Release Not Found");
+                }
+            }
+
+            var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == releaseBatch.Id && e.ProjectId == projectResource.Id);
+            if (releaseBatchItem == null)
+            {
+                releaseBatchItem = new ReleaseBatchItem
+                {
+                    ReleaseBatchId = releaseBatch.Id,
+                    ProjectId = projectResource.Id
+                };
+                _context.ReleaseBatchItems.Add(releaseBatchItem);
+            }
+
+            releaseBatchItem.ProjectName = projectResource.Name;
+            releaseBatchItem.ProjectSlug = projectResource.Slug;
+
+            if (releaseResource != null)
+            {
+                releaseBatchItem.ReleaseId = releaseResource.Id;
+                releaseBatchItem.ReleaseVersion = releaseResource.Version;
+            }            
+
+            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
+            releaseBatch.UpdateUserName = User.Identity.Name;
 
             await _context.SaveChangesAsync();
 
@@ -249,7 +268,7 @@ namespace Kraken.Controllers.Api
 
         // PUT: api/ReleaseBatches/5/UnlinkProject
         [HttpPut("{idOrName}/UnlinkProject")]
-        public async Task<IActionResult> UnlinkProjectFromReleaseBatch([FromRoute] string idOrName, [FromBody] string projectIdOrSlugOrName)
+        public async Task<IActionResult> UnlinkProject([FromRoute] string idOrName, [FromBody] string projectIdOrSlugOrName)
         {
             if (!ModelState.IsValid)
             {
@@ -261,20 +280,20 @@ namespace Kraken.Controllers.Api
             {
                 return HttpNotFound();
             }
-
-            releaseBatch.UpdateDateTime = DateTimeOffset.Now;
-            releaseBatch.UpdateUserName = User.Identity.Name;
-
+            
             var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
             if (projectResource == null)
             {
                 return HttpBadRequest("Project Not Found");
             }
-
+            
             var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == releaseBatch.Id && e.ProjectId == projectResource.Id);
             if (releaseBatchItem != null)
             {
                 _context.ReleaseBatchItems.Remove(releaseBatchItem);
+
+                releaseBatch.UpdateDateTime = DateTimeOffset.Now;
+                releaseBatch.UpdateUserName = User.Identity.Name;
 
                 await _context.SaveChangesAsync();
             }
@@ -376,9 +395,9 @@ namespace Kraken.Controllers.Api
             return Ok(deployments);
         }
 
-        // GET: api/ReleaseBatches/5/GetNextReleases
-        [HttpGet("{idOrName}/GetNextReleases")]
-        public async Task<IActionResult> GetNextReleases([FromRoute] string idOrName)
+        // GET: api/ReleaseBatches/5/PreviewReleases
+        [HttpGet("{idOrName}/PreviewReleases")]
+        public async Task<IActionResult> PreviewReleases([FromRoute] string idOrName)
         {
             if (!ModelState.IsValid)
             {
@@ -483,5 +502,11 @@ namespace Kraken.Controllers.Api
         private readonly ApplicationDbContext _context;
         private readonly IOctopusProxy _octopusProxy;
         private readonly IOctopusReleaseService _octopusReleaseService;
+
+        public class LinkProjectRequestBody
+        {
+            public string ProjectIdOrSlugOrName { get; set; }
+            public string ReleaseVersion { get; set; }
+        }
     }
 }

@@ -26,5 +26,7 @@
         ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages);
 
         ReleaseResource CreateRelease(ReleaseResource release);
+
+        ReleaseResource GetRelease(string projectId, string releaseVersion);
     }
 }
