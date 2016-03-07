@@ -325,7 +325,7 @@ namespace Kraken.Controllers.Api
                 EnvironmentResource environment = null;
                 if (!String.IsNullOrEmpty(environmentIdOrName))
                 {
-                    environment = _octopusProxy.GetEnvironment(environmentIdOrName);
+                    environment = _octopusProxy.GetEnvironment(environmentIdOrName, Permission.EnvironmentView);
                     if (environment == null)
                     {
                         return HttpBadRequest("Environment Not Found");
@@ -369,7 +369,7 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
-            var environment = _octopusProxy.GetEnvironment(environmentIdOrName);
+            var environment = _octopusProxy.GetEnvironment(environmentIdOrName, Permission.DeploymentCreate);
             if (environment == null)
             {
                 return HttpBadRequest("Environment Not Found");
@@ -458,6 +458,33 @@ namespace Kraken.Controllers.Api
             await _context.SaveChangesAsync();
 
             return Ok(releaseBatch);
+        }
+
+        [HttpGet("{idOrName}/GetProgression")]
+        public async Task<IActionResult> GetProgression([FromRoute] string idOrName)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+
+            var releaseBatch = await GetReleaseBatch(idOrName, true, false);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+
+            var progressions = new List<ProgressionResource>();
+
+            if (releaseBatch.Items != null && releaseBatch.Items.Any())
+            {
+                foreach (var releaseBatchItem in releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
+                {
+                    progressions.Add(_octopusProxy.GetProgression(releaseBatchItem.ProjectId));
+                }
+            }
+
+            return Ok(progressions);
         }
 
         protected override void Dispose(bool disposing)

@@ -39,7 +39,7 @@
         }.bind(this);
 
         this.loadEnvironments = function() {
-            environmentsService.getEnvironments().then(function(data) {
+            environmentsService.getEnvironments('DeploymentCreate').then(function(data) {
                 this.environments(data);
             }.bind(this));
         }.bind(this);

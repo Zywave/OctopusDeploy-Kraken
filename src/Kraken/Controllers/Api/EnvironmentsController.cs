@@ -21,10 +21,10 @@
             _octopusProxy = octopusProxy;
         }
 
-        [HttpGet]
-        public IEnumerable<EnvironmentResource> GetEnvironments()
+        [HttpGet("{permission}")]
+        public IEnumerable<EnvironmentResource> GetEnvironments([FromRoute] Permission permission = Permission.None)
         {
-            return _octopusProxy.GetEnvironments();
+            return _octopusProxy.GetEnvironments(permission == Permission.None ? Permission.EnvironmentView : permission);
         }
 
         private readonly IOctopusProxy _octopusProxy;

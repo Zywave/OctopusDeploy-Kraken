@@ -5,13 +5,15 @@
 
     public interface IOctopusProxy
     {
-        IEnumerable<EnvironmentResource> GetEnvironments();
+        IEnumerable<EnvironmentResource> GetEnvironments(Permission permission);
 
-        EnvironmentResource GetEnvironment(string idOrName);
+        EnvironmentResource GetEnvironment(string idOrName, Permission permission);
 
         ProjectResource GetProject(string idOrSlugOrName);
 
         IEnumerable<ProjectResource> GetProjects(string nameFilter);
+
+        ProgressionResource GetProgression(string projectId);
 
         ReleaseResource GetLatestRelease(string projectId);
 
