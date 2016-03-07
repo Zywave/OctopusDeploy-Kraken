@@ -86,9 +86,12 @@
         }.bind(this);
 
         this.checkProgress = function () {
-            shell.execute('PROGRESS', params.id).then(function (data) {
+            shell.execute('PROGRESS', params.id, '--suppressmessage').then(function (data) {
                 this.progress(data);
             }.bind(this), function () {
+                if (this.checkProgressIntervalId) {
+                    clearInterval(this.checkProgressIntervalId);
+                }
                 shell.open();
             }.bind(this));
         }.bind(this);
@@ -190,7 +193,7 @@
         this.checkProgress();
 
         // check progress every 5 seconds
-        setInterval(function () {
+        this.c = setInterval(function () {
             this.checkProgress();
         }.bind(this), 5000);
     };
