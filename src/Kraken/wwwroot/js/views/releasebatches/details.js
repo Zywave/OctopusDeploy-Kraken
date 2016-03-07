@@ -151,11 +151,11 @@
             if (release) {
                 var state = release.deployments[environment.id.toLowerCase()].state;
                 if (state === 6) { // 'Success'
-                    return 'status success';
+                    return 'status status__success';
                 } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
-                    return 'status failed';
+                    return 'status status__failed';
                 } else { // 'Cancelling' || 'Executing' || 'Queued'
-                    return 'status executing';
+                    return 'status status__executing';
                 }
             }
         }

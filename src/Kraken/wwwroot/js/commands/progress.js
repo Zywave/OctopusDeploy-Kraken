@@ -1,4 +1,4 @@
-﻿define(['cmdr', 'services/releaseBatches'], function (cmdr, releaseBatchesService) {
+﻿define(['cmdr', 'services/releaseBatches', 'underscore'], function (cmdr, releaseBatchesService, _) {
 
     return new cmdr.Definition({
         name: 'PROGRESS',
@@ -11,8 +11,15 @@
             }
 
             return releaseBatchesService.getProgression(name).then(function (data) {
-                this.shell.writeLine('Progression for: ' + name);
-                this.shell.writeLine();
+                // TODO display progress in shell
+                //this.shell.writeLine('Progression for batch idOrName ' + name);
+                //this.shell.writeLine();
+                //_.each(_.keys(data), function (projectId) {
+                //    if (data[projectId].releases) {
+                //        this.shell.writeLine(projectId);
+                //        //this.shell.writeTable(data.releases, ['projectId:20:project id', 'projectName:50:project name', 'releaseVersion:*:release version'], true);
+                //    }
+                //}.bind(this));
                 //this.shell.writeTable(data.releases, ['projectId:20:project id', 'projectName:50:project name', 'releaseVersion:*:release version'], true);
                 //this.shell.writeLine();
 

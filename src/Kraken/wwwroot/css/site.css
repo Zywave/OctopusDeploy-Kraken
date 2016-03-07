@@ -152,14 +152,14 @@ textarea {
     color: #fff;
 }
 
-.success {
+.status__success {
     background-color: #55ab55;
 }
 
-.failed {
+.status__failed {
     background-color: #e45847;
 }
 
-.executing {
+.status__executing {
     background-color: #1b80c2;
 }

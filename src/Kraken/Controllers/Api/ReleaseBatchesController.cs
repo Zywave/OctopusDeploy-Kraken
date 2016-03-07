@@ -478,7 +478,7 @@ namespace Kraken.Controllers.Api
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
-                foreach (var releaseBatchItem in releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
+                foreach (var releaseBatchItem in releaseBatch.Items)
                 {
                     progressions.Add(releaseBatchItem.ProjectId,
                         _octopusProxy.GetProgression(releaseBatchItem.ProjectId));
