@@ -129,16 +129,16 @@
         }.bind(this);
 
         this.getDeploymentUrl = function (item, environment) {
-            var release = this.getProgressDataFromProgression(item, environment);
-            if (release && release.deployments[environment.id.toLowerCase()]) {
-                return this.getReleaseUrl(item) + '/deployments/' + release.deployments[environment.id.toLowerCase()].deploymentId;
+            var progress = this.getProgressDataFromProgression(item, environment);
+            if (progress) {
+                return this.getReleaseUrl(item) + '/deployments/' + progress.deploymentId;
             }
         }
 
         this.applyIconsToProgress = function (item, environment) {
-            var release = this.getProgressDataFromProgression(item, environment);
-            if (release) {
-                var state = release.deployments[environment.id.toLowerCase()].state;
+            var progress = this.getProgressDataFromProgression(item, environment);
+            if (progress) {
+                var state = progress.state;
                 if (state === 6) { // 'Success'
                     return 'fa fa-check';
                 } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
@@ -150,9 +150,9 @@
         }
 
         this.applyCssToProgress = function (item, environment) {
-            var release = this.getProgressDataFromProgression(item, environment);
-            if (release) {
-                var state = release.deployments[environment.id.toLowerCase()].state;
+            var progress = this.getProgressDataFromProgression(item, environment);
+            if (progress) {
+                var state = progress.state;
                 if (state === 6) { // 'Success'
                     return 'status status__success';
                 } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
@@ -165,11 +165,10 @@
 
         this.getProgressDataFromProgression = function (item, environment) {
             if (this.progress()) {
-                var progress = this.progress()[item.projectId.toLowerCase()];
-                var release = _.find(progress.releases, function (releases) {
-                    return releases.deployments[environment.id.toLowerCase()];
+                var progress = _.find(this.progress(), function (p) {
+                    return p.projectId === item.projectId;
                 });
-                return release;
+                return progress;
             }
         }.bind(this);
 

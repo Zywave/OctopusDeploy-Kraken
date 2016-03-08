@@ -474,18 +474,38 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
-            var progressions = new Dictionary<string, ProgressionResource>();
+            var progress = new List<ProjectProgressResponseBody>();
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    progressions.Add(releaseBatchItem.ProjectId,
-                        _octopusProxy.GetProgression(releaseBatchItem.ProjectId));
+                    var progression = _octopusProxy.GetProgression(releaseBatchItem.ProjectId);
+                    foreach(var environment in progression.Environments)
+                    {
+                        DashboardItemResource deployment = null;
+                        foreach(var release in progression.Releases)
+                        {
+                            if (release.Deployments.TryGetValue(environment.Id, out deployment))
+                            {
+                                break;
+                            }
+                        }
+                        if (deployment != null)
+                        {
+                            progress.Add(new ProjectProgressResponseBody
+                            {
+                                ProjectId = releaseBatchItem.ProjectId,
+                                EnvironmentId = environment.Id,
+                                DeploymentId = deployment.DeploymentId,
+                                State = deployment.State
+                            });
+                        }
+                    }
                 }
             }
 
-            return Ok(progressions);
+            return Ok(progress);
         }
 
         protected override void Dispose(bool disposing)
@@ -535,6 +555,14 @@ namespace Kraken.Controllers.Api
         {
             public string ProjectIdOrSlugOrName { get; set; }
             public string ReleaseVersion { get; set; }
+        }
+
+        public class ProjectProgressResponseBody
+        {
+            public string ProjectId { get; set; }
+            public string DeploymentId { get; set; }
+            public TaskState State { get; set; }
+            public string EnvironmentId { get; set; }
         }
     }
 }
