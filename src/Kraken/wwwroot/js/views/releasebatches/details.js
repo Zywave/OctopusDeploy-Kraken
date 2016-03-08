@@ -131,7 +131,7 @@
         this.getDeploymentUrl = function (item, environment) {
             var progress = this.getProgressDataFromProgression(item, environment);
             if (progress) {
-                return this.getReleaseUrl(item) + '/deployments/' + progress.deploymentId;
+                return this.getProjectUrl(item) + '/releases/' + progress.releaseId + '/deployments/' + progress.deploymentId;
             }
         }
 

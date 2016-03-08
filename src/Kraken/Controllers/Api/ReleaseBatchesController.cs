@@ -498,7 +498,8 @@ namespace Kraken.Controllers.Api
                                 ProjectId = releaseBatchItem.ProjectId,
                                 EnvironmentId = environment.Id,
                                 DeploymentId = deployment.DeploymentId,
-                                State = deployment.State
+                                State = deployment.State,
+                                ReleaseId = deployment.ReleaseId
                             });
                         }
                     }
@@ -563,6 +564,7 @@ namespace Kraken.Controllers.Api
             public string DeploymentId { get; set; }
             public TaskState State { get; set; }
             public string EnvironmentId { get; set; }
+            public string ReleaseId { get; set; }
         }
     }
 }

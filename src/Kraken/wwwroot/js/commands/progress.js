@@ -16,7 +16,7 @@
                     var environmentIds = [];
                     this.shell.writeLine('Progression for batch idOrName ' + name);
                     this.shell.writeLine();
-                    this.shell.writeTable(data, ['projectId:20:project id', 'environmentId:20:environment', 'state:*:state'], true);
+                    this.shell.writeTable(data, ['projectId:20:project id', 'environmentId:20:environment', 'releaseId:20:release id', 'state:*:state'], true);
                 }
                 return data;
             }.bind(this)).fail(this.fail.bind(this));
