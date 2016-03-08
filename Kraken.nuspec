@@ -2,13 +2,13 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.0-prerelease03</version>
+    <version>1.0.0-prerelease06</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
     <releaseNotes>### Bug Fixes
 
-* appveyor artifact push fix ([53111a8](https://github.com/zywave/OctopusDeploy-Kraken/commit/53111a8)), closes [#31](https://github.com/zywave/OctopusDeploy-Kraken/issues/31)</releaseNotes>
+* logs file powershell fix ([fd3fccf](https://github.com/zywave/OctopusDeploy-Kraken/commit/fd3fccf))</releaseNotes>
   </metadata>
   <files>
       <file src="src\Kraken\bin\output\**\*.*" target=""/>

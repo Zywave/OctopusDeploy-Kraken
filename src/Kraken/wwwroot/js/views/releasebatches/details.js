@@ -1,11 +1,18 @@
 ﻿define(['knockout', 'bootstrap', 'select2', 'koselect2', 'moment', 'underscore', 'utils/koAsyncExtender', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'services/users', 'context'], function (ko, bs, select2, koselect2, moment, _, koAsyncExtender, shell, bus, releaseBatchesService, environmentsService, projectsService, usersService, context) {
     return function (params) {
 
+        var checkProgressIntervalId;
         this.viewEnvironments = ko.observableArray();
         this.deployEnvironments = ko.observableArray();
         this.progress = ko.observable();
         this.selectedProject = ko.observable();
         this.releaseBatch = ko.observable();
+        this.releaseBatch.subscribe(function (batch) {
+            if (batch.items.length) {
+                this.checkProgress();
+            };
+        }.bind(this));
+
         var releaseBatch = this.releaseBatch;
 
         this.projectsSelect2Options = ko.observable({
@@ -41,11 +48,9 @@
         }.bind(this);
 
         this.loadEnvironments = function () {
-            environmentsService.getEnvironments('DeploymentCreate').then(function (data) {
-                this.deployEnvironments(data);
-            }.bind(this));
-            environmentsService.getEnvironments('EnvironmentView').then(function (data) {
-                this.viewEnvironments(data);
+            releaseBatchesService.getBatchEnvironments(params.id).then(function (data) {
+                this.deployEnvironments(data.deploy);
+                this.viewEnvironments(data.view);
             }.bind(this));
         }.bind(this);
 
@@ -80,19 +85,23 @@
         this.linkProject = function () {
             shell.execute('LINKPROJ', params.id, this.selectedProject()).then(function () {
                 this.loadReleaseBatch();
+                this.loadEnvironments();
             }.bind(this), function () {
                 shell.open();
             }.bind(this));
         }.bind(this);
 
         this.checkProgress = function () {
-            shell.execute('PROGRESS', params.id, '--suppressmessage').then(function (data) {
+            clearInterval(checkProgressIntervalId);
+
+            releaseBatchesService.getProgression(params.id).then(function (data) {
                 this.progress(data);
-            }.bind(this), function () {
-                if (this.checkProgressIntervalId) {
-                    clearInterval(this.checkProgressIntervalId);
-                }
-                shell.open();
+                //check progress again in 5 seconds
+                checkProgressIntervalId = setInterval(function () {
+                    this.checkProgress();
+                }.bind(this), 5000);
+            }.bind(this)).fail(function(e) {
+                console.error(e);
             }.bind(this));
         }.bind(this);
 
@@ -135,31 +144,20 @@
             }
         }
 
-        this.applyIconsToProgress = function (item, environment) {
-            var progress = this.getProgressDataFromProgression(item, environment);
-            if (progress) {
-                var state = progress.state;
-                if (state === 6) { // 'Success'
-                    return 'fa fa-check';
-                } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
-                    return 'fa fa-exclamation-triangle';
-                } else { // 'Cancelling' || 'Executing' || 'Queued'
-                    return 'fa fa-spinner fa-spin';
-                }
+        this.getProgressState = function(progress) {
+            var state = progress.state;
+            if (state === 'Success') { // 'Success'
+                return 'success';
+            } else if (state === 'Canceled' || state === 'Failed' || state === 'TimedOut') { // 'Canceled' || 'Failed' || 'TimedOut'
+                return 'failed';
+            } else { // 'Cancelling' || 'Executing' || 'Queued'
+                return 'executing';
             }
         }
 
-        this.applyCssToProgress = function (item, environment) {
-            var progress = this.getProgressDataFromProgression(item, environment);
-            if (progress) {
-                var state = progress.state;
-                if (state === 6) { // 'Success'
-                    return 'status status__success';
-                } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
-                    return 'status status__failed';
-                } else { // 'Cancelling' || 'Executing' || 'Queued'
-                    return 'status status__executing';
-                }
+        this.formatDate = function (date) {
+            if (date) {
+                return moment(date).format('l LTS');
             }
         }
 
@@ -179,6 +177,7 @@
         bus.subscribe('releasebatches:update', function (idOrName) {
             if (releaseBatch().id === idOrName || releaseBatch().name === idOrName) {
                 this.loadReleaseBatch();
+                this.loadEnvironments();
             }
         }.bind(this));
         bus.subscribe('releasebatches:delete', function (idOrName) {
@@ -189,11 +188,5 @@
 
         this.loadReleaseBatch();
         this.loadEnvironments();
-        this.checkProgress();
-
-        // check progress every 5 seconds
-        this.checkProgressIntervalId = setInterval(function () {
-            this.checkProgress();
-        }.bind(this), 5000);
     };
 });

@@ -12,11 +12,11 @@ namespace Kraken.Tests.Controllers.Api
         public void TestGetEnvironmentsReturnsOctopusData()
         {
             var octopusApi = new Mock<IOctopusProxy>(MockBehavior.Strict);
-            octopusApi.Setup(o => o.GetEnvironments(Permission.EnvironmentView)).Returns(new[] { new EnvironmentResource() });
+            octopusApi.Setup(o => o.GetEnvironments()).Returns(new[] { new EnvironmentResource() });
 
             var controller = new EnvironmentsController(octopusApi.Object);
 
-            var result = controller.GetEnvironments(Permission.EnvironmentView);
+            var result = controller.GetEnvironments();
 
             Assert.NotNull(result);
 

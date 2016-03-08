@@ -23,20 +23,59 @@
 
             var endpoint = new OctopusServerEndpoint(settings.Value.OctopusServerAddress, apiKey);
             _octopusRepository = new OctopusRepository(endpoint);
-            _octopusClient = new OctopusClient(endpoint);
         }
 
-        public IEnumerable<EnvironmentResource> GetEnvironments(Permission permission)
+        public IEnumerable<EnvironmentResource> GetEnvironments()
         {
+            return _octopusRepository.Environments.FindAll();
+        }
+
+        public EnvironmentResource GetEnvironment(string idOrName)
+        {
+            return _octopusRepository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Environments-" + idOrName || string.Equals(e.Name, idOrName, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public Dictionary<Permission, IEnumerable<EnvironmentResource>> GetEnvironmentsWithPermissions(IEnumerable<Permission> permissionsToGet, IEnumerable<string> projectIds = null)
+        {
+            if (projectIds == null)
+            {
+                projectIds = new List<string>();
+            }
+
+            var environmentsWithPermissions = new Dictionary<Permission, IEnumerable<EnvironmentResource>>();
+
             var environments = _octopusRepository.Environments.FindAll();
+            var user = _octopusRepository.Users.GetCurrent();
+            var permissions = _octopusRepository.Users.GetPermissions(user);
 
-            return EnvironmentPermissionCheck(environments, permission);
-        }
+            foreach (var permissionToGet in permissionsToGet)
+            {
+                List<UserPermissionRestriction> userPermissionRestrictions;
+                var restrictedEnvironments = new List<string>();
+                if (permissions.Permissions.TryGetValue(permissionToGet, out userPermissionRestrictions))
+                {
+                    foreach (var userPermissionRestriction in userPermissionRestrictions)
+                    {
+                        if (!userPermissionRestriction.RestrictedToProjectIds.Any() ||
+                            userPermissionRestriction.RestrictedToProjectIds.Intersect(projectIds).Any())
+                        {
+                            // user has access to ALL environments for a project passed in
+                            if (!userPermissionRestriction.RestrictedToEnvironmentIds.Any())
+                            {
+                                restrictedEnvironments.AddRange(environments.Select(e => e.Id));
+                                break;
+                            }
+                            restrictedEnvironments.AddRange(userPermissionRestriction.RestrictedToEnvironmentIds);
+                        }
+                    }
+                }
+                environmentsWithPermissions.Add(permissionToGet,
+                    !restrictedEnvironments.Any()
+                        ? environments
+                        : environments.Where(e => restrictedEnvironments.Contains(e.Id)));
+            }
 
-        public EnvironmentResource GetEnvironment(string idOrName, Permission permission)
-        {
-            var environment = _octopusRepository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Environments-" + idOrName || string.Equals(e.Name, idOrName, StringComparison.InvariantCultureIgnoreCase));
-            return EnvironmentPermissionCheck(new List<EnvironmentResource> { environment }, permission).FirstOrDefault();
+            return environmentsWithPermissions;
         }
 
         public ProjectResource GetProject(string idOrSlugOrName)
@@ -49,9 +88,9 @@
             return _octopusRepository.Projects.FindMany(p => string.IsNullOrEmpty(nameFilter) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, nameFilter, CompareOptions.IgnoreCase) >= 0);
         }
 
-        public ProgressionResource GetProgression(string projectId)
+        public DashboardResource GetDynamicDashboard(IEnumerable<string> projectIds, IEnumerable<string> environmentIds)
         {
-            return _octopusClient.Get<ProgressionResource>($"api/progression/{projectId}");
+            return _octopusRepository.Dashboards.GetDynamicDashboard(projectIds.ToArray(), environmentIds.ToArray());
         }
 
         public ReleaseResource GetLatestRelease(string projectId)
@@ -123,7 +162,14 @@
                 }
             }
 
-            return _octopusRepository.Deployments.Create(deploymentResource);
+            try
+            {
+                return _octopusRepository.Deployments.Create(deploymentResource);
+            }
+            catch (OctopusSecurityException e)
+            {
+                return null;
+            }
         }
 
         public ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages)
@@ -168,22 +214,6 @@
             return null;
         }
 
-        private IEnumerable<EnvironmentResource> EnvironmentPermissionCheck(IEnumerable<EnvironmentResource> environments, Permission permission)
-        {
-            var user = _octopusRepository.Users.GetCurrent();
-            var permissions = _octopusRepository.Users.GetPermissions(user);
-            List<UserPermissionRestriction> userPermissionRestrictions;
-            var restrictedEnvironments = new List<string>();
-            if (permissions.Permissions.TryGetValue(permission, out userPermissionRestrictions))
-            {
-                restrictedEnvironments = userPermissionRestrictions.SelectMany(p => p.RestrictedToEnvironmentIds).Distinct().ToList();
-            }
-            return !restrictedEnvironments.Any()
-                ? environments
-                : environments.Where(e => restrictedEnvironments.Contains(e.Id));
-        } 
-
         private readonly OctopusRepository _octopusRepository;
-        private readonly OctopusClient _octopusClient;
     }
 }

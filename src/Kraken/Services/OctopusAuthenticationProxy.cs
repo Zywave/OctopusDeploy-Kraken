@@ -28,7 +28,7 @@
             {
                 _repository.Users.SignIn(loginCommand);
             }
-            catch
+            catch (OctopusValidationException)
             {
                 user = null;
                 return false;
