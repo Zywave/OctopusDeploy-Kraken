@@ -166,7 +166,7 @@
         this.getProgressDataFromProgression = function (item, environment) {
             if (this.progress()) {
                 var progress = _.find(this.progress(), function (p) {
-                    return p.projectId === item.projectId;
+                    return p.projectId === item.projectId && p.environmentId === environment.id;
                 });
                 return progress;
             }
