@@ -13,7 +13,7 @@
 
         IEnumerable<ProjectResource> GetProjects(string nameFilter);
 
-        ProgressionResource GetProgression(string projectId);
+        DashboardResource GetDashboardForProjectIdsAndEnvironmentIds(IEnumerable<string> projectIds, IEnumerable<string> environmentIds);
 
         ReleaseResource GetLatestRelease(string projectId);
 

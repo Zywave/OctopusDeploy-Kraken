@@ -51,12 +51,20 @@
                         <a target="_blank" data-bind="text: releaseVersion, attr: { href: $parents[1].getReleaseUrl(batchItem) }"></a>
                     </td>
                     <!-- ko foreach: { data: $component.viewEnvironments, as: 'environment' } -->
-                    <td class="" data-bind="">
-                        <a class="deployment-square" target="_blank" data-bind="attr: { href: $component.getDeploymentUrl(batchItem, environment) }">
-                            <span data-bind="css: $component.applyCssToProgress(batchItem, environment)">
-                                <i data-bind="css: $component.applyIconsToProgress(batchItem, environment)"></i>
+                    <td>
+                        <!-- ko with: $component.getProgressDataFromProgression(batchItem, environment) -->
+                        <a class="deployment-square" target="_blank" data-bind="if: $data, attr: { href: $component.getDeploymentUrl(batchItem, environment) }">
+                            <!-- ko with: $component.getProgressSuccessOrFailedOrExecuting($data) -->
+                            <span class="status" data-bind="css: { 'status--success': $data === 'success', 'status--failed': $data === 'failed', 'status--executing': $data === 'executing' }">
+                                <i class="fa" data-bind="css: { 'fa-check': $data === 'success', 'fa-exclamation-triangle': $data === 'failed', 'fa-spinner fa-spin': $data === 'executing' }"></i>
+                            </span>
+                            <!-- /ko -->
+                            <span class="deployment-square-info">
+                                <span class="version" data-bind="text: $data.releaseVersion"></span>
+                                <span class="release-date" data-bind="text: $component.formatDate($data.completedTime)"></span>
                             </span>
                         </a>
+                        <!-- /ko -->
                     </td>
                     <!-- /ko -->
                 </tr>

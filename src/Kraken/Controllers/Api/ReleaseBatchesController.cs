@@ -461,7 +461,7 @@ namespace Kraken.Controllers.Api
         }
 
         [HttpGet("{idOrName}/GetProgression")]
-        public async Task<IActionResult> GetProgression([FromRoute] string idOrName)
+        public async Task<IActionResult> GetProgression([FromRoute] string idOrName, [FromQuery] List<string> environmentIds)
         {
             if (!ModelState.IsValid)
             {
@@ -478,32 +478,18 @@ namespace Kraken.Controllers.Api
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
-                foreach (var releaseBatchItem in releaseBatch.Items)
+                var dashboard = _octopusProxy.GetDashboardForProjectIdsAndEnvironmentIds(releaseBatch.Items.Select(i => i.ProjectId), environmentIds);
+
+                progress = dashboard.Items.Select(d => new ProjectProgressResponseBody
                 {
-                    var progression = _octopusProxy.GetProgression(releaseBatchItem.ProjectId);
-                    foreach(var environment in progression.Environments)
-                    {
-                        DashboardItemResource deployment = null;
-                        foreach(var release in progression.Releases)
-                        {
-                            if (release.Deployments.TryGetValue(environment.Id, out deployment))
-                            {
-                                break;
-                            }
-                        }
-                        if (deployment != null)
-                        {
-                            progress.Add(new ProjectProgressResponseBody
-                            {
-                                ProjectId = releaseBatchItem.ProjectId,
-                                EnvironmentId = environment.Id,
-                                DeploymentId = deployment.DeploymentId,
-                                State = deployment.State,
-                                ReleaseId = deployment.ReleaseId
-                            });
-                        }
-                    }
-                }
+                    ProjectId = d.ProjectId,
+                    EnvironmentId = d.EnvironmentId,
+                    DeploymentId = d.DeploymentId,
+                    State = d.State,
+                    ReleaseId = d.ReleaseId,
+                    ReleaseVersion = d.ReleaseVersion,
+                    CompletedTime = d.CompletedTime
+                }).ToList();
             }
 
             return Ok(progress);
@@ -565,6 +551,8 @@ namespace Kraken.Controllers.Api
             public TaskState State { get; set; }
             public string EnvironmentId { get; set; }
             public string ReleaseId { get; set; }
+            public string ReleaseVersion { get; set; }
+            public DateTimeOffset? CompletedTime { get; set; }
         }
     }
 }

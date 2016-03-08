@@ -49,9 +49,9 @@
             return _octopusRepository.Projects.FindMany(p => string.IsNullOrEmpty(nameFilter) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, nameFilter, CompareOptions.IgnoreCase) >= 0);
         }
 
-        public ProgressionResource GetProgression(string projectId)
+        public DashboardResource GetDashboardForProjectIdsAndEnvironmentIds(IEnumerable<string> projectIds, IEnumerable<string> environmentIds)
         {
-            return _octopusClient.Get<ProgressionResource>($"api/progression/{projectId}");
+            return _octopusRepository.Dashboards.GetDynamicDashboard(projectIds.ToArray(), environmentIds.ToArray());
         }
 
         public ReleaseResource GetLatestRelease(string projectId)
