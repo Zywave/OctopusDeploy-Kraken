@@ -193,7 +193,7 @@
         this.checkProgress();
 
         // check progress every 5 seconds
-        this.c = setInterval(function () {
+        this.checkProgressIntervalId = setInterval(function () {
             this.checkProgress();
         }.bind(this), 5000);
     };
