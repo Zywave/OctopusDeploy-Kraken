@@ -7,6 +7,7 @@
         this.selectedProject = ko.observable();
         this.releaseBatch = ko.observable();
         var releaseBatch = this.releaseBatch;
+        var checkProgressIntervalId;
 
         this.projectsSelect2Options = ko.observable({
             width: 'off',
@@ -86,13 +87,16 @@
         }.bind(this);
 
         this.checkProgress = function () {
-            shell.execute('PROGRESS', params.id, '--suppressmessage').then(function (data) {
+            clearInterval(checkProgressIntervalId);
+
+            releaseBatchesService.getProgression(params.id, _.pluck(this.viewEnvironments(), 'id')).then(function (data) {
                 this.progress(data);
-            }.bind(this), function () {
-                if (this.checkProgressIntervalId) {
-                    clearInterval(this.checkProgressIntervalId);
-                }
-                shell.open();
+                // check progress again in 5 seconds
+                checkProgressIntervalId = setInterval(function () {
+                    this.checkProgress();
+                }.bind(this), 5000);
+            }.bind(this)).fail(function(e) {
+                console.error(e);
             }.bind(this));
         }.bind(this);
 
@@ -135,31 +139,20 @@
             }
         }
 
-        this.applyIconsToProgress = function (item, environment) {
-            var progress = this.getProgressDataFromProgression(item, environment);
-            if (progress) {
-                var state = progress.state;
-                if (state === 6) { // 'Success'
-                    return 'fa fa-check';
-                } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
-                    return 'fa fa-exclamation-triangle';
-                } else { // 'Cancelling' || 'Executing' || 'Queued'
-                    return 'fa fa-spinner fa-spin';
-                }
+        this.getProgressSuccessOrFailedOrExecuting = function(progress) {
+            var state = progress.state;
+            if (state === 6) { // 'Success'
+                return 'success';
+            } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
+                return 'failed';
+            } else { // 'Cancelling' || 'Executing' || 'Queued'
+                return 'executing';
             }
         }
 
-        this.applyCssToProgress = function (item, environment) {
-            var progress = this.getProgressDataFromProgression(item, environment);
-            if (progress) {
-                var state = progress.state;
-                if (state === 6) { // 'Success'
-                    return 'status status__success';
-                } else if (state === 1 || state === 4 || state === 7) { // 'Canceled' || 'Failed' || 'TimedOut'
-                    return 'status status__failed';
-                } else { // 'Cancelling' || 'Executing' || 'Queued'
-                    return 'status status__executing';
-                }
+        this.formatDate = function (date) {
+            if (date) {
+                return moment(date).format('l LTS');
             }
         }
 
@@ -190,10 +183,5 @@
         this.loadReleaseBatch();
         this.loadEnvironments();
         this.checkProgress();
-
-        // check progress every 5 seconds
-        this.checkProgressIntervalId = setInterval(function () {
-            this.checkProgress();
-        }.bind(this), 5000);
     };
 });

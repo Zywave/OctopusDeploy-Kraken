@@ -129,10 +129,43 @@ textarea {
 
 .deployment-square {
     text-align: left;
+    padding: 10px;
     display: block;
     border: 1px solid transparent;
     border-radius: 2px;
-    width: 50px;
+    max-width: 180px;
+}
+
+    .deployment-square a {
+        text-decoration: none;
+    }
+
+        .deployment-square a:hover {
+            text-decoration: none;
+        }
+
+    .deployment-square .version {
+        display: block;
+        font-size: 11pt;
+        margin-bottom: 2px;
+        color: #222;
+        white-space: pre-line;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+
+    .deployment-square .release-date {
+        display: block;
+        color: rgba(37,51,38,.64);
+        margin-top: 0;
+        font-size: 8pt;
+    }
+
+.deployment-square-info {
+    display: block;
+    margin-left: 45px;
 }
 
 .status {
@@ -152,14 +185,14 @@ textarea {
     color: #fff;
 }
 
-.status__success {
+.status--success {
     background-color: #55ab55;
 }
 
-.status__failed {
+.status--failed {
     background-color: #e45847;
 }
 
-.status__executing {
+.status--executing {
     background-color: #1b80c2;
 }

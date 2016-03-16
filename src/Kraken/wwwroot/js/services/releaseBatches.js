@@ -108,10 +108,12 @@
                 return data;
             });
         },
-        getProgression : function(idOrName) {
+        getProgression: function (idOrName, environmentIds) {
             return $.ajax({
                 type: 'GET',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/getprogression',
+                data: { environmentIds: environmentIds },
+                traditional: true,
                 contentType: 'application/json'
             }).then(function (data) {
                 return data;
