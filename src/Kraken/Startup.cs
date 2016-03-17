@@ -1,5 +1,6 @@
 ﻿namespace Kraken
 {
+    using System;
     using Kraken.Filters;
     using Kraken.Models;
     using Kraken.Security;
@@ -66,6 +67,7 @@
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            var logger = loggerFactory.CreateLogger<Program>();
 
             if (env.IsDevelopment())
             {
@@ -76,8 +78,7 @@
             else
             {
                 app.UseExceptionHandler("/error");
-
-                // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
+                
                 try
                 {
                     using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -85,7 +86,10 @@
                         serviceScope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    logger.LogCritical("Error while attempting to migrate database.", ex);
+                }
             }
 
             app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
