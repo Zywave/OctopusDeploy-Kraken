@@ -31,9 +31,9 @@ textarea {
     padding: 0;
 }
 
-    .sub-container .col {
-        padding: 0 0 20px 0;
-    }
+.sub-container .col {
+    padding: 0 0 20px 0;
+}
 
 .cmdr-overlay {
     z-index: 10000;
@@ -49,54 +49,54 @@ textarea {
     vertical-align: top;
 }
 
-    .batch-list__item a {
-        width: 280px;
-        height: 280px;
-        margin-right: 20px;
-        border-radius: 3px;
-        border: 1px solid transparent;
-        display: block;
-        padding: 18px;
-        text-align: center;
-        text-decoration: none;
-        background-color: transparent;
-    }
+.batch-list__item a {
+    width: 280px;
+    height: 280px;
+    margin-right: 20px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    display: block;
+    padding: 18px;
+    text-align: center;
+    text-decoration: none;
+    background-color: transparent;
+}
 
-        .batch-list__item a:hover {
-            background: #f4f4f4;
-            border: 1px solid #ddd;
-            text-decoration: none;
-        }
+.batch-list__item a:hover {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    text-decoration: none;
+}
 
-    .batch-list__item img {
-        display: inline-block;
-        height: 100px;
-        max-width: 250px;
-        border-radius: 4px;
-    }
+.batch-list__item img {
+    display: inline-block;
+    height: 100px;
+    max-width: 250px;
+    border-radius: 4px;
+}
 
-    .batch-list__item span {
-        display: block;
-        font-family: inherit;
-        font-weight: 400;
-        line-height: 1.2;
-        color: inherit;
-        margin-bottom: 7pt;
-        font-size: 13pt;
-        max-height: 65px;
-        overflow: hidden;
-        margin-top: 18px;
-        width: 100%;
-    }
+.batch-list__item span {
+    display: block;
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 1.2;
+    color: inherit;
+    margin-bottom: 7pt;
+    font-size: 13pt;
+    max-height: 65px;
+    overflow: hidden;
+    margin-top: 18px;
+    width: 100%;
+}
 
-    .batch-list__item p {
-        overflow: hidden;
-        max-height: 65px;
-        display: block;
-        text-overflow: ellipsis;
-        margin: 0 0 12pt;
-        color: #777;
-    }
+.batch-list__item p {
+    overflow: hidden;
+    max-height: 65px;
+    display: block;
+    text-overflow: ellipsis;
+    margin: 0 0 12pt;
+    color: #777;
+}
 
 .select2__link-project {
     width: 80%;
@@ -127,41 +127,79 @@ textarea {
     text-align: right;
 }
 
+.batch-table > tbody > tr {
+    height: 76px;
+}
+
+.batch-table > thead > tr > th,
+.batch-table > tbody > tr > td {
+    border-right: none;
+    border-left: none;
+}
+
+.batch-table > thead > tr > th:nth-child(n+3) {
+    padding-left: 18px;
+}
+
+.batch-table > tbody > tr > td {    
+    vertical-align: middle;
+}
+
+.batch-table > thead > tr > th:nth-child(1),
+.batch-table > tbody > tr > td:nth-child(1) {
+    background: #fafafa;
+}
+
+.batch-table > thead > tr > th:nth-child(2),
+.batch-table > tbody > tr > td:nth-child(2) {
+    background: #fafafa;
+    border-right: 1px solid #ddd;
+}
+
 .deployment-square {
     text-align: left;
     padding: 10px;
     display: block;
     border: 1px solid transparent;
     border-radius: 2px;
-    max-width: 180px;
+    min-width: 180px;
 }
 
-    .deployment-square a {
-        text-decoration: none;
-    }
+.deployment-square:hover {
+    background: #f4f4f4;
+    border: 1px solid #e3e3e3;
+}
 
-        .deployment-square a:hover {
-            text-decoration: none;
-        }
+a.deployment-square:hover {
+    text-decoration: none;
+}
 
-    .deployment-square .version {
-        display: block;
-        font-size: 11pt;
-        margin-bottom: 2px;
-        color: #222;
-        white-space: pre-line;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-wrap: break-word;
-        word-break: break-word;
-    }
+.deployment-square .version {
+    display: block;
+    font-size: 11pt;
+    margin-bottom: 2px;
+    color: #222;
+    white-space: pre-line;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-word;
+}
 
-    .deployment-square .release-date {
-        display: block;
-        color: rgba(37,51,38,.64);
-        margin-top: 0;
-        font-size: 8pt;
-    }
+.deployment-square .release-date {
+    display: block;
+    color: rgba(37,51,38,.64);
+    margin-top: 0;
+    font-size: 8pt;
+}
+
+.deployment-square .status {
+    display: block;
+    float: left;
+    margin-left: auto;
+    margin-right: 10px;
+    cursor: pointer;
+}
 
 .deployment-square-info {
     display: block;

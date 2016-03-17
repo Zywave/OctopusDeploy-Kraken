@@ -91,7 +91,7 @@
 
             releaseBatchesService.getProgression(params.id, _.pluck(this.viewEnvironments(), 'id')).then(function (data) {
                 this.progress(data);
-                // check progress again in 5 seconds
+                //check progress again in 5 seconds
                 checkProgressIntervalId = setInterval(function () {
                     this.checkProgress();
                 }.bind(this), 5000);
@@ -139,7 +139,7 @@
             }
         }
 
-        this.getProgressSuccessOrFailedOrExecuting = function(progress) {
+        this.getProgressState = function(progress) {
             var state = progress.state;
             if (state === 6) { // 'Success'
                 return 'success';
