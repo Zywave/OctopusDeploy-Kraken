@@ -27,4 +27,4 @@ If (-Not [string]::IsNullOrEmpty($StdoutLogEnabled)) {
 	$node.SetAttribute("stdoutLogEnabled", $StdoutLogEnabled)
 	$config.Save("./wwwroot/web.config")
 }
-New-Item "./logs"
+New-Item -ItemType Directory -Path "./logs"
