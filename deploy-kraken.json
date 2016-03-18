@@ -1,3 +1,4 @@
+{
   "Id": "ActionTemplates-61",
   "Name": "Deploy Kraken",
   "Description": "Release the [Kraken](https://github.com/Zywave/OctopusDeploy-Kraken)! Kraken is a companion tool for Octopus Deploy that facilitates deploying multiple projects at once.",
