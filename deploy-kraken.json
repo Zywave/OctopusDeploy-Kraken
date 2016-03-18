@@ -1,0 +1,135 @@
+  "Id": "ActionTemplates-61",
+  "Name": "Deploy Kraken",
+  "Description": "Release the [Kraken](https://github.com/Zywave/OctopusDeploy-Kraken)! Kraken is a companion tool for Octopus Deploy that facilitates deploying multiple projects at once.",
+  "ActionType": "Octopus.TentaclePackage",
+  "Version": 2,
+  "Properties": {
+    "Octopus.Action.EnabledFeatures": "Octopus.Features.CustomScripts,Octopus.Features.IISWebSite",
+    "Octopus.Action.Package.AutomaticallyRunConfigurationTransformationFiles": "False",
+    "Octopus.Action.Package.AutomaticallyUpdateAppSettingsAndConnectionStrings": "False",
+    "Octopus.Action.Package.DownloadOnTentacle": "False",
+    "Octopus.Action.Package.NuGetFeedId": "#{KrakenReleasesFeed}",
+    "Octopus.Action.Package.NuGetPackageId": "Kraken",
+    "Octopus.Action.IISWebSite.CreateOrUpdateWebSite": "True",
+    "Octopus.Action.IISWebSite.Bindings": "[{\"protocol\":\"http\",\"ipAddress\":\"#{IPAddress}\",\"port\":80,\"host\":\"#{HostName}\",\"thumbprint\":\"\",\"requireSni\":false,\"enabled\":true},{\"protocol\":\"https\",\"ipAddress\":\"#{IPAddress}\",\"port\":\"443\",\"host\":\"#{HostName}\",\"thumbprint\":\"#{SSLThumbprint}\",\"requireSni\":false,\"enabled\":true}]",
+    "Octopus.Action.IISWebSite.ApplicationPoolFrameworkVersion": "v4.0",
+    "Octopus.Action.IISWebSite.ApplicationPoolIdentityType": "SpecificUser",
+    "Octopus.Action.IISWebSite.EnableAnonymousAuthentication": "True",
+    "Octopus.Action.IISWebSite.EnableBasicAuthentication": "False",
+    "Octopus.Action.IISWebSite.EnableWindowsAuthentication": "False",
+    "Octopus.Action.CustomScripts.PostDeploy.ps1": " Import-Module WebAdministration -ErrorAction SilentlyContinue\r\n $appPool = \"IIS:\\\\AppPools\\\" + $ApplicationPoolName\r\n Set-ItemProperty $appPool managedRuntimeVersion \"\"\r\n Set-ItemProperty $appPool processModel.loadUserProfile true",
+    "Octopus.Action.IISWebSite.WebSiteName": "#{WebSiteName}",
+    "Octopus.Action.IISWebSite.WebRoot": "wwwroot",
+    "Octopus.Action.IISWebSite.ApplicationPoolName": "#{ApplicationPoolName}",
+    "Octopus.Action.IISWebSite.ApplicationPoolUsername": "#{Username}",
+    "Octopus.Action.IISWebSite.ApplicationPoolPassword": "#{Password}",
+    "Octopus.Action.CustomScripts.PreDeploy.ps1": "",
+    "Octopus.Action.CustomScripts.Deploy.ps1": ""
+  },
+  "Parameters": [
+    {
+      "Name": "OctopusServerAddress",
+      "Label": "Octopus server address",
+      "HelpText": "The hostname of your Octopus server.",
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Name": "DatabaseConnectionString",
+      "Label": "Database connection string",
+      "HelpText": "The SQL database connection string. Leave blank and the default value will create a localdb instance as the app pool user.",
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Name": "StdoutLogEnabled",
+      "Label": "Enable logging",
+      "HelpText": "Enables the stdout log. The log will be written to the installation root directory.",
+      "DefaultValue": "False",
+      "DisplaySettings": {
+        "Octopus.ControlType": "Checkbox"
+      }
+    },
+    {
+      "Name": "WebSiteName",
+      "Label": "Web site name",
+      "HelpText": "Name of the IIS web site to create or configure.",
+      "DefaultValue": "Kraken",
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Name": "ApplicationPoolName",
+      "Label": "Application pool name",
+      "HelpText": "Name of the application pool in IIS to create or configure.",
+      "DefaultValue": "Kraken",
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Name": "Username",
+      "Label": "Username",
+      "HelpText": "The Windows/domain account of the custom user that the application pool will run under. Example: YOURDOMAIN\\YourAccount. You will need to ensure that this user has permissions to run as an application pool and has access to the database.",
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Name": "Password",
+      "Label": "Password",
+      "HelpText": "The password for the user specified above.",
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "Sensitive"
+      }
+    },
+    {
+      "Name": "IPAddress",
+      "Label": "IP address",
+      "HelpText": "The IP address that the binding will listen on. Use * for any address, or specify an address such as 10.0.0.1. If using a IPv6 address remember to enclose in square brackets such as [::1].",
+      "DefaultValue": "*",
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Name": "HostName",
+      "Label": "Host name",
+      "HelpText": "The host header that this binding will listen on. Example: www.contoso.com. Leave empty to use any host header.",
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Name": "SSLThumbprint",
+      "Label": "SSL thumbprint",
+      "HelpText": "The X.509 certificate thumbprint to use.",
+      "DefaultValue": null,
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    },
+    {
+      "Name": "KrakenReleasesFeed",
+      "Label": "Kraken releases feed",
+      "HelpText": "The ID of the NuGet feed to use for Kraken Releases.",
+      "DefaultValue": "feeds-kraken-releases",
+      "DisplaySettings": {
+        "Octopus.ControlType": "SingleLineText"
+      }
+    }
+  ],
+  "$Meta": {
+    "ExportedAt": "2016-03-18T20:47:41.870Z",
+    "OctopusVersion": "3.3.3",
+    "Type": "ActionTemplate"
+  }
+}

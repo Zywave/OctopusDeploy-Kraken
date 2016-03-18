@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "~", "~", "{6E1D3CA4-2CAF-4F
 		appveyor.yml = appveyor.yml
 		CHANGELOG.md = CHANGELOG.md
 		CONTRIBUTING.md = CONTRIBUTING.md
+		deploy-kraken.json = deploy-kraken.json
 		global.json = global.json
 		gulpfile.js = gulpfile.js
 		Kraken.nuspec = Kraken.nuspec
