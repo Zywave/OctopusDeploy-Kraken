@@ -1,3 +1,13 @@
+<a name="1.0.0-prerelease.6"></a>
+# [1.0.0-prerelease.6](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.5...v1.0.0-prerelease.6) (2016-03-18)
+
+
+### Bug Fixes
+
+* logs file powershell fix ([fd3fccf](https://github.com/zywave/OctopusDeploy-Kraken/commit/fd3fccf))
+
+
+
 <a name="1.0.0-prerelease.5"></a>
 # [1.0.0-prerelease.5](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.4...v1.0.0-prerelease.5) (2016-03-18)
 

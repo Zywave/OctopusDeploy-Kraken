@@ -2,20 +2,13 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.0-prerelease05</version>
+    <version>1.0.0-prerelease06</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
     <releaseNotes>### Bug Fixes
 
-* force logs directory to be created ([5ebf680](https://github.com/zywave/OctopusDeploy-Kraken/commit/5ebf680))
-* improved exception handling ([9074d09](https://github.com/zywave/OctopusDeploy-Kraken/commit/9074d09))
-* remove duplicate octopus.client references ([0978baa](https://github.com/zywave/OctopusDeploy-Kraken/commit/0978baa))
-
-### Features
-
-* allow for enabling of stdout logging from octovariable ([674b5a7](https://github.com/zywave/OctopusDeploy-Kraken/commit/674b5a7))
-* progress command cleanup ([fbc94f5](https://github.com/zywave/OctopusDeploy-Kraken/commit/fbc94f5))</releaseNotes>
+* logs file powershell fix ([fd3fccf](https://github.com/zywave/OctopusDeploy-Kraken/commit/fd3fccf))</releaseNotes>
   </metadata>
   <files>
       <file src="src\Kraken\bin\output\**\*.*" target=""/>
