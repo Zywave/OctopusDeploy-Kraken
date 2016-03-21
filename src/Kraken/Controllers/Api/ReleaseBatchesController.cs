@@ -496,7 +496,6 @@ namespace Kraken.Controllers.Api
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
                 var dashboard = _octopusProxy.GetDynamicDashboard(releaseBatch.Items.Select(i => i.ProjectId), environmentIds);
-
                 progress = dashboard.Items.Select(d => new ProjectProgressResponseBody
                 {
                     ProjectId = d.ProjectId,
