@@ -31,9 +31,25 @@ namespace Kraken.Controllers.Api
 
         // GET: api/ReleaseBatches
         [HttpGet]
-        public IEnumerable<ReleaseBatch> GetReleaseBatches()
+        public IEnumerable<ReleaseBatch> GetReleaseBatches([FromQuery] string orderBy)
         {
-            return _context.ReleaseBatches;
+            Func<ReleaseBatch, object> orderByFunc;
+            switch (orderBy)
+            {
+                case "Name":
+                    orderByFunc = batch => batch.Name;
+                    break;
+                case "Updated":
+                    orderByFunc = batch => batch.UpdateDateTime;
+                    break;
+                case "Id":
+                    orderByFunc = batch => batch.Id;
+                    break;
+                default:
+                    orderByFunc = batch => batch.Id;
+                    break;
+            }
+            return _context.ReleaseBatches.OrderBy(orderByFunc);
         }
 
         // GET: api/ReleaseBatches/5
@@ -69,7 +85,7 @@ namespace Kraken.Controllers.Api
             {
                 return HttpNotFound();
             }
-            
+
             if (releaseBatch.Logo != null)
             {
                 return File(releaseBatch.Logo.Content, releaseBatch.Logo.ContentType);
@@ -92,7 +108,7 @@ namespace Kraken.Controllers.Api
             {
                 return HttpNotFound();
             }
-            
+
             if (releaseBatch.Name != null)
             {
                 existingReleaseBatch.Name = releaseBatch.Name;
@@ -118,13 +134,13 @@ namespace Kraken.Controllers.Api
             {
                 return HttpBadRequest(ModelState);
             }
-            
+
             var releaseBatch = await GetReleaseBatch(idOrName, false, true);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
             }
-            
+
             if (releaseBatch.Logo == null)
             {
                 if (releaseBatchLogo != null)
@@ -256,7 +272,7 @@ namespace Kraken.Controllers.Api
             {
                 releaseBatchItem.ReleaseId = releaseResource.Id;
                 releaseBatchItem.ReleaseVersion = releaseResource.Version;
-            }            
+            }
 
             releaseBatch.UpdateDateTime = DateTimeOffset.Now;
             releaseBatch.UpdateUserName = User.Identity.Name;
@@ -280,13 +296,13 @@ namespace Kraken.Controllers.Api
             {
                 return HttpNotFound();
             }
-            
+
             var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
             if (projectResource == null)
             {
                 return HttpBadRequest("Project Not Found");
             }
-            
+
             var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == releaseBatch.Id && e.ProjectId == projectResource.Id);
             if (releaseBatchItem != null)
             {
@@ -325,7 +341,7 @@ namespace Kraken.Controllers.Api
                 EnvironmentResource environment = null;
                 if (!String.IsNullOrEmpty(environmentIdOrName))
                 {
-                    environment = _octopusProxy.GetEnvironment(environmentIdOrName, Permission.EnvironmentView);
+                    environment = _octopusProxy.GetEnvironment(environmentIdOrName);
                     if (environment == null)
                     {
                         return HttpBadRequest("Environment Not Found");
@@ -362,14 +378,14 @@ namespace Kraken.Controllers.Api
             {
                 return HttpBadRequest(ModelState);
             }
-            
+
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
                 return HttpNotFound();
             }
 
-            var environment = _octopusProxy.GetEnvironment(environmentIdOrName, Permission.DeploymentCreate);
+            var environment = _octopusProxy.GetEnvironment(environmentIdOrName);
             if (environment == null)
             {
                 return HttpBadRequest("Environment Not Found");
@@ -450,7 +466,7 @@ namespace Kraken.Controllers.Api
                     }
                 }
             }
-            
+
             releaseBatch.SyncDateTime = DateTimeOffset.Now;
             releaseBatch.SyncEnvironmentId = null;
             releaseBatch.SyncEnvironmentName = "(Latest)";
@@ -461,7 +477,7 @@ namespace Kraken.Controllers.Api
         }
 
         [HttpGet("{idOrName}/GetProgression")]
-        public async Task<IActionResult> GetProgression([FromRoute] string idOrName, [FromQuery] List<string> environmentIds)
+        public async Task<IActionResult> GetProgression([FromRoute] string idOrName)
         {
             if (!ModelState.IsValid)
             {
@@ -474,12 +490,12 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
+            var environmentIds = _octopusProxy.GetEnvironments().Select(e => e.Id);
             var progress = new List<ProjectProgressResponseBody>();
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
-                var dashboard = _octopusProxy.GetDashboardForProjectIdsAndEnvironmentIds(releaseBatch.Items.Select(i => i.ProjectId), environmentIds);
-
+                var dashboard = _octopusProxy.GetDynamicDashboard(releaseBatch.Items.Select(i => i.ProjectId), environmentIds);
                 progress = dashboard.Items.Select(d => new ProjectProgressResponseBody
                 {
                     ProjectId = d.ProjectId,
@@ -493,6 +509,42 @@ namespace Kraken.Controllers.Api
             }
 
             return Ok(progress);
+        }
+
+        [HttpGet("{idOrName}/GetBatchEnvironments")]
+        public async Task<IActionResult> GetBatchEnvironments([FromRoute] string idOrName)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+
+            var releaseBatch = await GetReleaseBatch(idOrName, true, false);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+
+            var permissionsToGet = new[] { Permission.EnvironmentView, Permission.DeploymentCreate };
+
+            var environmentsWithPermissions =
+                _octopusProxy.GetEnvironmentsWithPermissions(permissionsToGet, releaseBatch.Items.Select(i => i.ProjectId));
+
+            var retVal = new EnvironmentsWithPermissionsResponseBody
+            {
+                View = environmentsWithPermissions[Permission.EnvironmentView].Select(e => new EnvironmentMapping
+                {
+                    Id = e.Id,
+                    Name = e.Name
+                }),
+                Deploy = environmentsWithPermissions[Permission.DeploymentCreate].Select(e => new EnvironmentMapping
+                {
+                    Id = e.Id,
+                    Name = e.Name
+                }),
+            };
+
+            return Ok(retVal);
         }
 
         protected override void Dispose(bool disposing)
@@ -553,6 +605,19 @@ namespace Kraken.Controllers.Api
             public string ReleaseId { get; set; }
             public string ReleaseVersion { get; set; }
             public DateTimeOffset? CompletedTime { get; set; }
+        }
+
+        public class EnvironmentsWithPermissionsResponseBody
+        {
+            public IEnumerable<EnvironmentMapping> View { get; set; }
+            public IEnumerable<EnvironmentMapping> Deploy { get; set; }
+        }
+
+        // json serializer was having issues with returning EnvironmentsWithPermissionsResponseBody as View and Deploy point to the same objects
+        public class EnvironmentMapping
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
         }
     }
 }

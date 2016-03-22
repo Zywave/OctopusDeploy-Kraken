@@ -51,6 +51,7 @@
             {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             });
             
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
