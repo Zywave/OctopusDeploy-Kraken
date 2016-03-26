@@ -47,6 +47,14 @@ namespace Kraken.Migrations
                     b.Property<string>("Description")
                         .HasAnnotation("MaxLength", 250);
 
+                    b.Property<bool>("IsLocked");
+
+                    b.Property<string>("LockComment")
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<string>("LockUserName")
+                        .HasAnnotation("MaxLength", 50);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 100);
