@@ -127,7 +127,8 @@
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/lockreleasebatch',
                 data: JSON.stringify(comment),
                 contentType: 'application/json'
-            }).then(function(data) {
+            }).then(function (data) {
+                bus.publish('releasebatches:update', idOrName);
                 return data;
             });
         }
