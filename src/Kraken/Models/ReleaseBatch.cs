@@ -40,6 +40,14 @@ namespace Kraken.Models
         [StringLength(50)]
         public string DeployEnvironmentName { get; set; }
 
+        public bool IsLocked { get; set; }
+
+        [StringLength(50)]
+        public string LockUserName { get; set; }
+
+        [StringLength(100)]
+        public string LockComment { get; set; }
+
         public DateTimeOffset? DeployDateTime { get; set; }
 
         public List<ReleaseBatchItem> Items { get; set; }
