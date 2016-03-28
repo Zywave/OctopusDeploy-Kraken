@@ -33,14 +33,7 @@
                 this.shell.writeLine();
                 this.shell.writeLine('         RELEASE THE KRAKEN!');
                 this.shell.writeLine();
-                if (data.failedProjects.length) {
-                    this.shell.writeLine('Some deployments were not successfully created because the current user lacks appropriate permissions:');
-                    data.failedProjects.forEach(function(failedProject) {
-                        this.shell.writeLine(failedProject);
-                    });
-                } else {
-                    this.shell.writeLine('Release batch deploys started.  Check Octopus for status.', 'success');
-                }
+                this.shell.writeLine('Release batch deploys started.  Check Octopus for status.', 'success');
                 return data;
             }.bind(this)).fail(this.fail.bind(this));
         },

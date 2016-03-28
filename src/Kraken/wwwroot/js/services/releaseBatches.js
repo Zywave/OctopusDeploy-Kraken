@@ -118,19 +118,8 @@
                 return data;
             });
         },
-        getBatchEnvironments: function (idOrName) {
+        getBatchEnvironments: function (idOrName, permission) {
             return $.get(context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/getbatchenvironments');
-        },
-        lockReleaseBatch: function(idOrName, comment) {
-            return $.ajax({
-                type: 'PUT',
-                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/lockreleasebatch',
-                data: JSON.stringify(comment),
-                contentType: 'application/json'
-            }).then(function (data) {
-                bus.publish('releasebatches:update', idOrName);
-                return data;
-            });
         }
     };
 

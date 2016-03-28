@@ -3,7 +3,6 @@ namespace Kraken.Controllers.Api
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
     using System.Threading.Tasks;
     using Kraken.Filters;
     using Kraken.Models;
@@ -12,7 +11,6 @@ namespace Kraken.Controllers.Api
     using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Mvc;
     using Microsoft.Data.Entity;
-    using Octopus.Client.Exceptions;
     using Octopus.Client.Model;
 
     [Authorize]
@@ -48,7 +46,7 @@ namespace Kraken.Controllers.Api
                     orderByFunc = batch => batch.Id;
                     break;
                 default:
-                    orderByFunc = batch => batch.Name;
+                    orderByFunc = batch => batch.Id;
                     break;
             }
             return _context.ReleaseBatches.OrderBy(orderByFunc);
@@ -111,11 +109,6 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
-            if (existingReleaseBatch.IsLocked)
-            {
-                return GetLockedForbiddenUpdateResult(existingReleaseBatch);
-            }
-
             if (releaseBatch.Name != null)
             {
                 existingReleaseBatch.Name = releaseBatch.Name;
@@ -131,32 +124,6 @@ namespace Kraken.Controllers.Api
             await _context.SaveChangesAsync();
 
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
-        }
-
-        [HttpPut("{idOrName}/LockReleaseBatch")]
-        public async Task<IActionResult> LockReleaseBatch([FromRoute] string idOrName, [FromBody] string comment)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelState);
-            }
-
-            var releaseBatch = await GetReleaseBatch(idOrName, false, false);
-            releaseBatch.IsLocked = !releaseBatch.IsLocked;
-            if (releaseBatch.IsLocked)
-            {
-                releaseBatch.LockComment = comment;
-                releaseBatch.LockUserName = User.Identity.Name;
-            }
-            else
-            {
-                releaseBatch.LockComment = string.Empty;
-                releaseBatch.LockUserName = string.Empty;
-            }
-
-            await _context.SaveChangesAsync();
-
-            return Ok(releaseBatch.IsLocked);
         }
 
         // PUT: api/ReleaseBatches/5/Logo
@@ -250,11 +217,6 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
-            if (releaseBatch.IsLocked)
-            {
-                return GetLockedForbiddenUpdateResult(releaseBatch);
-            }
-
             _context.ReleaseBatches.Remove(releaseBatch);
             await _context.SaveChangesAsync();
 
@@ -274,11 +236,6 @@ namespace Kraken.Controllers.Api
             if (releaseBatch == null)
             {
                 return HttpNotFound();
-            }
-
-            if (releaseBatch.IsLocked)
-            {
-                return GetLockedForbiddenUpdateResult(releaseBatch);
             }
 
             var projectResource = _octopusProxy.GetProject(requestBody.ProjectIdOrSlugOrName);
@@ -340,11 +297,6 @@ namespace Kraken.Controllers.Api
                 return HttpNotFound();
             }
 
-            if (releaseBatch.IsLocked)
-            {
-                return GetLockedForbiddenUpdateResult(releaseBatch);
-            }
-
             var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
             if (projectResource == null)
             {
@@ -382,11 +334,6 @@ namespace Kraken.Controllers.Api
             if (releaseBatch == null)
             {
                 return HttpNotFound();
-            }
-
-            if (releaseBatch.IsLocked)
-            {
-                return GetLockedForbiddenUpdateResult(releaseBatch);
             }
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
@@ -444,25 +391,13 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest("Environment Not Found");
             }
 
-            var responseBody = new DeployBatchResponseBody
-            {
-                SuccessfulProjects = new List<string>(),
-                FailedProjects = new List<string>()
-            };
+            var deployments = new List<DeploymentResource>();
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
                 foreach (var releaseBatchItem in releaseBatch.Items.Where(releaseBatchItem => !string.IsNullOrEmpty(releaseBatchItem.ReleaseId)))
                 {
-                    try
-                    {
-                        _octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id, forceRedeploy);
-                        responseBody.SuccessfulProjects.Add(releaseBatchItem.ProjectName);
-                    }
-                    catch (OctopusSecurityException)
-                    {
-                        responseBody.FailedProjects.Add(releaseBatchItem.ProjectName);
-                    }
+                    deployments.Add(_octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id, forceRedeploy));
                 }
             }
 
@@ -473,12 +408,7 @@ namespace Kraken.Controllers.Api
 
             await _context.SaveChangesAsync();
 
-            if (!responseBody.SuccessfulProjects.Any())
-            {
-                return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
-            }
-
-            return Ok(responseBody);
+            return Ok(deployments);
         }
 
         // GET: api/ReleaseBatches/5/PreviewReleases
@@ -606,12 +536,12 @@ namespace Kraken.Controllers.Api
                 {
                     Id = e.Id,
                     Name = e.Name
-                }).ToList(),
+                }),
                 Deploy = environmentsWithPermissions[Permission.DeploymentCreate].Select(e => new EnvironmentMapping
                 {
                     Id = e.Id,
                     Name = e.Name
-                }).ToList(),
+                }),
             };
 
             return Ok(retVal);
@@ -648,16 +578,12 @@ namespace Kraken.Controllers.Api
                 releaseBatch = await query.SingleOrDefaultAsync(b => b.Id == id);
             }
 
-            return releaseBatch ?? await query.SingleOrDefaultAsync(b => b.Name == idOrName);
-        }
-
-        private ObjectResult GetLockedForbiddenUpdateResult(ReleaseBatch releaseBatch)
-        {
-            var lockedReason = $"Locked by: {releaseBatch.LockUserName}{(!string.IsNullOrEmpty(releaseBatch.LockComment) ? $" with comment: {releaseBatch.LockComment}" : "")}";
-            return new ObjectResult(lockedReason)
+            if (releaseBatch == null)
             {
-                StatusCode = StatusCodes.Status403Forbidden
-            };
+                releaseBatch = await query.SingleOrDefaultAsync(b => b.Name == idOrName);
+            }
+
+            return releaseBatch;
         }
 
         private readonly ApplicationDbContext _context;
@@ -668,12 +594,6 @@ namespace Kraken.Controllers.Api
         {
             public string ProjectIdOrSlugOrName { get; set; }
             public string ReleaseVersion { get; set; }
-        }
-
-        public class DeployBatchResponseBody
-        {
-            public List<string> SuccessfulProjects { get; set; } 
-            public List<string> FailedProjects { get; set; } 
         }
 
         public class ProjectProgressResponseBody
@@ -689,8 +609,8 @@ namespace Kraken.Controllers.Api
 
         public class EnvironmentsWithPermissionsResponseBody
         {
-            public List<EnvironmentMapping> View { get; set; }
-            public List<EnvironmentMapping> Deploy { get; set; }
+            public IEnumerable<EnvironmentMapping> View { get; set; }
+            public IEnumerable<EnvironmentMapping> Deploy { get; set; }
         }
 
         // json serializer was having issues with returning EnvironmentsWithPermissionsResponseBody as View and Deploy point to the same objects

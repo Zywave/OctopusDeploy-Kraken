@@ -31,12 +31,12 @@
             }
 
             var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == userName);
+            user.OctopusApiKey = null; 
+
             if (user == null)
             {
                 return HttpNotFound();
             }
-
-            user.OctopusApiKey = null;
 
             return Ok(user);
         }

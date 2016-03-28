@@ -8,9 +8,10 @@ using Kraken.Models;
 namespace Kraken.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160118220759_auditinfo3")]
+    partial class auditinfo3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -20,8 +21,6 @@ namespace Kraken.Migrations
             modelBuilder.Entity("Kraken.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("UserName");
-
-                    b.Property<string>("DisplayName");
 
                     b.Property<string>("OctopusApiKey");
 
@@ -44,9 +43,6 @@ namespace Kraken.Migrations
                     b.Property<string>("DeployUserName")
                         .HasAnnotation("MaxLength", 50);
 
-                    b.Property<string>("Description")
-                        .HasAnnotation("MaxLength", 250);
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 100);
@@ -68,9 +64,6 @@ namespace Kraken.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
                 });
 
             modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>
@@ -83,10 +76,6 @@ namespace Kraken.Migrations
                         .HasAnnotation("MaxLength", 20);
 
                     b.Property<string>("ProjectName")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("ProjectSlug")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
@@ -103,29 +92,11 @@ namespace Kraken.Migrations
                     b.HasAlternateKey("ReleaseBatchId", "ProjectId");
                 });
 
-            modelBuilder.Entity("Kraken.Models.ReleaseBatchLogo", b =>
-                {
-                    b.Property<int>("ReleaseBatchId");
-
-                    b.Property<byte[]>("Content");
-
-                    b.Property<string>("ContentType");
-
-                    b.HasKey("ReleaseBatchId");
-                });
-
             modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>
                 {
                     b.HasOne("Kraken.Models.ReleaseBatch")
                         .WithMany()
                         .HasForeignKey("ReleaseBatchId");
-                });
-
-            modelBuilder.Entity("Kraken.Models.ReleaseBatchLogo", b =>
-                {
-                    b.HasOne("Kraken.Models.ReleaseBatch")
-                        .WithOne()
-                        .HasForeignKey("Kraken.Models.ReleaseBatchLogo", "ReleaseBatchId");
                 });
         }
     }
