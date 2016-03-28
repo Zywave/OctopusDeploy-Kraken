@@ -33,25 +33,9 @@ namespace Kraken.Controllers.Api
 
         // GET: api/ReleaseBatches
         [HttpGet]
-        public IEnumerable<ReleaseBatch> GetReleaseBatches([FromQuery] string orderBy)
+        public IEnumerable<ReleaseBatch> GetReleaseBatches()
         {
-            Func<ReleaseBatch, object> orderByFunc;
-            switch (orderBy)
-            {
-                case "Name":
-                    orderByFunc = batch => batch.Name;
-                    break;
-                case "Updated":
-                    orderByFunc = batch => batch.UpdateDateTime;
-                    break;
-                case "Id":
-                    orderByFunc = batch => batch.Id;
-                    break;
-                default:
-                    orderByFunc = batch => batch.Name;
-                    break;
-            }
-            return _context.ReleaseBatches.OrderBy(orderByFunc);
+            return _context.ReleaseBatches.OrderBy(rb => rb.Name);
         }
 
         // GET: api/ReleaseBatches/5
