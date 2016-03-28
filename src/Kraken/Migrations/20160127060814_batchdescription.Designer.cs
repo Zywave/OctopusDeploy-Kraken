@@ -8,9 +8,10 @@ using Kraken.Models;
 namespace Kraken.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160127060814_batchdescription")]
+    partial class batchdescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -20,8 +21,6 @@ namespace Kraken.Migrations
             modelBuilder.Entity("Kraken.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("UserName");
-
-                    b.Property<string>("DisplayName");
 
                     b.Property<string>("OctopusApiKey");
 
@@ -103,29 +102,11 @@ namespace Kraken.Migrations
                     b.HasAlternateKey("ReleaseBatchId", "ProjectId");
                 });
 
-            modelBuilder.Entity("Kraken.Models.ReleaseBatchLogo", b =>
-                {
-                    b.Property<int>("ReleaseBatchId");
-
-                    b.Property<byte[]>("Content");
-
-                    b.Property<string>("ContentType");
-
-                    b.HasKey("ReleaseBatchId");
-                });
-
             modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>
                 {
                     b.HasOne("Kraken.Models.ReleaseBatch")
                         .WithMany()
                         .HasForeignKey("ReleaseBatchId");
-                });
-
-            modelBuilder.Entity("Kraken.Models.ReleaseBatchLogo", b =>
-                {
-                    b.HasOne("Kraken.Models.ReleaseBatch")
-                        .WithOne()
-                        .HasForeignKey("Kraken.Models.ReleaseBatchLogo", "ReleaseBatchId");
                 });
         }
     }

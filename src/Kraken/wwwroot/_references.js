@@ -10,7 +10,6 @@
 /// <reference path="js/commands/deploybatch.js" />
 /// <reference path="js/commands/env.js" />
 /// <reference path="js/commands/linkproj.js" />
-/// <reference path="js/commands/lock.js" />
 /// <reference path="js/commands/logout.js" />
 /// <reference path="js/commands/mkbatch.js" />
 /// <reference path="js/commands/nubatch.js" />

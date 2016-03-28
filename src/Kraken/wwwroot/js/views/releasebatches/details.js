@@ -175,13 +175,13 @@
         }.bind(this);
 
         bus.subscribe('releasebatches:update', function (idOrName) {
-            if (releaseBatch().id === idOrName || String(releaseBatch().id) === idOrName || releaseBatch().name === idOrName) {
+            if (releaseBatch().id === idOrName || releaseBatch().name === idOrName) {
                 this.loadReleaseBatch();
                 this.loadEnvironments();
             }
         }.bind(this));
         bus.subscribe('releasebatches:delete', function (idOrName) {
-            if (releaseBatch().id === idOrName || String(releaseBatch().id) === idOrName || releaseBatch().name === idOrName) {
+            if (releaseBatch().id === idOrName || releaseBatch().name === idOrName) {
                 document.location = context.basePath + 'app';
             }
         }.bind(this));
