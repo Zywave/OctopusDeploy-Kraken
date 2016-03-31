@@ -1,6 +1,7 @@
 ﻿namespace Kraken
 {
     using System;
+    using System.Net;
     using Kraken.Filters;
     using Kraken.Models;
     using Kraken.Security;
@@ -20,6 +21,13 @@
     {
         public Startup(IHostingEnvironment env)
         {
+            // Enable TLS 1.2
+            ServicePointManager.SecurityProtocol =
+               SecurityProtocolType.Ssl3
+               | SecurityProtocolType.Tls
+               | SecurityProtocolType.Tls11
+               | SecurityProtocolType.Tls12;
+
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
