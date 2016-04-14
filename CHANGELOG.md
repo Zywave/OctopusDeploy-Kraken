@@ -1,3 +1,19 @@
+<a name="1.0.0-prerelease.7"></a>
+# [1.0.0-prerelease.7](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.6...v1.0.0-prerelease.7) (2016-03-31)
+
+
+### Bug Fixes
+
+* lock/unlock and passing id values to cmdr didn't refresh batch details UI ([5fa7038](https://github.com/zywave/OctopusDeploy-Kraken/commit/5fa7038))
+
+### Features
+
+* enable TLS 1.2 ([739ca27](https://github.com/zywave/OctopusDeploy-Kraken/commit/739ca27))
+* notify user when deploy fails for projects, allow user to lock batch, sort batch ([538e591](https://github.com/zywave/OctopusDeploy-Kraken/commit/538e591))
+* progress improvements: less API calls, more info closes #26 ([b44427c](https://github.com/zywave/OctopusDeploy-Kraken/commit/b44427c)), closes [#26](https://github.com/zywave/OctopusDeploy-Kraken/issues/26) [#38](https://github.com/zywave/OctopusDeploy-Kraken/issues/38) [#37](https://github.com/zywave/OctopusDeploy-Kraken/issues/37) [#39](https://github.com/zywave/OctopusDeploy-Kraken/issues/39)
+
+
+
 <a name="1.0.0-prerelease.6"></a>
 # [1.0.0-prerelease.6](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.5...v1.0.0-prerelease.6) (2016-03-18)
 
