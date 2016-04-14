@@ -4,7 +4,7 @@
             <button type="button" class="btn btn-default" data-bind="click: $parent.manage"><span class="glyphicon glyphicon-console"></span> Manage</button>
 
             <div class="btn-group">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button data-bind="disable: isLocked" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="glyphicon glyphicon-refresh"></span> Sync <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu pull-right">
@@ -27,8 +27,18 @@
             </div>
         </div>
 
-        <img class="pull-left batch-logo" data-bind="attr: { src: logoUrl }" />
-        <h2 data-bind="text: name"></h2>
+        <div>
+            <img class="pull-left batch-logo" data-bind="attr: { src: logoUrl }" />
+            <h2 data-bind="text: name"></h2>
+            <!-- ko if: isLocked -->
+            <span data-bind="if: isLocked">
+                <span class="glyphicon glyphicon-lock"></span>
+                <span data-bind="text: lockUserName"></span>
+                <br />
+                <span data-bind="text: lockComment"></span>
+            </span>
+            <!-- /ko -->
+        </div>
     </header>
 
     <div class="view__body">
@@ -74,7 +84,7 @@
         <div class="container sub-container">
             <div class="col col-lg-6">
                 <div class="input-group input-group select2-bootstrap-append">
-                    <select class="form-control" data-bind="value: $parent.selectedProject, select2: $parent.projectsSelect2Options"></select>
+                    <select class="form-control" data-bind="disable: isLocked, value: $parent.selectedProject, select2: $parent.projectsSelect2Options"></select>
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-primary" aria-haspopup="true" aria-expanded="false" data-bind="enable: $parent.selectedProject, click: $component.linkProject">
                             <span class="glyphicon glyphicon-plus"></span>

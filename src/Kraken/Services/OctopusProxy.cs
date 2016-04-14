@@ -162,14 +162,7 @@
                 }
             }
 
-            try
-            {
-                return _octopusRepository.Deployments.Create(deploymentResource);
-            }
-            catch (OctopusSecurityException e)
-            {
-                return null;
-            }
+            return _octopusRepository.Deployments.Create(deploymentResource);
         }
 
         public ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages)
