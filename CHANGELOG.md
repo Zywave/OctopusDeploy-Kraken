@@ -1,3 +1,17 @@
+<a name="1.0.0-prerelease.8"></a>
+# [1.0.0-prerelease.8](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.7...v1.0.0-prerelease.8) (2016-04-19)
+
+
+### Bug Fixes
+
+* getNextReleases method renamed to previewReleases ([deacf6f](https://github.com/zywave/OctopusDeploy-Kraken/commit/deacf6f))
+
+### Features
+
+* lock batch implementation, sort batches by name by default on home page ([d8ce1c6](https://github.com/zywave/OctopusDeploy-Kraken/commit/d8ce1c6))
+
+
+
 <a name="1.0.0-prerelease.7"></a>
 # [1.0.0-prerelease.7](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.6...v1.0.0-prerelease.7) (2016-03-31)
 
