@@ -42,7 +42,7 @@
                 checkVersionedOrUnversioned(releases);
             }
 
-            releaseBatchesService.getNextReleases(batchIdOrName).then(function (releases) {
+            releaseBatchesService.previewReleases(batchIdOrName).then(function (releases) {
                 checkVersionedOrUnversioned(releases);
                 if (unversionedReleases.length) {
                     getVersionForRelease(unversionedReleases.pop());
