@@ -131,6 +131,16 @@
                 bus.publish('releasebatches:update', idOrName);
                 return data;
             });
+        },
+        unlockReleaseBatch: function (idOrName) {
+            return $.ajax({
+                type: 'PUT',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/unlockreleasebatch',
+                contentType: 'application/json'
+            }).then(function (data) {
+                bus.publish('releasebatches:update', idOrName);
+                return data;
+            });
         }
     };
 

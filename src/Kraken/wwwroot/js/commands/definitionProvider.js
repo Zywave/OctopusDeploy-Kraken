@@ -12,8 +12,9 @@
     'commands/deploybatch',
     'commands/nubatch',
     'commands/progress',
+    'commands/lockbatch',
+    'commands/unlockbatch',
     'commands/logout',
-    'commands/lockbatch'
 ],
 function (cmdr) {
     var provider = new cmdr.DefinitionProvider();

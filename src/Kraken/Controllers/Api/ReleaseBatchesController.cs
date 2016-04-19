@@ -126,21 +126,41 @@ namespace Kraken.Controllers.Api
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, false, false);
-            releaseBatch.IsLocked = !releaseBatch.IsLocked;
-            if (releaseBatch.IsLocked)
+            if (releaseBatch == null)
             {
-                releaseBatch.LockComment = comment;
-                releaseBatch.LockUserName = User.Identity.Name;
+                return HttpNotFound();
             }
-            else
-            {
-                releaseBatch.LockComment = string.Empty;
-                releaseBatch.LockUserName = string.Empty;
-            }
+
+            releaseBatch.IsLocked = true;
+            releaseBatch.LockComment = comment;
+            releaseBatch.LockUserName = User.Identity.Name;
 
             await _context.SaveChangesAsync();
 
-            return Ok(releaseBatch.IsLocked);
+            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+        }
+
+        [HttpPut("{idOrName}/UnlockReleaseBatch")]
+        public async Task<IActionResult> UnlockReleaseBatch([FromRoute] string idOrName)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+            
+            var releaseBatch = await GetReleaseBatch(idOrName, false, false);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+
+            releaseBatch.IsLocked = false;
+            releaseBatch.LockComment = String.Empty;
+            releaseBatch.LockUserName = String.Empty;
+
+            await _context.SaveChangesAsync();
+
+            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // PUT: api/ReleaseBatches/5/Logo
@@ -637,7 +657,7 @@ namespace Kraken.Controllers.Api
 
         private ObjectResult GetLockedForbiddenUpdateResult(ReleaseBatch releaseBatch)
         {
-            var lockedReason = $"Locked by: {releaseBatch.LockUserName}{(!string.IsNullOrEmpty(releaseBatch.LockComment) ? $" with comment: {releaseBatch.LockComment}" : "")}";
+            var lockedReason = $"Locked by: {releaseBatch.LockUserName}{(!string.IsNullOrEmpty(releaseBatch.LockComment) ? $" ({releaseBatch.LockComment})" : String.Empty)}";
             return new ObjectResult(lockedReason)
             {
                 StatusCode = StatusCodes.Status403Forbidden
@@ -676,8 +696,7 @@ namespace Kraken.Controllers.Api
             public List<EnvironmentMapping> View { get; set; }
             public List<EnvironmentMapping> Deploy { get; set; }
         }
-
-        // json serializer was having issues with returning EnvironmentsWithPermissionsResponseBody as View and Deploy point to the same objects
+        
         public class EnvironmentMapping
         {
             public string Id { get; set; }
