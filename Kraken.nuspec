@@ -2,17 +2,13 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.0-prerelease08</version>
+    <version>1.0.0-prerelease09</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
     <releaseNotes>### Bug Fixes
 
-* getNextReleases method renamed to previewReleases ([deacf6f](https://github.com/zywave/OctopusDeploy-Kraken/commit/deacf6f))
-
-### Features
-
-* lock batch implementation, sort batches by name by default on home page ([d8ce1c6](https://github.com/zywave/OctopusDeploy-Kraken/commit/d8ce1c6))</releaseNotes>
+* multiple deploy command fixes ([e2dd6df](https://github.com/zywave/OctopusDeploy-Kraken/commit/e2dd6df))</releaseNotes>
   </metadata>
   <files>
       <file src="src\Kraken\bin\output\**\*.*" target=""/>
