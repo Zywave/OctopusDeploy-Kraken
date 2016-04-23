@@ -11,35 +11,49 @@
             }
             
             return releaseBatchesService.deployReleaseBatch(batchIdOrName, environmentIdOrName, force === '--force').then(function (data) {
-                this.shell.writeLine();
-                this.shell.writeLine('                $$$$$$$');
-                this.shell.writeLine('            $$$$$$$$$$$$$$');
-                this.shell.writeLine('         $$$$$$$$$$$$$$$$$$');
-                this.shell.writeLine('        $$$$$$$$$$$$$$$$$$$$');
-                this.shell.writeLine('       $$$$$$$$$$$$$$$O$$$$$    $$$$$$');
-                this.shell.writeLine('       $$$$$$$$O$$$$$$$$$$$$   $$$  $$$');
-                this.shell.writeLine('       $$$$$$$$$$$$$$$$$$$$  $$$$    $$');
-                this.shell.writeLine('        $$$$$$$$$$$$$$$$$$$$$$$$');
-                this.shell.writeLine('         $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-                this.shell.writeLine(' $$$$$$     $$$$$$$$$$$$$$$$$$        $$');
-                this.shell.writeLine('$$   $$$$$$$$$$$$$$$$$$$$$$$         $$');
-                this.shell.writeLine(' $$$    $$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-                this.shell.writeLine('     $$$$$$$$  $$$ $$$$$$          $$');
-                this.shell.writeLine('   $$$$       $$$  $$$ $$$      $$$$');
-                this.shell.writeLine('  $$$       $$$$   $$$  $$$');
-                this.shell.writeLine('   $$$$$   $$$     $$$   $$$$    $$');
-                this.shell.writeLine('    $$$    $$$$$$  $$$    $$$$$$$$');
-                this.shell.writeLine('            $$$     $$$$$   $$$$');
-                this.shell.writeLine();
-                this.shell.writeLine('         RELEASE THE KRAKEN!');
-                this.shell.writeLine();
-                if (data.failedProjects.length) {
-                    this.shell.writeLine('Some deployments were not successfully created because the current user lacks appropriate permissions:');
-                    data.failedProjects.forEach(function(failedProject) {
-                        this.shell.writeLine(failedProject);
-                    });
+                if (data.successfulItems.length) {
+                    this.shell.writeLine();
+                    this.shell.writeLine('                $$$$$$$');
+                    this.shell.writeLine('            $$$$$$$$$$$$$$');
+                    this.shell.writeLine('         $$$$$$$$$$$$$$$$$$');
+                    this.shell.writeLine('        $$$$$$$$$$$$$$$$$$$$');
+                    this.shell.writeLine('       $$$$$$$$$$$$$$$O$$$$$    $$$$$$');
+                    this.shell.writeLine('       $$$$$$$$O$$$$$$$$$$$$   $$$  $$$');
+                    this.shell.writeLine('       $$$$$$$$$$$$$$$$$$$$  $$$$    $$');
+                    this.shell.writeLine('        $$$$$$$$$$$$$$$$$$$$$$$$');
+                    this.shell.writeLine('         $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+                    this.shell.writeLine(' $$$$$$     $$$$$$$$$$$$$$$$$$        $$');
+                    this.shell.writeLine('$$   $$$$$$$$$$$$$$$$$$$$$$$         $$');
+                    this.shell.writeLine(' $$$    $$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+                    this.shell.writeLine('     $$$$$$$$  $$$ $$$$$$          $$');
+                    this.shell.writeLine('   $$$$       $$$  $$$ $$$      $$$$');
+                    this.shell.writeLine('  $$$       $$$$   $$$  $$$');
+                    this.shell.writeLine('   $$$$$   $$$     $$$   $$$$    $$');
+                    this.shell.writeLine('    $$$    $$$$$$  $$$    $$$$$$$$');
+                    this.shell.writeLine('            $$$     $$$$$   $$$$');
+                    this.shell.writeLine();
+                    this.shell.writeLine('         RELEASE THE KRAKEN!');
+                    this.shell.writeLine();
+                    this.shell.writeLine('Deployments for the following projects were created:');
+                    data.successfulItems.forEach(function (item) {
+                        this.shell.writeLine(item.projectName, 'success');
+                    }.bind(this));
                 } else {
-                    this.shell.writeLine('Release batch deploys started.  Check Octopus for status.', 'success');
+                    this.shell.writeLine('No deployments created');
+                }
+                if (data.unauthorizedItems.length) {
+                    this.shell.writeLine();
+                    this.shell.writeLine('Deployments for the following projects were not created because you are not authorized to deploy them:');
+                    data.unauthorizedItems.forEach(function (item) {
+                        this.shell.writeLine(item.projectName, 'warning');
+                    }.bind(this));
+                }
+                if (data.failedItems.length) {
+                    this.shell.writeLine();
+                    this.shell.writeLine('Deployments for the following projects were not created because an error occured while attempting to create them:');
+                    data.failedItems.forEach(function (item) {
+                        this.shell.writeLine(item.projectName, 'error');
+                    }.bind(this));
                 }
                 return data;
             }.bind(this)).fail(this.fail.bind(this));

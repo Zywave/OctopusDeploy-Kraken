@@ -448,11 +448,7 @@ namespace Kraken.Controllers.Api
                 return HttpBadRequest("Environment Not Found");
             }
 
-            var responseBody = new DeployBatchResponseBody
-            {
-                SuccessfulProjects = new List<string>(),
-                FailedProjects = new List<string>()
-            };
+            var responseBody = new DeployBatchResponseBody();
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
@@ -461,11 +457,15 @@ namespace Kraken.Controllers.Api
                     try
                     {
                         _octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id, forceRedeploy);
-                        responseBody.SuccessfulProjects.Add(releaseBatchItem.ProjectName);
+                        responseBody.SuccessfulItems.Add(releaseBatchItem);
                     }
                     catch (OctopusSecurityException)
                     {
-                        responseBody.FailedProjects.Add(releaseBatchItem.ProjectName);
+                        responseBody.UnauthorizedItems.Add(releaseBatchItem);
+                    }
+                    catch (OctopusException)
+                    {
+                        responseBody.FailedItems.Add(releaseBatchItem);
                     }
                 }
             }
@@ -476,12 +476,7 @@ namespace Kraken.Controllers.Api
             releaseBatch.DeployUserName = User.Identity.Name;
 
             await _context.SaveChangesAsync();
-
-            if (!responseBody.SuccessfulProjects.Any())
-            {
-                return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
-            }
-
+            
             return Ok(responseBody);
         }
 
@@ -676,8 +671,9 @@ namespace Kraken.Controllers.Api
 
         public class DeployBatchResponseBody
         {
-            public List<string> SuccessfulProjects { get; set; } 
-            public List<string> FailedProjects { get; set; } 
+            public List<ReleaseBatchItem> SuccessfulItems { get; set; } = new List<ReleaseBatchItem>();
+            public List<ReleaseBatchItem> UnauthorizedItems { get; set; } = new List<ReleaseBatchItem>();
+            public List<ReleaseBatchItem> FailedItems { get; set; } = new List<ReleaseBatchItem>();
         }
 
         public class ProjectProgressResponseBody
@@ -693,8 +689,8 @@ namespace Kraken.Controllers.Api
 
         public class EnvironmentsWithPermissionsResponseBody
         {
-            public List<EnvironmentMapping> View { get; set; }
-            public List<EnvironmentMapping> Deploy { get; set; }
+            public List<EnvironmentMapping> View { get; set; } = new List<EnvironmentMapping>();
+            public List<EnvironmentMapping> Deploy { get; set; } = new List<EnvironmentMapping>();
         }
         
         public class EnvironmentMapping

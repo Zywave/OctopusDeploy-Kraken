@@ -85,8 +85,9 @@
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/deploy?forceRedeploy=' + !!forceRedeploy,
                 data: JSON.stringify(environmentIdOrName),
                 contentType: 'application/json'
-            }).then(function() {
+            }).then(function(data) {
                 bus.publish('releasebatches:deploy', idOrName);
+                return data;
             });
         },
         createReleases: function (idOrName, releases) {
@@ -104,8 +105,6 @@
                 type: 'GET',
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/previewreleases',
                 contentType: 'application/json'
-            }).then(function (data) {
-                return data;
             });
         },
         getProgression: function (idOrName) {
@@ -114,8 +113,6 @@
                 url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/getprogression',
                 traditional: true,
                 contentType: 'application/json'
-            }).then(function (data) {
-                return data;
             });
         },
         getBatchEnvironments: function (idOrName) {
