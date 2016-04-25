@@ -1,3 +1,13 @@
+<a name="1.0.0-prerelease.10"></a>
+# [1.0.0-prerelease.10](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.9...v1.0.0-prerelease.10) (2016-04-25)
+
+
+### Bug Fixes
+
+* deploy command displays multiple results properly ([055f1f5](https://github.com/zywave/OctopusDeploy-Kraken/commit/055f1f5))
+
+
+
 <a name="1.0.0-prerelease.9"></a>
 # [1.0.0-prerelease.9](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.8...v1.0.0-prerelease.9) (2016-04-23)
 

@@ -1,3 +1,3 @@
 ### Bug Fixes
 
-* multiple deploy command fixes ([e2dd6df](https://github.com/zywave/OctopusDeploy-Kraken/commit/e2dd6df))
+* deploy command displays multiple results properly ([055f1f5](https://github.com/zywave/OctopusDeploy-Kraken/commit/055f1f5))
