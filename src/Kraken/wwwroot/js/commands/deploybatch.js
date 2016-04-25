@@ -36,23 +36,16 @@
                     this.shell.writeLine();
                     this.shell.writeLine('Deployments for the following projects were created:');
                     data.successfulItems.forEach(function (item) {
-                        this.shell.writeLine(item.projectName, 'success');
+                        this.shell.writeLine(item.name, 'success');
                     }.bind(this));
                 } else {
                     this.shell.writeLine('No deployments created');
-                }
-                if (data.unauthorizedItems.length) {
-                    this.shell.writeLine();
-                    this.shell.writeLine('Deployments for the following projects were not created because you are not authorized to deploy them:');
-                    data.unauthorizedItems.forEach(function (item) {
-                        this.shell.writeLine(item.projectName, 'warning');
-                    }.bind(this));
                 }
                 if (data.failedItems.length) {
                     this.shell.writeLine();
                     this.shell.writeLine('Deployments for the following projects were not created because an error occured while attempting to create them:');
                     data.failedItems.forEach(function (item) {
-                        this.shell.writeLine(item.projectName, 'error');
+                        this.shell.writeLine(item.name + ': ' + item.message, 'error');
                     }.bind(this));
                 }
                 return data;

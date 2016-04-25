@@ -457,15 +457,18 @@ namespace Kraken.Controllers.Api
                     try
                     {
                         _octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id, forceRedeploy);
-                        responseBody.SuccessfulItems.Add(releaseBatchItem);
+                        responseBody.SuccessfulItems.Add(new DeployBatchItem
+                        {
+                            Name = releaseBatchItem.ProjectName
+                        });
                     }
-                    catch (OctopusSecurityException)
+                    catch (OctopusException ex)
                     {
-                        responseBody.UnauthorizedItems.Add(releaseBatchItem);
-                    }
-                    catch (OctopusException)
-                    {
-                        responseBody.FailedItems.Add(releaseBatchItem);
+                        responseBody.FailedItems.Add(new DeployBatchItem
+                        {
+                            Name = releaseBatchItem.ProjectName,
+                            Message = ex.Message
+                        });
                     }
                 }
             }
@@ -671,9 +674,15 @@ namespace Kraken.Controllers.Api
 
         public class DeployBatchResponseBody
         {
-            public List<ReleaseBatchItem> SuccessfulItems { get; set; } = new List<ReleaseBatchItem>();
-            public List<ReleaseBatchItem> UnauthorizedItems { get; set; } = new List<ReleaseBatchItem>();
-            public List<ReleaseBatchItem> FailedItems { get; set; } = new List<ReleaseBatchItem>();
+            public List<DeployBatchItem> SuccessfulItems { get; set; } = new List<DeployBatchItem>();
+            public List<DeployBatchItem> FailedItems { get; set; } = new List<DeployBatchItem>();
+        }
+
+        public class DeployBatchItem
+        {
+            public string Name { get; set; }
+            
+            public string Message { get; set; }
         }
 
         public class ProjectProgressResponseBody
