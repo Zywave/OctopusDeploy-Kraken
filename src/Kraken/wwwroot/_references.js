@@ -6,6 +6,7 @@
 /// <reference path="js/commands/autocompleteprovider.js" />
 /// <reference path="js/commands/batch.js" />
 /// <reference path="js/commands/commandHandler.js" />
+/// <reference path="js/commands/copybatch.js" />
 /// <reference path="js/commands/definitionProvider.js" />
 /// <reference path="js/commands/deploybatch.js" />
 /// <reference path="js/commands/env.js" />

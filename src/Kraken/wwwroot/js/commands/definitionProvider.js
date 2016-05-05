@@ -6,6 +6,7 @@
     'commands/mkbatch',
     'commands/updbatch',
     'commands/rmbatch',
+    'commands/copybatch',
     'commands/linkproj',
     'commands/unlinkproj',
     'commands/syncbatch',

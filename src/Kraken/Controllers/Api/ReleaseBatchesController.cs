@@ -265,6 +265,57 @@ namespace Kraken.Controllers.Api
             return Ok(releaseBatch);
         }
 
+        // DELETE: api/ReleaseBatches/5/Copy
+        [HttpPost("{idOrName}/Copy")]
+        public async Task<IActionResult> CopyReleaseBatch([FromRoute] string idOrName, [FromBody] string copyName)
+        {
+            if (!ModelState.IsValid)
+            {
+                return HttpBadRequest(ModelState);
+            }
+
+            var releaseBatch = await GetReleaseBatch(idOrName, true, true);
+            if (releaseBatch == null)
+            {
+                return HttpNotFound();
+            }
+
+            var copyReleaseBatch = new ReleaseBatch();
+            copyReleaseBatch.Name = copyName;
+
+            copyReleaseBatch.Description = releaseBatch.Description;
+
+            if (releaseBatch.Logo != null)
+            {
+                copyReleaseBatch.Logo = new ReleaseBatchLogo();
+                copyReleaseBatch.Logo.Content = releaseBatch.Logo.Content;
+                copyReleaseBatch.Logo.ContentType = releaseBatch.Logo.ContentType;
+            }
+
+            if (releaseBatch.Items != null)
+            {
+                copyReleaseBatch.Items = new List<ReleaseBatchItem>();
+                foreach (var item in releaseBatch.Items)
+                {
+                    var copyItem = new ReleaseBatchItem();
+                    copyItem.ProjectId = item.ProjectId;
+                    copyItem.ProjectName = item.ProjectName;
+                    copyItem.ProjectSlug = item.ProjectSlug;
+                    copyItem.ReleaseId = item.ReleaseId;
+                    copyItem.ReleaseVersion = item.ReleaseVersion;
+                    copyReleaseBatch.Items.Add(copyItem);
+                }
+            }
+
+            copyReleaseBatch.UpdateDateTime = DateTimeOffset.Now;
+            copyReleaseBatch.UpdateUserName = User.Identity.Name;
+
+            _context.ReleaseBatches.Add(copyReleaseBatch);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtRoute("GetReleaseBatch", new { idOrName = copyReleaseBatch.Id }, copyReleaseBatch);
+        }
+
         // PUT: api/ReleaseBatches/5/LinkProject
         [HttpPut("{idOrName}/LinkProject")]
         public async Task<IActionResult> LinkProject([FromRoute] string idOrName, [FromBody] LinkProjectRequestBody requestBody)

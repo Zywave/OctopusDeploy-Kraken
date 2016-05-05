@@ -49,6 +49,17 @@
                 return data;
             });
         },
+        copyReleaseBatch: function(idOrName, copyName) {
+            return $.ajax({
+                type: 'POST',
+                url: context.basePath + 'api/releasebatches/' + encodeURI(idOrName) + '/copy',
+                data: JSON.stringify(copyName),
+                contentType: 'application/json'
+            }).then(function (data) {
+                bus.publish('releasebatches:add', data.id);
+                return data;
+            });
+        },
         linkProject: function (idOrName, projectIdOrSlugOrName, releaseVersion) {
             return $.ajax({
                 type: 'PUT',
