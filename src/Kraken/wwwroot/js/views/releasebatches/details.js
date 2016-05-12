@@ -1,7 +1,7 @@
 ﻿define(['knockout', 'bootstrap', 'select2', 'koselect2', 'moment', 'underscore', 'utils/koAsyncExtender', 'shell', 'bus', 'services/releaseBatches', 'services/environments', 'services/projects', 'services/users', 'context'], function (ko, bs, select2, koselect2, moment, _, koAsyncExtender, shell, bus, releaseBatchesService, environmentsService, projectsService, usersService, context) {
     return function (params) {
 
-        var checkProgressIntervalId;
+        var checkProgressTimeoutId;
         this.viewEnvironments = ko.observableArray();
         this.deployEnvironments = ko.observableArray();
         this.progress = ko.observable();
@@ -92,12 +92,11 @@
         }.bind(this);
 
         this.checkProgress = function () {
-            clearInterval(checkProgressIntervalId);
-
+            clearTimeout(checkProgressTimeoutId);
             releaseBatchesService.getProgression(params.id).then(function (data) {
                 this.progress(data);
                 //check progress again in 5 seconds
-                checkProgressIntervalId = setInterval(function () {
+                checkProgressTimeoutId = setTimeout(function () {
                     this.checkProgress();
                 }.bind(this), 5000);
             }.bind(this)).fail(function(e) {
