@@ -2,6 +2,7 @@
     return function (params) {
 
         var checkProgressTimeoutId;
+        var checkProgressAjaxPromise;
         this.viewEnvironments = ko.observableArray();
         this.deployEnvironments = ko.observableArray();
         this.progress = ko.observable();
@@ -93,14 +94,16 @@
 
         this.checkProgress = function () {
             clearTimeout(checkProgressTimeoutId);
-            releaseBatchesService.getProgression(params.id).then(function (data) {
+            if (checkProgressAjaxPromise) {
+                checkProgressAjaxPromise.abort();
+            }
+
+            checkProgressAjaxPromise = releaseBatchesService.getProgression(params.id).done(function (data) {
                 this.progress(data);
                 //check progress again in 5 seconds
                 checkProgressTimeoutId = setTimeout(function () {
                     this.checkProgress();
                 }.bind(this), 5000);
-            }.bind(this)).fail(function(e) {
-                console.error(e);
             }.bind(this));
         }.bind(this);
 
