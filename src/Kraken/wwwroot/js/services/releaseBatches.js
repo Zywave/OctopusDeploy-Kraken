@@ -88,7 +88,7 @@
                 contentType: 'application/json'
             }).then(function () {
                 bus.publish('releasebatches:sync', idOrName);
-            });;
+            });
         },
         deployReleaseBatch: function (idOrName, environmentIdOrName, forceRedeploy) {
             return $.ajax({
