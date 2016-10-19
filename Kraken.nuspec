@@ -2,11 +2,17 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
-    <releaseNotes>### Features
+    <releaseNotes>### Bug Fixes
+
+* checkProgress floods network when adding projects ([0d02bd0](https://github.com/zywave/OctopusDeploy-Kraken/commit/0d02bd0))
+* linking projects via UI lags kraken and floods network with API calls ([#59](https://github.com/zywave/OctopusDeploy-Kraken/issues/59)) ([c8dd77a](https://github.com/zywave/OctopusDeploy-Kraken/commit/c8dd77a))
+
+
+### Features
 
 * copybatch command ([2da1ee2](https://github.com/zywave/OctopusDeploy-Kraken/commit/2da1ee2)), closes [#43](https://github.com/zywave/OctopusDeploy-Kraken/issues/43)</releaseNotes>
   </metadata>
