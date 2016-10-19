@@ -1,6 +1,6 @@
 {
   "name": "OctopusDeploy-Kraken",
-  "version": "1.0.0-prerelease.10",
+  "version": "1.0.0",
   "private": true,
   "repository": {
     "type": "git",
