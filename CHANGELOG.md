@@ -1,3 +1,14 @@
+<a name="1.0.2-prerelease.0"></a>
+## [1.0.2-prerelease.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.1...v1.0.2-prerelease.0) (2016-11-10)
+
+
+### Bug Fixes
+
+* breaking Octopus upgrade requires Octopus.Client package update ([2782c86](https://github.com/zywave/OctopusDeploy-Kraken/commit/2782c86))
+* linking projects via UI lags kraken and floods network with API calls ([6e33177](https://github.com/zywave/OctopusDeploy-Kraken/commit/6e33177))
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.0-prerelease.10...v1.0.1) (2016-10-19)
 
