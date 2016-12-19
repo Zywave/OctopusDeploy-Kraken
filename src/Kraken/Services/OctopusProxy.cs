@@ -4,13 +4,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using Kraken.Security;
-    using Microsoft.AspNet.Http;
-    using Microsoft.Extensions.OptionsModel;
     using Octopus.Client;
     using Octopus.Client.Model;
-    using NuGet;
     using System.Globalization;
+    using System.Threading.Tasks;
+    using Kraken.Security;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Options;
     using Octopus.Client.Exceptions;
 
     public class OctopusProxy : IOctopusProxy
@@ -22,20 +22,20 @@
             var apiKey = httpContextAccessor.HttpContext.User.GetOctopusApiKey();
 
             var endpoint = new OctopusServerEndpoint(settings.Value.OctopusServerAddress, apiKey);
-            _octopusRepository = new OctopusRepository(endpoint);
+            _octopusClient = Octopus.Client.OctopusAsyncClient.Create(endpoint, new OctopusClientOptions()).Result;
         }
 
-        public IEnumerable<EnvironmentResource> GetEnvironments()
+        public async Task<IEnumerable<EnvironmentResource>> GetEnvironmentsAsync()
         {
-            return _octopusRepository.Environments.FindAll();
+            return await _octopusClient.Repository.Environments.FindAll();
         }
 
-        public EnvironmentResource GetEnvironment(string idOrName)
+        public async Task<EnvironmentResource> GetEnvironmentAsync(string idOrName)
         {
-            return _octopusRepository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Environments-" + idOrName || string.Equals(e.Name, idOrName, StringComparison.InvariantCultureIgnoreCase));
+            return await _octopusClient.Repository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Environments-" + idOrName || string.Equals(e.Name, idOrName, StringComparison.OrdinalIgnoreCase));
         }
 
-        public Dictionary<Permission, IEnumerable<EnvironmentResource>> GetEnvironmentsWithPermissions(IEnumerable<Permission> permissionsToGet, IEnumerable<string> projectIds = null)
+        public async Task<Dictionary<Permission, IEnumerable<EnvironmentResource>>> GetEnvironmentsWithPermissionsAsync(IEnumerable<Permission> permissionsToGet, IEnumerable<string> projectIds = null)
         {
             if (projectIds == null)
             {
@@ -44,9 +44,9 @@
 
             var environmentsWithPermissions = new Dictionary<Permission, IEnumerable<EnvironmentResource>>();
 
-            var environments = _octopusRepository.Environments.FindAll();
-            var user = _octopusRepository.Users.GetCurrent();
-            var permissions = _octopusRepository.Users.GetPermissions(user);
+            var environments = await _octopusClient.Repository.Environments.FindAll();
+            var user = await _octopusClient.Repository.Users.GetCurrent();
+            var permissions = await _octopusClient.Repository.Users.GetPermissions(user);
 
             foreach (var permissionToGet in permissionsToGet)
             {
@@ -78,46 +78,46 @@
             return environmentsWithPermissions;
         }
 
-        public ProjectResource GetProject(string idOrSlugOrName)
+        public async Task<ProjectResource> GetProjectAsync(string idOrSlugOrName)
         {
-            return _octopusRepository.Projects.FindOne(p => p.Id == idOrSlugOrName || p.Id == "Projects-" + idOrSlugOrName || p.Slug == idOrSlugOrName || string.Equals(p.Name, idOrSlugOrName, StringComparison.InvariantCultureIgnoreCase));
+            return await _octopusClient.Repository.Projects.FindOne(p => p.Id == idOrSlugOrName || p.Id == "Projects-" + idOrSlugOrName || p.Slug == idOrSlugOrName || string.Equals(p.Name, idOrSlugOrName, StringComparison.OrdinalIgnoreCase));
         }
 
-        public IEnumerable<ProjectResource> GetProjects(string nameFilter)
+        public async Task<IEnumerable<ProjectResource>> GetProjectsAsync(string nameFilter)
         {
-            return _octopusRepository.Projects.FindMany(p => string.IsNullOrEmpty(nameFilter) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, nameFilter, CompareOptions.IgnoreCase) >= 0);
+            return await _octopusClient.Repository.Projects.FindMany(p => string.IsNullOrEmpty(nameFilter) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, nameFilter, CompareOptions.IgnoreCase) >= 0);
         }
 
-        public DashboardResource GetDynamicDashboard(IEnumerable<string> projectIds, IEnumerable<string> environmentIds)
+        public async Task<DashboardResource> GetDynamicDashboardAsync(IEnumerable<string> projectIds, IEnumerable<string> environmentIds)
         {
-            return _octopusRepository.Dashboards.GetDynamicDashboard(projectIds.ToArray(), environmentIds.ToArray());
+            return await _octopusClient.Repository.Dashboards.GetDynamicDashboard(projectIds.ToArray(), environmentIds.ToArray());
         }
 
-        public ReleaseResource GetLatestRelease(string projectId)
+        public async Task<ReleaseResource> GetLatestReleaseAsync(string projectId)
         {
-            var project = GetProject(projectId);
-            var releases = _octopusRepository.Projects.GetReleases(project).Items;
+            var project = await GetProjectAsync(projectId);
+            var releases = (await _octopusClient.Repository.Projects.GetReleases(project)).Items;
             return releases.FirstOrDefault();
         }
 
-        public ReleaseResource GetLatestDeployedRelease(string projectId, string environmentId)
+        public async Task<ReleaseResource> GetLatestDeployedReleaseAsync(string projectId, string environmentId)
         {
-            var deployment = _octopusRepository.Deployments.FindAll(new[] { projectId }, new[] { environmentId }).Items.FirstOrDefault();
-            return deployment != null ? _octopusRepository.Releases.Get(deployment.ReleaseId) : null;
+            var deployment = (await _octopusClient.Repository.Deployments.FindAll(new[] { projectId }, new[] { environmentId })).Items.FirstOrDefault();
+            return deployment != null ? await _octopusClient.Repository.Releases.Get(deployment.ReleaseId) : null;
         }
 
-        public DeploymentProcessResource GetDeploymentProcessForProject(string projectId)
+        public async Task<DeploymentProcessResource> GetDeploymentProcessForProjectAsync(string projectId)
         {
-            var project = GetProject(projectId);
-            return _octopusRepository.DeploymentProcesses.Get(project.DeploymentProcessId);
+            var project = await GetProjectAsync(projectId);
+            return await _octopusClient.Repository.DeploymentProcesses.Get(project.DeploymentProcessId);
         }
 
-        public FeedResource GetFeed(string feedId)
+        public async Task<FeedResource> GetFeedAsync(string feedId)
         {
-            return _octopusRepository.Feeds.Get(feedId);
+            return await _octopusClient.Repository.Feeds.Get(feedId);
         }
 
-        public DeploymentResource DeployRelease(string releaseId, string environmentId, bool forceRedeploy)
+        public async Task<DeploymentResource> DeployReleaseAsync(string releaseId, string environmentId, bool forceRedeploy)
         {
             var deploymentResource = new DeploymentResource
             {
@@ -128,11 +128,11 @@
 
             if (!forceRedeploy)
             {
-                var release = _octopusRepository.Releases.Get(releaseId);
+                var release = await _octopusClient.Repository.Releases.Get(releaseId);
                 DeploymentResource checkDeploy;
                 try
                 {
-                    checkDeploy = _octopusRepository.Releases.GetDeployments(release).Items.FirstOrDefault(d => d.EnvironmentId == environmentId);
+                    checkDeploy = (await _octopusClient.Repository.Releases.GetDeployments(release)).Items.FirstOrDefault(d => d.EnvironmentId == environmentId);
                 }
                 catch (OctopusResourceNotFoundException)
                 {
@@ -141,7 +141,7 @@
 
                 if (checkDeploy != null && checkDeploy.ReleaseId == releaseId)
                 {
-                    var task = _octopusRepository.Tasks.Get(checkDeploy.TaskId);
+                    var task = await _octopusClient.Repository.Tasks.Get(checkDeploy.TaskId);
 
                     // if the task hasn't completed, don't queue up another deploy
                     if (!task.IsCompleted)
@@ -162,10 +162,10 @@
                 }
             }
 
-            return _octopusRepository.Deployments.Create(deploymentResource);
+            return await _octopusClient.Repository.Deployments.Create(deploymentResource);
         }
 
-        public ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages)
+        public async Task<ReleaseResource> CreateReleaseAsync(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages)
         {
             var release = new ReleaseResource
             {
@@ -174,30 +174,30 @@
                 SelectedPackages = selectedPackages.ToList()
             };
 
-            return CreateRelease(release);
+            return await CreateReleaseAsync(release);
         }
 
-        public ReleaseResource CreateRelease(ReleaseResource release)
+        public async Task<ReleaseResource> CreateReleaseAsync(ReleaseResource release)
         {
-            var project = _octopusRepository.Projects.Get(release.ProjectId);
+            var project = await _octopusClient.Repository.Projects.Get(release.ProjectId);
             try
             {
-                return _octopusRepository.Projects.GetReleaseByVersion(project, release.Version);
+                return await _octopusClient.Repository.Projects.GetReleaseByVersion(project, release.Version);
             }
             catch (OctopusResourceNotFoundException)
             {
-                return _octopusRepository.Releases.Create(release);
+                return await _octopusClient.Repository.Releases.Create(release);
             }
         }
 
-        public ReleaseResource GetRelease(string projectId, string releaseVersion)
+        public async Task<ReleaseResource> GetReleaseAsync(string projectId, string releaseVersion)
         {
-            var project = _octopusRepository.Projects.Get(projectId);
+            var project = await _octopusClient.Repository.Projects.Get(projectId);
             if (project != null)
             {
                 try
                 {
-                    return _octopusRepository.Projects.GetReleaseByVersion(project, releaseVersion);
+                    return await _octopusClient.Repository.Projects.GetReleaseByVersion(project, releaseVersion);
                 }
                 catch (OctopusResourceNotFoundException)
                 {
@@ -207,6 +207,6 @@
             return null;
         }
 
-        private readonly OctopusRepository _octopusRepository;
+        private readonly IOctopusAsyncClient _octopusClient;
     }
 }

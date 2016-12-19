@@ -2,9 +2,10 @@ namespace Kraken.Controllers.Api
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Kraken.Filters;
-    using Microsoft.AspNet.Authorization;
-    using Microsoft.AspNet.Mvc;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using Octopus.Client.Model;
     using Services;
 
@@ -23,9 +24,9 @@ namespace Kraken.Controllers.Api
 
         // GET: api/projects
         [HttpGet]
-        public IEnumerable<ProjectResource> GetProjects([FromQuery] string nameFilter = "")
+        public async Task<IEnumerable<ProjectResource>> GetProjects([FromQuery] string nameFilter = "")
         {
-            return _octopusProxy.GetProjects(nameFilter);
+            return await _octopusProxy.GetProjectsAsync(nameFilter);
         }
 
         private readonly IOctopusProxy _octopusProxy;

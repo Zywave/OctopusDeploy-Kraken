@@ -1,9 +1,10 @@
 ﻿namespace Kraken.Services
 {
+    using System.Threading.Tasks;
     using Octopus.Client.Model;
 
     public interface IOctopusReleaseService
     {
-        ReleaseResource GetNextRelease(string projectId);
+        Task<ReleaseResource> GetNextReleaseAsync(string projectId);
     }
 }

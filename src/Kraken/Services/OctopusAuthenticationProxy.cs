@@ -1,7 +1,7 @@
 ﻿namespace Kraken.Services
 {
     using System;
-    using Microsoft.Extensions.OptionsModel;
+    using Microsoft.Extensions.Options;
     using Octopus.Client;
     using Octopus.Client.Model;
     using Octopus.Client.Exceptions;
@@ -13,7 +13,7 @@
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
             _octopusServerAddress = settings.Value.OctopusServerAddress;
-            _repository = new OctopusRepository(new OctopusServerEndpoint(_octopusServerAddress));
+            _repository = OctopusAsyncClient.Create(new OctopusServerEndpoint(_octopusServerAddress), new OctopusClientOptions()).Result.Repository;
         }
 
         public bool Login(string userName, string password, out UserResource user)
@@ -26,7 +26,7 @@
 
             try
             {
-                _repository.Users.SignIn(loginCommand);
+                _repository.Users.SignIn(loginCommand).Wait();
             }
             catch (OctopusValidationException)
             {
@@ -34,24 +34,22 @@
                 return false;
             }
             
-            user = _repository.Users.GetCurrent();
+            user = _repository.Users.GetCurrent().Result;
             return true;
         }
 
         public string CreateApiKey()
         {
-            var apiKeyResource = _repository.Users.CreateApiKey(_repository.Users.GetCurrent(), "Kraken");
+            var apiKeyResource = _repository.Users.CreateApiKey(_repository.Users.GetCurrent().Result, "Kraken").Result;
             return apiKeyResource.ApiKey;
         }
 
         public bool ValidateApiKey(string userName, string apiKey)
         {
-            var repository = new OctopusRepository(new OctopusServerEndpoint(_octopusServerAddress, apiKey));
-
             UserResource user;
             try
             {
-                user = repository.Users.GetCurrent();
+                user = _repository.Users.GetCurrent().Result;
             }
             catch (OctopusSecurityException)
             {
@@ -63,12 +61,10 @@
 
         public bool ValidateApiKey(string apiKey, out string userName)
         {
-            var repository = new OctopusRepository(new OctopusServerEndpoint(_octopusServerAddress, apiKey));
-
             UserResource user;
             try
             {
-                user = repository.Users.GetCurrent();
+                user = _repository.Users.GetCurrent().Result;
             }
             catch (OctopusSecurityException)
             {
@@ -81,6 +77,6 @@
         }
 
         private readonly string _octopusServerAddress;
-        private readonly OctopusRepository _repository;
+        private readonly IOctopusAsyncRepository _repository;
     }
 }

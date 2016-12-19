@@ -1,7 +1,10 @@
 ﻿namespace Kraken.Services
 {
+    using System;
+    using System.Threading.Tasks;
+
     public interface INuGetProxy
     {
-        string GetLatestVersionForPackage(string packageId, string nuGetSource);
+        Task<Version> GetLatestVersionForPackageAsync(string packageId, string nuGetSource);
     }
 }

@@ -6,17 +6,19 @@ using Xunit;
 
 namespace Kraken.Tests.Controllers.Api
 {
+    using System.Threading.Tasks;
+
     public class EnvironmentsControllerTests
     {
         [Fact]
-        public void TestGetEnvironmentsReturnsOctopusData()
+        public async Task TestGetEnvironmentsReturnsOctopusData()
         {
             var octopusApi = new Mock<IOctopusProxy>(MockBehavior.Strict);
-            octopusApi.Setup(o => o.GetEnvironments()).Returns(new[] { new EnvironmentResource() });
+            octopusApi.Setup(o => o.GetEnvironmentsAsync()).ReturnsAsync(new[] { new EnvironmentResource() });
 
             var controller = new EnvironmentsController(octopusApi.Object);
 
-            var result = controller.GetEnvironments();
+            var result = await controller.GetEnvironments();
 
             Assert.NotNull(result);
 

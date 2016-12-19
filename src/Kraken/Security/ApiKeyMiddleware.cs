@@ -2,11 +2,12 @@
 {
     using System;
     using System.Net.Http.Headers;
+    using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
     using Kraken.Services;
-    using Microsoft.AspNet.Builder;
-    using Microsoft.AspNet.Http;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Primitives;
 
     public class ApiKeyMiddleware
@@ -33,7 +34,6 @@
                     var principal = ClaimsPrincipalHelpers.CreatePrincipal(userName, apiKey);
 
                     httpContext.User = principal;
-                    Thread.CurrentPrincipal = principal;
                 }
             }
 

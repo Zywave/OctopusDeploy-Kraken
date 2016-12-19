@@ -1,6 +1,6 @@
 ﻿@using System.Threading.Tasks
 @using Kraken
-@inject Microsoft.Extensions.OptionsModel.IOptions<AppSettings> AppSettings
+@inject Microsoft.Extensions.Options.IOptions<AppSettings> AppSettings
 
 <div data-bind="component: { name: '@Html.Raw(ViewData["View"])', params: @Html.Raw(ViewData["Params"]) }"></div>
 

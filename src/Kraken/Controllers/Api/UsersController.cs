@@ -4,9 +4,9 @@
     using System.Threading.Tasks;
     using Kraken.Filters;
     using Kraken.Models;
-    using Microsoft.AspNet.Authorization;
-    using Microsoft.AspNet.Mvc;
-    using Microsoft.Data.Entity;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
 
     [Authorize]
     [Produces("application/json")]
@@ -27,13 +27,13 @@
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == userName);
             if (user == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             user.OctopusApiKey = null;

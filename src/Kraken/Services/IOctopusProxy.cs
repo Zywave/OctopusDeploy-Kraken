@@ -1,36 +1,37 @@
 ﻿namespace Kraken.Services
 {
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Octopus.Client.Model;
 
     public interface IOctopusProxy
     {
-        IEnumerable<EnvironmentResource> GetEnvironments();
+        Task<IEnumerable<EnvironmentResource>> GetEnvironmentsAsync();
 
-        EnvironmentResource GetEnvironment(string idOrName);
+        Task<EnvironmentResource> GetEnvironmentAsync(string idOrName);
 
-        Dictionary<Permission, IEnumerable<EnvironmentResource>> GetEnvironmentsWithPermissions(IEnumerable<Permission> permissionsToGet, IEnumerable<string> projectIds = null);
+        Task<Dictionary<Permission, IEnumerable<EnvironmentResource>>> GetEnvironmentsWithPermissionsAsync(IEnumerable<Permission> permissionsToGet, IEnumerable<string> projectIds = null);
 
-        ProjectResource GetProject(string idOrSlugOrName);
+        Task<ProjectResource> GetProjectAsync(string idOrSlugOrName);
 
-        IEnumerable<ProjectResource> GetProjects(string nameFilter);
+        Task<IEnumerable<ProjectResource>> GetProjectsAsync(string nameFilter);
 
-        DashboardResource GetDynamicDashboard(IEnumerable<string> projectIds, IEnumerable<string> environmentIds);
+        Task<DashboardResource> GetDynamicDashboardAsync(IEnumerable<string> projectIds, IEnumerable<string> environmentIds);
 
-        ReleaseResource GetLatestRelease(string projectId);
+        Task<ReleaseResource> GetLatestReleaseAsync(string projectId);
 
-        ReleaseResource GetLatestDeployedRelease(string projectId, string environmentId);
+        Task<ReleaseResource> GetLatestDeployedReleaseAsync(string projectId, string environmentId);
 
-        DeploymentProcessResource GetDeploymentProcessForProject(string projectId);
+        Task<DeploymentProcessResource> GetDeploymentProcessForProjectAsync(string projectId);
 
-        FeedResource GetFeed(string feedIdOrName);
+        Task<FeedResource> GetFeedAsync(string feedIdOrName);
 
-        DeploymentResource DeployRelease(string releaseId, string environmentId, bool forceRedeploy);
+        Task<DeploymentResource> DeployReleaseAsync(string releaseId, string environmentId, bool forceRedeploy);
 
-        ReleaseResource CreateRelease(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages);
+        Task<ReleaseResource> CreateReleaseAsync(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages);
 
-        ReleaseResource CreateRelease(ReleaseResource release);
+        Task<ReleaseResource> CreateReleaseAsync(ReleaseResource release);
 
-        ReleaseResource GetRelease(string projectId, string releaseVersion);
+        Task<ReleaseResource> GetReleaseAsync(string projectId, string releaseVersion);
     }
 }

@@ -2,8 +2,8 @@
 {
     using System;
     using System.Text.RegularExpressions;
-    using Microsoft.AspNet.Http;
-    using Microsoft.AspNet.Razor.TagHelpers;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Razor.TagHelpers;
 
     public class IETagHelper : TagHelper
     {

@@ -1,18 +1,17 @@
 ﻿namespace Kraken
 {
-    using System;
-    using System.Net;
     using Kraken.Filters;
     using Kraken.Models;
     using Kraken.Security;
     using Kraken.Services;
-    using Microsoft.AspNet.Authentication.Cookies;
-    using Microsoft.AspNet.Builder;
-    using Microsoft.AspNet.Hosting;
-    using Microsoft.AspNet.Http;
-    using Microsoft.Data.Entity;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Infrastructure;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
@@ -21,49 +20,42 @@
     {
         public Startup(IHostingEnvironment env)
         {
-            // Enable TLS 1.2
-            ServicePointManager.SecurityProtocol =
-               SecurityProtocolType.Ssl3
-               | SecurityProtocolType.Tls
-               | SecurityProtocolType.Tls11
-               | SecurityProtocolType.Tls12;
-
-            // Set up configuration sources.
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddJsonFile($"appsettings.deploy.json", optional: true);
+                .AddEnvironmentVariables();
 
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
+            //    builder.AddUserSecrets();
+            //}
 
-            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
-        public IConfigurationRoot Configuration { get; set; }
+        public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
             services.AddEntityFramework()
-                .AddSqlServer()
+                .AddEntityFrameworkSqlServer()
                 .AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            // Add framework services.
             services.AddMvc().AddJsonOptions(options =>
             {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             });
-            
+
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddTransient<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
             services.AddTransient<IOctopusProxy, OctopusProxy>();
             services.AddTransient<INuGetProxy, NuGetProxy>();
@@ -76,33 +68,19 @@
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            var logger = loggerFactory.CreateLogger<Program>();
 
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseBrowserLink();
             }
             else
             {
-                app.UseExceptionHandler("/error");
-                
-                try
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                    {
-                        serviceScope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.LogCritical("Error while attempting to migrate database.", ex);
-                }
+                app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
-            
+            //app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
+
             app.UseStaticFiles();
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions
@@ -114,18 +92,15 @@
                 AuthenticationScheme = "Cookies"
             });
 
-            app.UseMiddleware<ApiKeyMiddleware>(); 
-            
+            app.UseMiddleware<ApiKeyMiddleware>();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                    name: "default",    
+                    name: "default",
                     template: "{action}/{*view}",
                     defaults: new { controller = "Default", action = "App", view = "releasebatches/index" });
             });
         }
-
-        // Entry point for the application.
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }

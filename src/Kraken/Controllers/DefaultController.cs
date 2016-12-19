@@ -7,10 +7,10 @@
     using Kraken.Security;
     using Kraken.Services;
     using Kraken.ViewModels;
-    using Microsoft.AspNet.Authorization;
-    using Microsoft.AspNet.Http;
-    using Microsoft.AspNet.Mvc;
-    using Microsoft.Data.Entity;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Newtonsoft.Json;
     using Octopus.Client.Model;
     [Authorize]
@@ -123,7 +123,7 @@
             await DbContext.SaveChangesAsync();
         }
 
-        private static string SerializeQuery(IReadableStringCollection query)
+        private static string SerializeQuery(IQueryCollection query)
         {
             var dictionary = query.ToDictionary(item => item.Key, item => item.Value.Count > 1 ? (object)item.Value : item.Value[0]);
 
