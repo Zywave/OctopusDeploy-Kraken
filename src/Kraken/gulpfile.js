@@ -65,5 +65,4 @@ gulp.task("build", function () {
         preserveLicenseComments: false,
         out: "./wwwroot/js/app.built.js"
     });
-
 });

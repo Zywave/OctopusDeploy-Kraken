@@ -2,6 +2,19 @@
   <PropertyGroup Label="Configuration">
     <AssemblyName>Kraken</AssemblyName>
     <RootNamespace>Kraken</RootNamespace>
+    <PreBuildEvent>
+if not '$(Configuration)' == 'Debug' (
+      
+    cd $(ProjectDir)
+
+    call npm install
+
+    call gulp npmlib
+    call gulp clean
+    call gulp build
+    call gulp min
+)
+</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
