@@ -1,6 +1,7 @@
 ﻿namespace Kraken.Services
 {
     using System;
+    using System.Threading.Tasks;
     using Microsoft.Extensions.Options;
     using Octopus.Client;
     using Octopus.Client.Model;
@@ -12,11 +13,11 @@
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            _octopusServerAddress = settings.Value.OctopusServerAddress;
-            _repository = OctopusAsyncClient.Create(new OctopusServerEndpoint(_octopusServerAddress), new OctopusClientOptions()).Result.Repository;
+            var octopusServerAddress = settings.Value.OctopusServerAddress;
+            _repository = OctopusAsyncClient.Create(new OctopusServerEndpoint(octopusServerAddress), new OctopusClientOptions()).Result.Repository;
         }
 
-        public bool Login(string userName, string password, out UserResource user)
+        public async Task<UserResource> Login(string userName, string password)
         {
             var loginCommand = new LoginCommand()
             {
@@ -26,30 +27,29 @@
 
             try
             {
-                _repository.Users.SignIn(loginCommand).Wait();
+                await _repository.Users.SignIn(loginCommand);
             }
             catch (OctopusValidationException)
             {
-                user = null;
-                return false;
+                return null;
             }
             
-            user = _repository.Users.GetCurrent().Result;
-            return true;
+            var user = _repository.Users.GetCurrent().Result;
+            return user;
         }
 
-        public string CreateApiKey()
+        public async Task<string> CreateApiKey()
         {
-            var apiKeyResource = _repository.Users.CreateApiKey(_repository.Users.GetCurrent().Result, "Kraken").Result;
+            var apiKeyResource = await _repository.Users.CreateApiKey(_repository.Users.GetCurrent().Result, "Kraken");
             return apiKeyResource.ApiKey;
         }
 
-        public bool ValidateApiKey(string userName, string apiKey)
+        public async Task<bool> ValidateApiKey(string userName, string apiKey)
         {
             UserResource user;
             try
             {
-                user = _repository.Users.GetCurrent().Result;
+                user = await _repository.Users.GetCurrent();
             }
             catch (OctopusSecurityException)
             {
@@ -59,24 +59,21 @@
             return user.Username == userName;
         }
 
-        public bool ValidateApiKey(string apiKey, out string userName)
+        public async Task<string> ValidateApiKey(string apiKey)
         {
             UserResource user;
             try
             {
-                user = _repository.Users.GetCurrent().Result;
+                user = await _repository.Users.GetCurrent();
             }
             catch (OctopusSecurityException)
             {
-                userName = null;
-                return false;
+                return null;
             }
 
-            userName = user.Username;
-            return true;
+            return user.Username;
         }
 
-        private readonly string _octopusServerAddress;
         private readonly IOctopusAsyncRepository _repository;
     }
 }

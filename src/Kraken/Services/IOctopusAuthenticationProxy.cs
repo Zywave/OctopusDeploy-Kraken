@@ -2,14 +2,16 @@ using Octopus.Client.Model;
 
 namespace Kraken.Services
 {
+    using System.Threading.Tasks;
+
     public interface IOctopusAuthenticationProxy
     {
-        bool Login(string username, string password, out UserResource user);
+        Task<UserResource> Login(string username, string password);
 
-        string CreateApiKey();
+        Task<string> CreateApiKey();
 
-        bool ValidateApiKey(string userName, string apiKey);
+        Task<bool> ValidateApiKey(string userName, string apiKey);
 
-        bool ValidateApiKey(string apiKey, out string userName);
+        Task<string> ValidateApiKey(string apiKey);
     }
 }

@@ -51,15 +51,15 @@
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                UserResource userResource;
-                if (OctopusAuthenticationProxy.Login(model.UserName, model.Password, out userResource))
+                var userResource = await OctopusAuthenticationProxy.Login(model.UserName, model.Password);
+                if (userResource != null)
                 {
                     var appUser = await ResolveApplicationUserAsync(userResource);
                     var octopusApiKey = appUser.OctopusApiKey;
 
-                    if (String.IsNullOrEmpty(octopusApiKey) || !OctopusAuthenticationProxy.ValidateApiKey(appUser.UserName, octopusApiKey))
+                    if (String.IsNullOrEmpty(octopusApiKey) || !await OctopusAuthenticationProxy.ValidateApiKey(appUser.UserName, octopusApiKey))
                     {
-                        octopusApiKey = OctopusAuthenticationProxy.CreateApiKey();
+                        octopusApiKey = await OctopusAuthenticationProxy.CreateApiKey();
 
                         await SetApplicationUserOctopusApiKey(appUser.UserName, octopusApiKey);
                     }

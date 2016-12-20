@@ -33,5 +33,7 @@
         Task<ReleaseResource> CreateReleaseAsync(ReleaseResource release);
 
         Task<ReleaseResource> GetReleaseAsync(string projectId, string releaseVersion);
+
+        Task<VariableSetResource> GetVariableSetForProject(string projectId);
     }
 }

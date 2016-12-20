@@ -207,6 +207,12 @@
             return null;
         }
 
+        public async Task<VariableSetResource> GetVariableSetForProject(string projectId)
+        {
+            var project = await GetProjectAsync(projectId);
+            return await _octopusClient.Repository.VariableSets.Get(project.VariableSetId);
+        }
+
         private readonly IOctopusAsyncClient _octopusClient;
     }
 }
