@@ -1,3 +1,14 @@
+<a name="1.0.2-prerelease.1"></a>
+## [1.0.2-prerelease.1](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.2-prerelease.0...v1.0.2-prerelease.1) (2017-01-13)
+
+
+### Bug Fixes
+
+* prepublish project.json step not ported over in NET Core upgrade ([6f66d19](https://github.com/zywave/OctopusDeploy-Kraken/commit/6f66d19))
+* sync to NuGet package would periodically fail ([087479f](https://github.com/zywave/OctopusDeploy-Kraken/commit/087479f))
+
+
+
 <a name="1.0.2-prerelease.0"></a>
 ## [1.0.2-prerelease.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.1...v1.0.2-prerelease.0) (2016-11-10)
 
