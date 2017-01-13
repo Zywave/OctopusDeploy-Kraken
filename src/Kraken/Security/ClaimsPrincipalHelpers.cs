@@ -10,7 +10,8 @@
         {
             if (claimsPrincipal == null) throw new ArgumentNullException(nameof(claimsPrincipal));
 
-            return claimsPrincipal.FindFirstValue(ApplicationClaims.OctopusApiKey);
+            var claim = claimsPrincipal.FindFirst(ApplicationClaims.OctopusApiKey);
+            return claim.Value;
         }
 
         public static ClaimsPrincipal CreatePrincipal(string username, string octopusApiKey)

@@ -6,17 +6,19 @@ using Xunit;
 
 namespace Kraken.Tests.Controllers.Api
 {
+    using System.Threading.Tasks;
+
     public class ProjectsControllerTests
     {
         [Fact]
-        public void TestGetProjectsWithNoFilterReturnsOctopusData()
+        public async Task TestGetProjectsWithNoFilterReturnsOctopusData()
         {
             var octopusApi = new Mock<IOctopusProxy>(MockBehavior.Strict);
-            octopusApi.Setup(o => o.GetProjects("")).Returns(new[] { new ProjectResource() });
+            octopusApi.Setup(o => o.GetProjectsAsync("")).ReturnsAsync(new[] { new ProjectResource() });
 
             var controller = new ProjectsController(octopusApi.Object);
 
-            var result = controller.GetProjects();
+            var result = await controller.GetProjects();
 
             Assert.NotNull(result);
 
@@ -24,14 +26,14 @@ namespace Kraken.Tests.Controllers.Api
         }
 
         [Fact]
-        public void TestGetProjectsWithFilterReturnsOctopusData()
+        public async Task TestGetProjectsWithFilterReturnsOctopusData()
         {
             var octopusApi = new Mock<IOctopusProxy>(MockBehavior.Strict);
-            octopusApi.Setup(o => o.GetProjects("project-1")).Returns(new[] { new ProjectResource() });
+            octopusApi.Setup(o => o.GetProjectsAsync("project-1")).ReturnsAsync(new[] { new ProjectResource() });
 
             var controller = new ProjectsController(octopusApi.Object);
 
-            var result = controller.GetProjects("project-1");
+            var result = await controller.GetProjects("project-1");
 
             Assert.NotNull(result);
 

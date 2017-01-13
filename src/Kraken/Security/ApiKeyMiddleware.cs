@@ -2,11 +2,12 @@
 {
     using System;
     using System.Net.Http.Headers;
+    using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
     using Kraken.Services;
-    using Microsoft.AspNet.Builder;
-    using Microsoft.AspNet.Http;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Primitives;
 
     public class ApiKeyMiddleware
@@ -20,24 +21,23 @@
             _octopusAuthenticationProxy = octopusAuthenticationProxy;
         }
 
-        public Task Invoke(HttpContext httpContext)
+        public async Task Invoke(HttpContext httpContext)
         {
             if (httpContext == null) throw new ArgumentNullException(nameof(httpContext));
 
             string apiKey;
             if (TryGetApiKey(httpContext.Request, out apiKey))
             {
-                string userName;
-                if (_octopusAuthenticationProxy.ValidateApiKey(apiKey, out userName))
+                var userName = await _octopusAuthenticationProxy.ValidateApiKey(apiKey);
+                if (!string.IsNullOrEmpty(userName))
                 {
                     var principal = ClaimsPrincipalHelpers.CreatePrincipal(userName, apiKey);
 
                     httpContext.User = principal;
-                    Thread.CurrentPrincipal = principal;
                 }
             }
 
-            return _next.Invoke(httpContext);
+            await _next.Invoke(httpContext);
         }
 
         private static bool TryGetApiKey(HttpRequest request, out string apiKey)

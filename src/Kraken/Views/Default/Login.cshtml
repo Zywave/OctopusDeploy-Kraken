@@ -1,4 +1,4 @@
-﻿@model LoginViewModel
+﻿@model Kraken.ViewModels.LoginViewModel
 
 <h2>Login</h2>
 <div class="row">
@@ -7,7 +7,7 @@
             <form asp-controller="Default" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
                 <h4>Use an Octopus account to log in.</h4>
                 <hr />
-                <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+                <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="UserName" class="col-md-2 control-label"></label>
                     <div class="col-md-10">

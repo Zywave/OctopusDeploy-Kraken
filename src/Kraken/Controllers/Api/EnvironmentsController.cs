@@ -1,10 +1,11 @@
 ﻿namespace Kraken.Controllers.Api
 {
     using System;
+    using System.Threading.Tasks;
     using System.Collections.Generic;
     using Kraken.Filters;
-    using Microsoft.AspNet.Authorization;
-    using Microsoft.AspNet.Mvc;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using Octopus.Client.Model;
     using Kraken.Services;
 
@@ -22,9 +23,9 @@
         }
 
         [HttpGet]
-        public IEnumerable<EnvironmentResource> GetEnvironments()
+        public async Task<IEnumerable<EnvironmentResource>> GetEnvironments()
         {
-            return _octopusProxy.GetEnvironments();
+            return await _octopusProxy.GetEnvironmentsAsync();
         }
 
         private readonly IOctopusProxy _octopusProxy;

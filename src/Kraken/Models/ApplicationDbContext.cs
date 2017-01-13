@@ -1,5 +1,5 @@
-﻿using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Kraken.Models
 {
@@ -9,6 +9,10 @@ namespace Kraken.Models
         public virtual DbSet<ReleaseBatch> ReleaseBatches { get; set; }
         public virtual DbSet<ReleaseBatchItem> ReleaseBatchItems { get; set; }
         public virtual DbSet<ReleaseBatchLogo> ReleaseBatchLogos { get; set; }
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

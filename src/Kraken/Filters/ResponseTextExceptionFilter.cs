@@ -1,9 +1,9 @@
 ﻿namespace Kraken.Filters
 {
     using System;
-    using Microsoft.AspNet.Mvc;
-    using Microsoft.AspNet.Mvc.Filters;
-    using Microsoft.Extensions.OptionsModel;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.Extensions.Options;
 
     public class ResponseTextExceptionFilter : IExceptionFilter
     {

@@ -1,5 +1,5 @@
 {
-  "name": "ASP.NET",
+  "name": "kraken",
   "private": true,
   "dependencies": {
     "bootstrap": "3.3.5",

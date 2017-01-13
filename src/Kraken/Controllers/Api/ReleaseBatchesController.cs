@@ -8,10 +8,10 @@ namespace Kraken.Controllers.Api
     using Kraken.Filters;
     using Kraken.Models;
     using Kraken.Services;
-    using Microsoft.AspNet.Authorization;
-    using Microsoft.AspNet.Http;
-    using Microsoft.AspNet.Mvc;
-    using Microsoft.Data.Entity;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Octopus.Client.Exceptions;
     using Octopus.Client.Model;
 
@@ -44,14 +44,14 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
 
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(releaseBatch);
@@ -63,13 +63,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, false, true);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (releaseBatch.Logo != null)
@@ -86,13 +86,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var existingReleaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (existingReleaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (existingReleaseBatch.IsLocked)
@@ -114,7 +114,7 @@ namespace Kraken.Controllers.Api
 
             await _context.SaveChangesAsync();
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new NoContentResult();
         }
 
         [HttpPut("{idOrName}/LockReleaseBatch")]
@@ -122,13 +122,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             releaseBatch.IsLocked = true;
@@ -137,7 +137,7 @@ namespace Kraken.Controllers.Api
 
             await _context.SaveChangesAsync();
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new NoContentResult();
         }
 
         [HttpPut("{idOrName}/UnlockReleaseBatch")]
@@ -145,13 +145,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
             
             var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             releaseBatch.IsLocked = false;
@@ -160,7 +160,7 @@ namespace Kraken.Controllers.Api
 
             await _context.SaveChangesAsync();
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new NoContentResult();
         }
 
         // PUT: api/ReleaseBatches/5/Logo
@@ -169,13 +169,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, false, true);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (releaseBatch.Logo == null)
@@ -204,7 +204,7 @@ namespace Kraken.Controllers.Api
 
             await _context.SaveChangesAsync();
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new NoContentResult();
         }
 
         // POST: api/ReleaseBatches
@@ -213,7 +213,7 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             releaseBatch.UpdateDateTime = DateTimeOffset.Now;
@@ -228,7 +228,7 @@ namespace Kraken.Controllers.Api
             {
                 if (_context.ReleaseBatches.Count(e => e.Id == releaseBatch.Id) > 0)
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -245,13 +245,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (releaseBatch.IsLocked)
@@ -271,13 +271,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, true, true);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             var copyReleaseBatch = new ReleaseBatch();
@@ -322,13 +322,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (releaseBatch.IsLocked)
@@ -336,19 +336,19 @@ namespace Kraken.Controllers.Api
                 return GetLockedForbiddenUpdateResult(releaseBatch);
             }
 
-            var projectResource = _octopusProxy.GetProject(requestBody.ProjectIdOrSlugOrName);
+            var projectResource = await _octopusProxy.GetProjectAsync(requestBody.ProjectIdOrSlugOrName);
             if (projectResource == null)
             {
-                return HttpBadRequest("Project Not Found");
+                return BadRequest("Project Not Found");
             }
 
             ReleaseResource releaseResource = null;
             if (requestBody.ReleaseVersion != null)
             {
-                releaseResource = _octopusProxy.GetRelease(projectResource.Id, requestBody.ReleaseVersion);
+                releaseResource = await _octopusProxy.GetReleaseAsync(projectResource.Id, requestBody.ReleaseVersion);
                 if (releaseResource == null)
                 {
-                    return HttpBadRequest("Release Not Found");
+                    return BadRequest("Release Not Found");
                 }
             }
 
@@ -377,7 +377,7 @@ namespace Kraken.Controllers.Api
 
             await _context.SaveChangesAsync();
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new NoContentResult();
         }
 
         // PUT: api/ReleaseBatches/5/UnlinkProject
@@ -386,13 +386,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (releaseBatch.IsLocked)
@@ -400,10 +400,10 @@ namespace Kraken.Controllers.Api
                 return GetLockedForbiddenUpdateResult(releaseBatch);
             }
 
-            var projectResource = _octopusProxy.GetProject(projectIdOrSlugOrName);
+            var projectResource = await _octopusProxy.GetProjectAsync(projectIdOrSlugOrName);
             if (projectResource == null)
             {
-                return HttpBadRequest("Project Not Found");
+                return BadRequest("Project Not Found");
             }
 
             var releaseBatchItem = await _context.ReleaseBatchItems.SingleOrDefaultAsync(e => e.ReleaseBatchId == releaseBatch.Id && e.ProjectId == projectResource.Id);
@@ -418,10 +418,10 @@ namespace Kraken.Controllers.Api
             }
             else
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new NoContentResult();
         }
 
         // PUT: api/ReleaseBatches/5/Sync
@@ -430,13 +430,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (releaseBatch.IsLocked)
@@ -449,20 +449,24 @@ namespace Kraken.Controllers.Api
                 EnvironmentResource environment = null;
                 if (!String.IsNullOrEmpty(environmentIdOrName))
                 {
-                    environment = _octopusProxy.GetEnvironment(environmentIdOrName);
+                    environment = await _octopusProxy.GetEnvironmentAsync(environmentIdOrName);
                     if (environment == null)
                     {
-                        return HttpBadRequest("Environment Not Found");
+                        return BadRequest("Environment Not Found");
                     }
                 }
 
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    var releaseResource = environment == null ? _octopusProxy.GetLatestRelease(releaseBatchItem.ProjectId) : _octopusProxy.GetLatestDeployedRelease(releaseBatchItem.ProjectId, environment.Id);
+                    var releaseResource =
+                        await
+                        (environment == null
+                            ? _octopusProxy.GetLatestReleaseAsync(releaseBatchItem.ProjectId)
+                            : _octopusProxy.GetLatestDeployedReleaseAsync(releaseBatchItem.ProjectId, environment.Id));
                     releaseBatchItem.ReleaseId = releaseResource?.Id;
                     releaseBatchItem.ReleaseVersion = releaseResource?.Version;
 
-                    var projectResource = _octopusProxy.GetProject(releaseBatchItem.ProjectId);
+                    var projectResource = await _octopusProxy.GetProjectAsync(releaseBatchItem.ProjectId);
                     releaseBatchItem.ProjectName = projectResource.Name;
                     releaseBatchItem.ProjectSlug = projectResource.Slug;
                 }
@@ -484,19 +488,19 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
-            var environment = _octopusProxy.GetEnvironment(environmentIdOrName);
+            var environment = await _octopusProxy.GetEnvironmentAsync(environmentIdOrName);
             if (environment == null)
             {
-                return HttpBadRequest("Environment Not Found");
+                return BadRequest("Environment Not Found");
             }
 
             var responseBody = new DeployBatchResponseBody();
@@ -507,7 +511,7 @@ namespace Kraken.Controllers.Api
                 {
                     try
                     {
-                        _octopusProxy.DeployRelease(releaseBatchItem.ReleaseId, environment.Id, forceRedeploy);
+                        await _octopusProxy.DeployReleaseAsync(releaseBatchItem.ReleaseId, environment.Id, forceRedeploy);
                         responseBody.SuccessfulItems.Add(new DeployBatchItem
                         {
                             Name = releaseBatchItem.ProjectName
@@ -540,13 +544,13 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             var releases = new List<ReleaseResource>();
@@ -555,7 +559,7 @@ namespace Kraken.Controllers.Api
             {
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    releases.Add(_octopusReleaseService.GetNextRelease(releaseBatchItem.ProjectId));
+                    releases.Add(await _octopusReleaseService.GetNextReleaseAsync(releaseBatchItem.ProjectId));
                 }
             }
 
@@ -568,20 +572,20 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
                 foreach (var releaseBatchItem in releaseBatch.Items)
                 {
-                    var release = _octopusProxy.CreateRelease(releases.First(r => r.ProjectId == releaseBatchItem.ProjectId));
+                    var release = await _octopusProxy.CreateReleaseAsync(releases.First(r => r.ProjectId == releaseBatchItem.ProjectId));
                     if (release != null)
                     {
                         releaseBatchItem.ReleaseId = release.Id;
@@ -604,21 +608,21 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
-            var environmentIds = _octopusProxy.GetEnvironments().Select(e => e.Id);
+            var environmentIds = (await _octopusProxy.GetEnvironmentsAsync()).Select(e => e.Id);
             var progress = new List<ProjectProgressResponseBody>();
 
             if (releaseBatch.Items != null && releaseBatch.Items.Any())
             {
-                var dashboard = _octopusProxy.GetDynamicDashboard(releaseBatch.Items.Select(i => i.ProjectId), environmentIds);
+                var dashboard = await _octopusProxy.GetDynamicDashboardAsync(releaseBatch.Items.Select(i => i.ProjectId), environmentIds);
                 progress = dashboard.Items.Select(d => new ProjectProgressResponseBody
                 {
                     ProjectId = d.ProjectId,
@@ -639,19 +643,21 @@ namespace Kraken.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var releaseBatch = await GetReleaseBatch(idOrName, true, false);
             if (releaseBatch == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             var permissionsToGet = new[] { Permission.EnvironmentView, Permission.DeploymentCreate };
 
             var environmentsWithPermissions =
-                _octopusProxy.GetEnvironmentsWithPermissions(permissionsToGet, releaseBatch.Items.Select(i => i.ProjectId));
+                await
+                    _octopusProxy.GetEnvironmentsWithPermissionsAsync(permissionsToGet,
+                        releaseBatch.Items.Select(i => i.ProjectId));
 
             var retVal = new EnvironmentsWithPermissionsResponseBody
             {

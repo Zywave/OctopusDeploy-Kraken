@@ -7,10 +7,10 @@
     using Kraken.Security;
     using Kraken.Services;
     using Kraken.ViewModels;
-    using Microsoft.AspNet.Authorization;
-    using Microsoft.AspNet.Http;
-    using Microsoft.AspNet.Mvc;
-    using Microsoft.Data.Entity;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Newtonsoft.Json;
     using Octopus.Client.Model;
     [Authorize]
@@ -51,15 +51,15 @@
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                UserResource userResource;
-                if (OctopusAuthenticationProxy.Login(model.UserName, model.Password, out userResource))
+                var userResource = await OctopusAuthenticationProxy.Login(model.UserName, model.Password);
+                if (userResource != null)
                 {
                     var appUser = await ResolveApplicationUserAsync(userResource);
                     var octopusApiKey = appUser.OctopusApiKey;
 
-                    if (String.IsNullOrEmpty(octopusApiKey) || !OctopusAuthenticationProxy.ValidateApiKey(appUser.UserName, octopusApiKey))
+                    if (String.IsNullOrEmpty(octopusApiKey) || !await OctopusAuthenticationProxy.ValidateApiKey(appUser.UserName, octopusApiKey))
                     {
-                        octopusApiKey = OctopusAuthenticationProxy.CreateApiKey();
+                        octopusApiKey = await OctopusAuthenticationProxy.CreateApiKey();
 
                         await SetApplicationUserOctopusApiKey(appUser.UserName, octopusApiKey);
                     }
@@ -123,7 +123,7 @@
             await DbContext.SaveChangesAsync();
         }
 
-        private static string SerializeQuery(IReadableStringCollection query)
+        private static string SerializeQuery(IQueryCollection query)
         {
             var dictionary = query.ToDictionary(item => item.Key, item => item.Value.Count > 1 ? (object)item.Value : item.Value[0]);
 

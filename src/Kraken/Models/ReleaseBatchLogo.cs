@@ -1,5 +1,8 @@
 ﻿namespace Kraken.Models
 {
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    [Table("ReleaseBatchLogo")]
     public class ReleaseBatchLogo
     {
         public int ReleaseBatchId { get; set; }
