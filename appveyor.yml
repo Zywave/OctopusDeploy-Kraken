@@ -1,5 +1,5 @@
 version: '{build}'
-os: Visual Studio 2015 RC
+os: Visual Studio 2017 RC
 cache: C:\Users\appveyor\.dnx\packages
 build_script:
 - ps: >-
