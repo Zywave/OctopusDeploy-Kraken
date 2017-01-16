@@ -29,11 +29,11 @@
             {
                 await _repository.Users.SignIn(loginCommand);
             }
-            catch (OctopusValidationException)
+            catch (OctopusException e) when (e is OctopusValidationException || e is OctopusResourceNotFoundException)
             {
                 return null;
             }
-            
+
             var user = _repository.Users.GetCurrent().Result;
             return user;
         }

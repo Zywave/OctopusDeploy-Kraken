@@ -19,7 +19,7 @@ $contents = $contents + @"
 
 }
 "@
-$contents | Out-File "./approot/src/Kraken/appsettings.deploy.json"
+$contents | Out-File "appsettings.deploy.json"
 
 If (-Not [string]::IsNullOrEmpty($StdoutLogEnabled)) {
 	$config = [xml](Get-Content "./wwwroot/web.config")
