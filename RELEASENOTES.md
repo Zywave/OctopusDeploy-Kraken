@@ -1,4 +1,3 @@
 ### Bug Fixes
 
-* prepublish project.json step not ported over in NET Core upgrade ([6f66d19](https://github.com/zywave/OctopusDeploy-Kraken/commit/6f66d19))
-* sync to NuGet package would periodically fail ([087479f](https://github.com/zywave/OctopusDeploy-Kraken/commit/087479f))
+* updating build and deploy steps to reflect netcore1.1 upgrade ([#66](https://github.com/zywave/OctopusDeploy-Kraken/issues/66)) ([89d997c](https://github.com/zywave/OctopusDeploy-Kraken/commit/89d997c))

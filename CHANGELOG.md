@@ -1,3 +1,13 @@
+<a name="1.0.2-prerelease.2"></a>
+## [1.0.2-prerelease.2](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.2-prerelease.1...v1.0.2-prerelease.2) (2017-01-16)
+
+
+### Bug Fixes
+
+* updating build and deploy steps to reflect netcore1.1 upgrade ([#66](https://github.com/zywave/OctopusDeploy-Kraken/issues/66)) ([89d997c](https://github.com/zywave/OctopusDeploy-Kraken/commit/89d997c))
+
+
+
 <a name="1.0.2-prerelease.1"></a>
 ## [1.0.2-prerelease.1](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.2-prerelease.0...v1.0.2-prerelease.1) (2017-01-13)
 

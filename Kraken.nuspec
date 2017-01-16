@@ -2,14 +2,13 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.2-prerelease01</version>
+    <version>1.0.2-prerelease02</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
     <releaseNotes>### Bug Fixes
 
-* prepublish project.json step not ported over in NET Core upgrade ([6f66d19](https://github.com/zywave/OctopusDeploy-Kraken/commit/6f66d19))
-* sync to NuGet package would periodically fail ([087479f](https://github.com/zywave/OctopusDeploy-Kraken/commit/087479f))</releaseNotes>
+* updating build and deploy steps to reflect netcore1.1 upgrade ([#66](https://github.com/zywave/OctopusDeploy-Kraken/issues/66)) ([89d997c](https://github.com/zywave/OctopusDeploy-Kraken/commit/89d997c))</releaseNotes>
   </metadata>
   <files>
       <file src="src\Kraken\bin\Release\netcoreapp1.1\publish\**\*.*" target=""/>
