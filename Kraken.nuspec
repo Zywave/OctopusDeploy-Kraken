@@ -12,7 +12,7 @@
 * sync to NuGet package would periodically fail ([087479f](https://github.com/zywave/OctopusDeploy-Kraken/commit/087479f))</releaseNotes>
   </metadata>
   <files>
-      <file src="src\Kraken\bin\output\**\*.*" target=""/>
+      <file src="src\Kraken\bin\Release\netcoreapp1.1\publish\**\*.*" target=""/>
       <file src="predeploy.ps1" target=""/>
   </files>
 </package>

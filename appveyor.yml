@@ -3,9 +3,9 @@ os: Visual Studio 2015 RC
 cache: C:\Users\appveyor\.dnx\packages
 build_script:
 - ps: >-
-    dnu restore
+    dotnet restore
 
-    dnu build src\Kraken --configuration Release
+    dotnet build src\Kraken\Kraken.csproj --configuration Release
 
     $rnp = Resolve-Path(".\RELEASENOTES.md")
 
@@ -15,7 +15,7 @@ build_script:
 - ps: >-
     cd test\Kraken.Tests
 
-    dnx test
+    dotnet test
 
     cd ..\..\
 before_deploy:
@@ -24,7 +24,7 @@ before_deploy:
 
     npm install -g gulp
 
-    dnu publish src\Kraken --runtime active --configuration Release --iis-command web-prod
+    dotnet publish src\Kraken\Kraken.csproj --configuration Release
 
     nuget pack Kraken.nuspec -NoPackageAnalysis
 
