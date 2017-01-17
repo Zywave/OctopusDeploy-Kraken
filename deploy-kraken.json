@@ -3,7 +3,7 @@
   "Name": "Deploy Kraken",
   "Description": "Release the [Kraken](https://github.com/Zywave/OctopusDeploy-Kraken)! Kraken is a companion tool for Octopus Deploy that facilitates deploying multiple projects at once.",
   "ActionType": "Octopus.TentaclePackage",
-  "Version": 2,
+  "Version": 4,
   "Properties": {
     "Octopus.Action.EnabledFeatures": "Octopus.Features.CustomScripts,Octopus.Features.IISWebSite",
     "Octopus.Action.Package.AutomaticallyRunConfigurationTransformationFiles": "False",
@@ -20,7 +20,6 @@
     "Octopus.Action.IISWebSite.EnableWindowsAuthentication": "False",
     "Octopus.Action.CustomScripts.PostDeploy.ps1": " Import-Module WebAdministration -ErrorAction SilentlyContinue\r\n $appPool = \"IIS:\\\\AppPools\\\" + $ApplicationPoolName\r\n Set-ItemProperty $appPool managedRuntimeVersion \"\"\r\n Set-ItemProperty $appPool processModel.loadUserProfile true",
     "Octopus.Action.IISWebSite.WebSiteName": "#{WebSiteName}",
-    "Octopus.Action.IISWebSite.WebRoot": "wwwroot",
     "Octopus.Action.IISWebSite.ApplicationPoolName": "#{ApplicationPoolName}",
     "Octopus.Action.IISWebSite.ApplicationPoolUsername": "#{Username}",
     "Octopus.Action.IISWebSite.ApplicationPoolPassword": "#{Password}",
@@ -30,7 +29,7 @@
   },
   "Parameters": [
     {
-      "Id": null,
+      "Id": "7af405d5-a042-4c59-a73b-d70e164056e1",
       "Name": "OctopusServerAddress",
       "Label": "Octopus server address",
       "HelpText": "The hostname of your Octopus server.",
@@ -40,7 +39,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "04edf152-5f57-446e-b8e2-5c50f8016b42",
       "Name": "DatabaseConnectionString",
       "Label": "Database connection string",
       "HelpText": "The SQL database connection string. Leave blank and the default value will create a localdb instance as the app pool user.",
@@ -50,7 +49,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "6b7bbf2d-20ff-4f9e-88a9-1ebfeb63327f",
       "Name": "StdoutLogEnabled",
       "Label": "Enable logging",
       "HelpText": "Enables the stdout log. The log will be written to the installation root directory.",
@@ -60,7 +59,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "a3fc6721-2eac-4f94-87f8-61f6a6197796",
       "Name": "WebSiteName",
       "Label": "Web site name",
       "HelpText": "Name of the IIS web site to create or configure.",
@@ -70,7 +69,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "0795cd3b-d4c9-44ce-81a1-ffa49a1dae24",
       "Name": "ApplicationPoolName",
       "Label": "Application pool name",
       "HelpText": "Name of the application pool in IIS to create or configure.",
@@ -80,7 +79,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "025d9f9c-a4dd-4156-a6e9-b689a3aae3d5",
       "Name": "Username",
       "Label": "Username",
       "HelpText": "The Windows/domain account of the custom user that the application pool will run under. Example: YOURDOMAIN\\YourAccount. You will need to ensure that this user has permissions to run as an application pool and has access to the database.",
@@ -90,7 +89,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "97eed355-0ee9-40e4-8b95-2d9197437c8c",
       "Name": "Password",
       "Label": "Password",
       "HelpText": "The password for the user specified above.",
@@ -100,7 +99,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "02c46cf1-3b2a-4ec8-9397-9008e61c3797",
       "Name": "IPAddress",
       "Label": "IP address",
       "HelpText": "The IP address that the binding will listen on. Use * for any address, or specify an address such as 10.0.0.1. If using a IPv6 address remember to enclose in square brackets such as [::1].",
@@ -110,7 +109,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "6e4abd2c-8bf9-45eb-8b86-fc65575bf83c",
       "Name": "HostName",
       "Label": "Host name",
       "HelpText": "The host header that this binding will listen on. Example: www.contoso.com. Leave empty to use any host header.",
@@ -120,7 +119,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "961acadc-6907-4072-b766-6b12602bbe15",
       "Name": "SSLThumbprint",
       "Label": "SSL thumbprint",
       "HelpText": "The X.509 certificate thumbprint to use.",
@@ -130,7 +129,7 @@
       }
     },
     {
-      "Id": null,
+      "Id": "6a7bfbed-8771-4718-8c6d-1501f8b2a247",
       "Name": "KrakenReleasesFeed",
       "Label": "Kraken releases feed",
       "HelpText": "The ID of the NuGet feed to use for Kraken Releases.",
@@ -141,7 +140,7 @@
     }
   ],
   "$Meta": {
-    "ExportedAt": "2017-01-17T15:23:29.469Z",
+    "ExportedAt": "2017-01-17T15:29:50.287Z",
     "OctopusVersion": "3.4.15",
     "Type": "ActionTemplate"
   }
