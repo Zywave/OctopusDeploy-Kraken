@@ -9,8 +9,8 @@
     "Octopus.Action.Package.AutomaticallyRunConfigurationTransformationFiles": "False",
     "Octopus.Action.Package.AutomaticallyUpdateAppSettingsAndConnectionStrings": "False",
     "Octopus.Action.Package.DownloadOnTentacle": "False",
-    "Octopus.Action.Package.NuGetFeedId": "#{KrakenReleasesFeed}",
-    "Octopus.Action.Package.NuGetPackageId": "Kraken",
+    "Octopus.Action.Package.FeedId": "#{KrakenReleasesFeed}",
+    "Octopus.Action.Package.PackageId": "Kraken",
     "Octopus.Action.IISWebSite.CreateOrUpdateWebSite": "True",
     "Octopus.Action.IISWebSite.Bindings": "[{\"protocol\":\"http\",\"ipAddress\":\"#{IPAddress}\",\"port\":80,\"host\":\"#{HostName}\",\"thumbprint\":\"\",\"requireSni\":false,\"enabled\":true},{\"protocol\":\"https\",\"ipAddress\":\"#{IPAddress}\",\"port\":\"443\",\"host\":\"#{HostName}\",\"thumbprint\":\"#{SSLThumbprint}\",\"requireSni\":false,\"enabled\":true}]",
     "Octopus.Action.IISWebSite.ApplicationPoolFrameworkVersion": "v4.0",
@@ -24,11 +24,13 @@
     "Octopus.Action.IISWebSite.ApplicationPoolName": "#{ApplicationPoolName}",
     "Octopus.Action.IISWebSite.ApplicationPoolUsername": "#{Username}",
     "Octopus.Action.IISWebSite.ApplicationPoolPassword": "#{Password}",
+    "Octopus.Action.IISWebSite.DeploymentType": "webSite",
     "Octopus.Action.CustomScripts.PreDeploy.ps1": "",
     "Octopus.Action.CustomScripts.Deploy.ps1": ""
   },
   "Parameters": [
     {
+      "Id": null,
       "Name": "OctopusServerAddress",
       "Label": "Octopus server address",
       "HelpText": "The hostname of your Octopus server.",
@@ -38,6 +40,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "DatabaseConnectionString",
       "Label": "Database connection string",
       "HelpText": "The SQL database connection string. Leave blank and the default value will create a localdb instance as the app pool user.",
@@ -47,6 +50,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "StdoutLogEnabled",
       "Label": "Enable logging",
       "HelpText": "Enables the stdout log. The log will be written to the installation root directory.",
@@ -56,6 +60,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "WebSiteName",
       "Label": "Web site name",
       "HelpText": "Name of the IIS web site to create or configure.",
@@ -65,6 +70,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "ApplicationPoolName",
       "Label": "Application pool name",
       "HelpText": "Name of the application pool in IIS to create or configure.",
@@ -74,6 +80,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "Username",
       "Label": "Username",
       "HelpText": "The Windows/domain account of the custom user that the application pool will run under. Example: YOURDOMAIN\\YourAccount. You will need to ensure that this user has permissions to run as an application pool and has access to the database.",
@@ -83,6 +90,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "Password",
       "Label": "Password",
       "HelpText": "The password for the user specified above.",
@@ -92,6 +100,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "IPAddress",
       "Label": "IP address",
       "HelpText": "The IP address that the binding will listen on. Use * for any address, or specify an address such as 10.0.0.1. If using a IPv6 address remember to enclose in square brackets such as [::1].",
@@ -101,6 +110,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "HostName",
       "Label": "Host name",
       "HelpText": "The host header that this binding will listen on. Example: www.contoso.com. Leave empty to use any host header.",
@@ -110,6 +120,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "SSLThumbprint",
       "Label": "SSL thumbprint",
       "HelpText": "The X.509 certificate thumbprint to use.",
@@ -119,6 +130,7 @@
       }
     },
     {
+      "Id": null,
       "Name": "KrakenReleasesFeed",
       "Label": "Kraken releases feed",
       "HelpText": "The ID of the NuGet feed to use for Kraken Releases.",
@@ -129,8 +141,8 @@
     }
   ],
   "$Meta": {
-    "ExportedAt": "2016-03-18T20:47:41.870Z",
-    "OctopusVersion": "3.3.3",
+    "ExportedAt": "2017-01-17T15:23:29.469Z",
+    "OctopusVersion": "3.4.15",
     "Type": "ActionTemplate"
   }
 }
