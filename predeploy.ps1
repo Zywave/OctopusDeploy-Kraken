@@ -23,7 +23,7 @@ $contents | Out-File "appsettings.deploy.json"
 
 If (-Not [string]::IsNullOrEmpty($StdoutLogEnabled)) {
 	$config = [xml](Get-Content "./wwwroot/web.config")
-	$node = $config.SelectNodes("configuration/system.webServer/httpPlatform")
+	$node = $config.SelectNodes("configuration/system.webServer/aspNetCore")
 	$node.SetAttribute("stdoutLogEnabled", $StdoutLogEnabled)
 	$config.Save("./wwwroot/web.config")
 }
