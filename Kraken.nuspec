@@ -2,13 +2,15 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.0.2-prerelease02</version>
+    <version>1.1.0-prerelease00</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
     <releaseNotes>### Bug Fixes
 
-* updating build and deploy steps to reflect netcore1.1 upgrade ([#66](https://github.com/zywave/OctopusDeploy-Kraken/issues/66)) ([89d997c](https://github.com/zywave/OctopusDeploy-Kraken/commit/89d997c))</releaseNotes>
+* appveyor Visual Studio 2015 -> 2017 ([c05fbfa](https://github.com/zywave/OctopusDeploy-Kraken/commit/c05fbfa))
+* updating appveyor to use new VS for csproj net core support ([ac3f10c](https://github.com/zywave/OctopusDeploy-Kraken/commit/ac3f10c))
+* updating build and deploy steps to reflect netcore1.1 upgrade ([2bfb617](https://github.com/zywave/OctopusDeploy-Kraken/commit/2bfb617))</releaseNotes>
   </metadata>
   <files>
       <file src="src\Kraken\bin\Release\netcoreapp1.1\publish\**\*.*" target=""/>

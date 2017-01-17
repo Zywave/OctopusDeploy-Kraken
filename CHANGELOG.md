@@ -1,3 +1,15 @@
+<a name="1.1.0-prerelease.0"></a>
+# [1.1.0-prerelease.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.2-prerelease.2...v1.1.0-prerelease.0) (2017-01-17)
+
+
+### Bug Fixes
+
+* appveyor Visual Studio 2015 -> 2017 ([c05fbfa](https://github.com/zywave/OctopusDeploy-Kraken/commit/c05fbfa))
+* updating appveyor to use new VS for csproj net core support ([ac3f10c](https://github.com/zywave/OctopusDeploy-Kraken/commit/ac3f10c))
+* updating build and deploy steps to reflect netcore1.1 upgrade ([2bfb617](https://github.com/zywave/OctopusDeploy-Kraken/commit/2bfb617))
+
+
+
 <a name="1.0.2-prerelease.2"></a>
 ## [1.0.2-prerelease.2](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.2-prerelease.1...v1.0.2-prerelease.2) (2017-01-16)
 
