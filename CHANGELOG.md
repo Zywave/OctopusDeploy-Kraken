@@ -1,3 +1,14 @@
+<a name="1.1.0-prerelease.1"></a>
+# [1.1.0-prerelease.1](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.0...v1.1.0-prerelease.1) (2017-01-17)
+
+
+### Bug Fixes
+
+* predeploy.ps1 httpPlatform module change to aspNetCore ([c8a46c8](https://github.com/zywave/OctopusDeploy-Kraken/commit/c8a46c8))
+* remove old web.config ([8b4d196](https://github.com/zywave/OctopusDeploy-Kraken/commit/8b4d196))
+
+
+
 <a name="1.1.0-prerelease.0"></a>
 # [1.1.0-prerelease.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.0.2-prerelease.2...v1.1.0-prerelease.0) (2017-01-17)
 
