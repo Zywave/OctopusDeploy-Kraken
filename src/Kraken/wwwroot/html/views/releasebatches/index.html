@@ -2,6 +2,7 @@
     <header class="view__header page-header">
 
         <div class="pull-right">
+            <button type="button" class="btn btn-primary" data-bind="click: function() { showAddBatchModal(true); }"><span class="glyphicon glyphicon-plus"></span> Add batch</button>
             <button type="button" class="btn btn-default" data-bind="click: manage"><span class="glyphicon glyphicon-console"></span> Manage</button>
         </div>
 
@@ -9,7 +10,7 @@
     </header>
     <section class="view__body">
         <ul class="batch-list" data-bind="foreach: releaseBatches">
-            <li class="batch-list__item"> 
+            <li class="batch-list__item">
                 <a data-bind="attr: { href: detailsUrl }">
                     <img data-bind="attr: { src: logoUrl, alt: name }" />
                     <span data-bind="text: name"></span>
@@ -18,4 +19,33 @@
             </li>
         </ul>
     </section>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: showAddBatchModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add batch</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" data-bind="submit: addBatchModal.addBatch">
+                    <div class="form-group" data-bind="css: { 'has-error has-feedback': addBatchModal.invalid }">
+                        <label class="col-sm-2 control-label" for="batchName">Batch name</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" id="batchName" data-bind="value: addBatchModal.batchName" />
+                            <!-- ko if: addBatchModal.invalid-->
+                            <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+                            <!-- /ko -->
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bind="click : addBatchModal.addBatch">Add</button>
+                <button type="button" class="btn btn-link" data-bind="click : addBatchModal.closeModal">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>

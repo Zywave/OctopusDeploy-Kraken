@@ -25,15 +25,19 @@ if not '$(Configuration)' == 'Debug' (
     <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="wwwroot\js\utils\koBindingHandlers.js" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.0-preview4-final" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.1.0-preview4-final" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.0" />
-    <PackageReference Include="Microsoft.NETCore.App" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Routing" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.0" />
@@ -45,9 +49,9 @@ if not '$(Configuration)' == 'Debug' (
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink.Loader" Version="14.1.0" />
-    <PackageReference Include="NuGet.Client" Version="4.0.0-rc2" />
-    <PackageReference Include="NuGet.Protocol.Core.Types" Version="4.0.0-rc2" />
-    <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.0.0-rc2" />
-    <PackageReference Include="Octopus.Client" Version="4.5.0" />
+    <PackageReference Include="NuGet.Client" Version="4.0.0-rc3" />
+    <PackageReference Include="NuGet.Protocol.Core.Types" Version="4.0.0-rc3" />
+    <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.0.0-rc3" />
+    <PackageReference Include="Octopus.Client" Version="4.6.1" />
   </ItemGroup>
 </Project>
