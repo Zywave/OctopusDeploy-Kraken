@@ -2,6 +2,26 @@
     return function(params) {
 
         this.releaseBatches = ko.observableArray();
+        this.showAddBatchModal = ko.observable(false);
+        var showAddBatchModal = this.showAddBatchModal;
+        this.addBatchModal = {
+            invalid: ko.observable(false),
+            batchName: ko.observable(''),
+            addBatch: function () {
+                if (this.addBatchModal.invalid() || !this.addBatchModal.batchName()) {
+                    this.addBatchModal.invalid(true);
+                    return;
+                }
+                shell.open();
+                shell.execute('MKBATCH', this.addBatchModal.batchName());
+                this.addBatchModal.closeModal();
+            },
+            closeModal: function () {
+                this.addBatchModal.invalid(false);
+                this.addBatchModal.batchName('');
+                showAddBatchModal(false);
+            }
+        };
 
         this.manage = function () {
             shell.open();

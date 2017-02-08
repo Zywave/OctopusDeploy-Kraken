@@ -183,7 +183,7 @@ a.deployment-square:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     word-wrap: break-word;
-    word-break: break-word;
+    word-break: break-all;
 }
 
 .deployment-square .release-date {
