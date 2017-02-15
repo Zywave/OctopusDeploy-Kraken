@@ -1,3 +1,13 @@
+<a name="1.1.0-prerelease.3"></a>
+# [1.1.0-prerelease.3](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.2...v1.1.0-prerelease.3) (2017-02-15)
+
+
+### Bug Fixes
+
+* replace prebuild event with prepublish script ([a33db43](https://github.com/zywave/OctopusDeploy-Kraken/commit/a33db43))
+
+
+
 <a name="1.1.0-prerelease.2"></a>
 # [1.1.0-prerelease.2](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.1...v1.1.0-prerelease.2) (2017-02-15)
 
