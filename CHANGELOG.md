@@ -1,3 +1,13 @@
+<a name="1.1.0-prerelease.2"></a>
+# [1.1.0-prerelease.2](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.1...v1.1.0-prerelease.2) (2017-02-15)
+
+
+### Bug Fixes
+
+* migration history is broken for fresh instances of Kraken ([21ccab6](https://github.com/zywave/OctopusDeploy-Kraken/commit/21ccab6)), closes [#68](https://github.com/zywave/OctopusDeploy-Kraken/issues/68)
+
+
+
 <a name="1.1.0-prerelease.1"></a>
 # [1.1.0-prerelease.1](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.0...v1.1.0-prerelease.1) (2017-01-17)
 

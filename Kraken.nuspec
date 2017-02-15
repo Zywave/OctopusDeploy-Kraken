@@ -2,14 +2,13 @@
   <metadata>
     <id>Kraken</id>
     <title>Kraken Deploy</title>
-    <version>1.1.0-prerelease01</version>
+    <version>1.1.0-prerelease02</version>
     <projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
     <authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
     <description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
     <releaseNotes>### Bug Fixes
 
-* predeploy.ps1 httpPlatform module change to aspNetCore ([c8a46c8](https://github.com/zywave/OctopusDeploy-Kraken/commit/c8a46c8))
-* remove old web.config ([8b4d196](https://github.com/zywave/OctopusDeploy-Kraken/commit/8b4d196))</releaseNotes>
+* migration history is broken for fresh instances of Kraken ([21ccab6](https://github.com/zywave/OctopusDeploy-Kraken/commit/21ccab6)), closes [#68](https://github.com/zywave/OctopusDeploy-Kraken/issues/68)</releaseNotes>
   </metadata>
   <files>
       <file src="src\Kraken\bin\Release\netcoreapp1.1\publish\**\*.*" target=""/>
