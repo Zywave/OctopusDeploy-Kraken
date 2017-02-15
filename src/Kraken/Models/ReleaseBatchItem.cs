@@ -11,21 +11,21 @@ namespace Kraken.Models
         public int ReleaseBatchId { get; set; }
 
         [Required]
-        [StringLength(20)]
+        [MaxLength(20)]
         public string ProjectId { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [MaxLength(50)]
         public string ProjectName { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [MaxLength(50)]
         public string ProjectSlug { get; set; }
 
-        [StringLength(20)]
+        [MaxLength(20)]
         public string ReleaseId { get; set; }
 
-        [StringLength(20)]
+        [MaxLength(20)]
         public string ReleaseVersion { get; set; }
 
         public ReleaseBatch Batch { get; set; }

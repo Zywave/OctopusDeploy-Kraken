@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -13,19 +13,23 @@ namespace Kraken.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
-                .HasAnnotation("Relational:DefaultSchema", "kraken")
+                .HasDefaultSchema("kraken")
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Kraken.Models.ApplicationUser", b =>
                 {
-                    b.Property<string>("UserName");
+                    b.Property<string>("UserName")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50);
 
                     b.Property<string>("DisplayName");
 
                     b.Property<string>("OctopusApiKey");
 
                     b.HasKey("UserName");
+
+                    b.ToTable("ApplicationUser");
                 });
 
             modelBuilder.Entity("Kraken.Models.ReleaseBatch", b =>
@@ -36,49 +40,51 @@ namespace Kraken.Migrations
                     b.Property<DateTimeOffset?>("DeployDateTime");
 
                     b.Property<string>("DeployEnvironmentId")
-                        .HasAnnotation("MaxLength", 20);
+                        .HasMaxLength(20);
 
                     b.Property<string>("DeployEnvironmentName")
-                        .HasAnnotation("MaxLength", 50);
+                        .HasMaxLength(50);
 
                     b.Property<string>("DeployUserName")
-                        .HasAnnotation("MaxLength", 50);
+                        .HasMaxLength(50);
 
                     b.Property<string>("Description")
-                        .HasAnnotation("MaxLength", 250);
+                        .HasMaxLength(250);
 
                     b.Property<bool>("IsLocked");
 
                     b.Property<string>("LockComment")
-                        .HasAnnotation("MaxLength", 100);
+                        .HasMaxLength(100);
 
                     b.Property<string>("LockUserName")
-                        .HasAnnotation("MaxLength", 50);
+                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 100);
+                        .HasMaxLength(100);
 
                     b.Property<DateTimeOffset?>("SyncDateTime");
 
                     b.Property<string>("SyncEnvironmentId")
-                        .HasAnnotation("MaxLength", 20);
+                        .HasMaxLength(20);
 
                     b.Property<string>("SyncEnvironmentName")
-                        .HasAnnotation("MaxLength", 50);
+                        .HasMaxLength(50);
 
                     b.Property<string>("SyncUserName")
-                        .HasAnnotation("MaxLength", 50);
+                        .HasMaxLength(50);
 
                     b.Property<DateTimeOffset?>("UpdateDateTime");
 
                     b.Property<string>("UpdateUserName")
-                        .HasAnnotation("MaxLength", 50);
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.ToTable("ReleaseBatch");
                 });
 
             modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>
@@ -88,27 +94,29 @@ namespace Kraken.Migrations
 
                     b.Property<string>("ProjectId")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 20);
+                        .HasMaxLength(20);
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
+                        .HasMaxLength(50);
 
                     b.Property<string>("ProjectSlug")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
+                        .HasMaxLength(50);
 
                     b.Property<int>("ReleaseBatchId");
 
                     b.Property<string>("ReleaseId")
-                        .HasAnnotation("MaxLength", 20);
+                        .HasMaxLength(20);
 
                     b.Property<string>("ReleaseVersion")
-                        .HasAnnotation("MaxLength", 20);
+                        .HasMaxLength(20);
 
                     b.HasKey("Id");
 
                     b.HasAlternateKey("ReleaseBatchId", "ProjectId");
+
+                    b.ToTable("ReleaseBatchItem");
                 });
 
             modelBuilder.Entity("Kraken.Models.ReleaseBatchLogo", b =>
@@ -120,20 +128,24 @@ namespace Kraken.Migrations
                     b.Property<string>("ContentType");
 
                     b.HasKey("ReleaseBatchId");
+
+                    b.ToTable("ReleaseBatchLogo");
                 });
 
             modelBuilder.Entity("Kraken.Models.ReleaseBatchItem", b =>
                 {
-                    b.HasOne("Kraken.Models.ReleaseBatch")
-                        .WithMany()
-                        .HasForeignKey("ReleaseBatchId");
+                    b.HasOne("Kraken.Models.ReleaseBatch", "Batch")
+                        .WithMany("Items")
+                        .HasForeignKey("ReleaseBatchId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Kraken.Models.ReleaseBatchLogo", b =>
                 {
-                    b.HasOne("Kraken.Models.ReleaseBatch")
-                        .WithOne()
-                        .HasForeignKey("Kraken.Models.ReleaseBatchLogo", "ReleaseBatchId");
+                    b.HasOne("Kraken.Models.ReleaseBatch", "Batch")
+                        .WithOne("Logo")
+                        .HasForeignKey("Kraken.Models.ReleaseBatchLogo", "ReleaseBatchId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }

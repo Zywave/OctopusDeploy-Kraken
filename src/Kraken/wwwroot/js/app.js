@@ -15,13 +15,16 @@
     shim: {
         underscore: {
             exports: '_'
+        },
+        bootstrap: {
+             deps: ['jquery']
         }
     }
 });
 
 define('context', window.appContext);
 
-requirejs(['knockout', 'componentLoader', 'shell'],
-function (ko) {
-    ko.applyBindings();
-});
+requirejs(['knockout', 'componentLoader', 'shell', 'utils/koBindingHandlers'],
+    function (ko) {
+        ko.applyBindings();
+    });
