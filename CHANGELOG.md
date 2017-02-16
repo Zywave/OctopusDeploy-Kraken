@@ -1,3 +1,13 @@
+<a name="1.1.0-prerelease.4"></a>
+# [1.1.0-prerelease.4](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.3...v1.1.0-prerelease.4) (2017-02-16)
+
+
+### Bug Fixes
+
+* web.config location in deploy script corrected ([dd50370](https://github.com/zywave/OctopusDeploy-Kraken/commit/dd50370))
+
+
+
 <a name="1.1.0-prerelease.3"></a>
 # [1.1.0-prerelease.3](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.2...v1.1.0-prerelease.3) (2017-02-15)
 

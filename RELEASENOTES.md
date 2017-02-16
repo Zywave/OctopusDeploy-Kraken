@@ -1,3 +1,3 @@
 ### Bug Fixes
 
-* replace prebuild event with prepublish script ([a33db43](https://github.com/zywave/OctopusDeploy-Kraken/commit/a33db43))
+* web.config location in deploy script corrected ([dd50370](https://github.com/zywave/OctopusDeploy-Kraken/commit/dd50370))
