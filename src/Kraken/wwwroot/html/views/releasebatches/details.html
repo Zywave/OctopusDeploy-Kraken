@@ -33,9 +33,7 @@
             <!-- ko if: isLocked -->
             <span data-bind="if: isLocked">
                 <span class="glyphicon glyphicon-lock"></span>
-                <span data-bind="text: lockUserName"></span>
-                <br />
-                <span data-bind="text: lockComment"></span>
+                <span data-bind="text: $parent.getLockInfo(lockUserName, lockComment)"></span>
             </span>
             <!-- /ko -->
         </div>

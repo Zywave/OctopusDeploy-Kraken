@@ -131,6 +131,15 @@
             return info;
         }.bind(this);
 
+        this.getLockInfo = function (userName, comment) {
+            var info = '';
+            info += 'Locked by ' + getUserDisplayName(userName);
+            if (comment) {
+                info += ' (' + comment + ')';
+            }
+            return info;
+        }.bind(this);
+
         this.getProjectUrl = function (item) {
             return context.octopusServerAddress + '/app#/projects/' + item.projectSlug;
         }.bind(this);
