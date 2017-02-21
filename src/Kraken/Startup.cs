@@ -95,6 +95,16 @@
                     template: "{action}/{*view}",
                     defaults: new { controller = "Default", action = "App", view = "releasebatches/index" });
             });
+
+            MigrateDatabase(app);
+        }
+
+        private void MigrateDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                serviceScope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
+            }
         }
     }
 }

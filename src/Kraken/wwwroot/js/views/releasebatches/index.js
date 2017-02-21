@@ -1,31 +1,59 @@
 ﻿define(['knockout', 'shell', 'bus', 'services/releaseBatches', 'context'], function(ko, shell, bus, releaseBatchesService, context) {
-    return function(params) {
-
-        this.releaseBatches = ko.observableArray();
-        this.showAddBatchModal = ko.observable(false);
-        var showAddBatchModal = this.showAddBatchModal;
-        this.addBatchModal = {
-            invalid: ko.observable(false),
-            batchName: ko.observable(''),
-            addBatch: function () {
-                if (this.addBatchModal.invalid() || !this.addBatchModal.batchName()) {
-                    this.addBatchModal.invalid(true);
-                    return;
-                }
-                shell.open();
-                shell.execute('MKBATCH', this.addBatchModal.batchName());
-                this.addBatchModal.closeModal();
-            },
-            closeModal: function () {
-                this.addBatchModal.invalid(false);
-                this.addBatchModal.batchName('');
-                showAddBatchModal(false);
-            }
-        };
+    return function () {
 
         this.manage = function () {
             shell.open();
         }.bind(this);
+
+        function AddBatchModal() {
+            this.show = ko.observable(false);
+            this.invalid = ko.observable(false);
+            this.batchName = ko.observable('');
+
+            var deferred;
+
+            this.submit = function () {
+                if (!this.batchName()) {
+                    this.invalid(true);
+                    return;
+                }
+                if (deferred) {
+                    deferred.resolve(this.batchName());
+                    deferred = null;
+                }
+                this.close();
+            }.bind(this);
+
+            this.open = function () {
+                this.show(true);
+                if (!deferred) {
+                    deferred = $.Deferred();
+                }
+                return deferred.promise();
+            }.bind(this);
+
+            this.close = function () {
+                this.invalid(false);
+                this.batchName('');
+                this.show(false);
+                if (deferred) {
+                    deferred.resolve(false);
+                    deferred = null;
+                }
+            }.bind(this);
+        };
+
+        this.addBatchModal = new AddBatchModal();
+
+        this.addBatch = function () {
+            this.addBatchModal.open().then(function (batchName) {
+                if (batchName) {
+                    shell.execute('MKBATCH', batchName);
+                }
+            });
+        }.bind(this);
+
+        this.releaseBatches = ko.observableArray();
 
         var mapReleaseBatch = function(batch) {
             batch.detailsUrl = context.basePath + 'app/releasebatches/details?id=' + batch.id;

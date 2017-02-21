@@ -12,6 +12,16 @@
 		<PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Content Include="wwwroot\html\views\releasebatches\addBatchModal.html" />
+	  <Content Include="wwwroot\html\views\releasebatches\addBatchModel.html">
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Include="wwwroot\js\views\releasebatches\addBatchModal.js" />
+	  <Content Include="wwwroot\js\views\releasebatches\index - Copy.js">
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="1.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="1.1.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.0" />
