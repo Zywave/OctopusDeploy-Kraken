@@ -1,6 +1,6 @@
 version: '{build}'
 os: Visual Studio 2017 RC
-cache: C:\Users\appveyor\.dnx\packages
+cache: C:\Users\appveyor\.nuget\packages
 build_script:
 - ps: >-
     dotnet restore
@@ -25,7 +25,9 @@ before_deploy:
 
     npm install -g gulp
 
-    dotnet publish src\Kraken\Kraken.csproj --configuration Release
+    dotnet publish src\Kraken\Kraken.csproj --configuration Release --output ..\..\published-app
+
+    echo d | xcopy "src\Kraken\wwwroot\lib" "published-app\wwwroot\lib" /s
 
     nuget pack Kraken.nuspec -NoPackageAnalysis
 
