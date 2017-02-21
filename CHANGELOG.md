@@ -1,3 +1,16 @@
+<a name="1.1.0-prerelease.5"></a>
+# [1.1.0-prerelease.5](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.4...v1.1.0-prerelease.5) (2017-02-21)
+
+
+### Bug Fixes
+
+* bundle wwwroot/lib folder (temp hack until dotnet publish works in appveyor correctly) ([9753d51](https://github.com/zywave/OctopusDeploy-Kraken/commit/9753d51))
+* lock info formatting ([44ac4fb](https://github.com/zywave/OctopusDeploy-Kraken/commit/44ac4fb))
+* reorder buttons on index page ([c9b2eb2](https://github.com/zywave/OctopusDeploy-Kraken/commit/c9b2eb2))
+* shorten 'Batch name' label ([4a451ac](https://github.com/zywave/OctopusDeploy-Kraken/commit/4a451ac))
+
+
+
 <a name="1.1.0-prerelease.4"></a>
 # [1.1.0-prerelease.4](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.3...v1.1.0-prerelease.4) (2017-02-16)
 
