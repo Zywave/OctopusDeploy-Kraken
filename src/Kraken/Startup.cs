@@ -1,6 +1,7 @@
 ﻿namespace Kraken
 {
-    using Kraken.Filters;
+	using System;
+	using Kraken.Filters;
     using Kraken.Models;
     using Kraken.Security;
     using Kraken.Services;
@@ -96,15 +97,23 @@
                     defaults: new { controller = "Default", action = "App", view = "releasebatches/index" });
             });
 
-            MigrateDatabase(app);
+            MigrateDatabase(app, loggerFactory);
         }
 
-        private void MigrateDatabase(IApplicationBuilder app)
+        private void MigrateDatabase(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            using (var serviceScope = app.ApplicationServices.CreateScope())
-            {
-                serviceScope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
-            }
+			var logger = loggerFactory.CreateLogger<Program>();
+	        try
+	        {
+		        using (var serviceScope = app.ApplicationServices.CreateScope())
+		        {
+			        serviceScope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
+		        }
+	        }
+	        catch (Exception ex)
+	        {
+		        logger.LogCritical("Error while attempting to migrate database", ex);
+	        }
         }
     }
 }
