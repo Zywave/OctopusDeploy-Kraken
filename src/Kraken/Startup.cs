@@ -100,7 +100,7 @@
             MigrateDatabase(app, loggerFactory);
         }
 
-        private void MigrateDatabase(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        private static void MigrateDatabase(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             var logger = loggerFactory.CreateLogger<Program>();
             try
