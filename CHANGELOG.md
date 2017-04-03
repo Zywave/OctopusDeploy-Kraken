@@ -1,3 +1,13 @@
+<a name="1.1.0-prerelease.7"></a>
+# [1.1.0-prerelease.7](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.6...v1.1.0-prerelease.7) (2017-04-03)
+
+
+### Bug Fixes
+
+* update Octopus.Client NuGet package to support Octopus >3.11.2 ([bd7bd9f](https://github.com/zywave/OctopusDeploy-Kraken/commit/bd7bd9f))
+
+
+
 <a name="1.1.0-prerelease.6"></a>
 # [1.1.0-prerelease.6](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.5...v1.1.0-prerelease.6) (2017-03-08)
 
