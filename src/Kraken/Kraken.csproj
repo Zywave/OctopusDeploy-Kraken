@@ -35,7 +35,7 @@
     <PackageReference Include="NuGet.Client" Version="4.0.0" />
     <PackageReference Include="NuGet.Protocol.Core.Types" Version="4.0.0" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.0.0" />
-    <PackageReference Include="Octopus.Client" Version="4.13.2" />
+    <PackageReference Include="Octopus.Client" Version="4.15.5" />
   </ItemGroup>
   <Target Name="PrepublishScript" BeforeTargets="Publish">
     <Exec Command="npm install" />
