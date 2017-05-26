@@ -1,3 +1,13 @@
+<a name="1.1.0-prerelease.8"></a>
+# [1.1.0-prerelease.8](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.7...v1.1.0-prerelease.8) (2017-05-26)
+
+
+### Features
+
+* octopus api upgrade ([b10cf24](https://github.com/zywave/OctopusDeploy-Kraken/commit/b10cf24))
+
+
+
 <a name="1.1.0-prerelease.7"></a>
 # [1.1.0-prerelease.7](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.6...v1.1.0-prerelease.7) (2017-04-03)
 

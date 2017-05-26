@@ -3,13 +3,13 @@
 	<metadata>
 		<id>Kraken</id>
 		<title>Kraken Deploy</title>
-		<version>1.1.0-prerelease07</version>
+		<version>1.1.0-prerelease08</version>
 		<projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
 		<authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
 		<description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
-		<releaseNotes>### Bug Fixes
+		<releaseNotes>### Features
 
-* update Octopus.Client NuGet package to support Octopus >3.11.2 ([bd7bd9f](https://github.com/zywave/OctopusDeploy-Kraken/commit/bd7bd9f))</releaseNotes>
+* octopus api upgrade ([b10cf24](https://github.com/zywave/OctopusDeploy-Kraken/commit/b10cf24))</releaseNotes>
 	</metadata>
 	<files>
 		<file src="published-app\**\*.*" target=""/>
