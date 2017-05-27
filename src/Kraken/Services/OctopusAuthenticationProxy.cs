@@ -13,8 +13,8 @@
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            var octopusServerAddress = settings.Value.OctopusServerAddress;
-            _repository = OctopusAsyncClient.Create(new OctopusServerEndpoint(octopusServerAddress), new OctopusClientOptions()).Result.Repository;
+            _octopusServerAddress = settings.Value.OctopusServerAddress;
+            _repository = OctopusAsyncClient.Create(new OctopusServerEndpoint(_octopusServerAddress), new OctopusClientOptions()).Result.Repository;
         }
 
         public async Task<UserResource> Login(string userName, string password)
@@ -49,7 +49,10 @@
             UserResource user;
             try
             {
-                user = await _repository.Users.GetCurrent();
+                using (var client = await OctopusAsyncClient.Create(new OctopusServerEndpoint(_octopusServerAddress, apiKey)))
+                {
+                    user = await client.Repository.Users.GetCurrent();
+                }
             }
             catch (OctopusSecurityException)
             {
@@ -64,7 +67,10 @@
             UserResource user;
             try
             {
-                user = await _repository.Users.GetCurrent();
+                using (var client = await OctopusAsyncClient.Create(new OctopusServerEndpoint(_octopusServerAddress, apiKey)))
+                {
+                    user = await client.Repository.Users.GetCurrent();
+                }
             }
             catch (OctopusSecurityException)
             {
@@ -74,6 +80,7 @@
             return user.Username;
         }
 
+        private readonly string _octopusServerAddress;
         private readonly IOctopusAsyncRepository _repository;
     }
 }
