@@ -1,3 +1,14 @@
+<a name="1.1.0-prerelease.9"></a>
+# [1.1.0-prerelease.9](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.8...v1.1.0-prerelease.9) (2017-05-27)
+
+
+### Bug Fixes
+
+* fixing octopus client usage for async and disposal ([b8ff958](https://github.com/zywave/OctopusDeploy-Kraken/commit/b8ff958))
+* validate api key ([0ada22e](https://github.com/zywave/OctopusDeploy-Kraken/commit/0ada22e))
+
+
+
 <a name="1.1.0-prerelease.8"></a>
 # [1.1.0-prerelease.8](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.7...v1.1.0-prerelease.8) (2017-05-26)
 
