@@ -51,8 +51,9 @@
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddTransient<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
-            services.AddTransient<IOctopusProxy, OctopusProxy>();
+            services.AddScoped<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
+            services.AddScoped<IOctopusProxy, OctopusProxy>();
+
             services.AddTransient<INuGetProxy, NuGetProxy>();
             services.AddTransient<IOctopusReleaseService, OctopusReleaseService>();
             services.AddTransient<ResponseTextExceptionFilter>();

@@ -7,18 +7,22 @@
     using Octopus.Client.Model;
     using Octopus.Client.Exceptions;
 
-    public class OctopusAuthenticationProxy : IOctopusAuthenticationProxy
+    public class OctopusAuthenticationProxy : IOctopusAuthenticationProxy, IDisposable
     {
         public OctopusAuthenticationProxy(IOptions<AppSettings> settings)
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
 
             _octopusServerAddress = settings.Value.OctopusServerAddress;
-            _repository = OctopusAsyncClient.Create(new OctopusServerEndpoint(_octopusServerAddress), new OctopusClientOptions()).Result.Repository;
         }
 
         public async Task<UserResource> Login(string userName, string password)
         {
+            if (_loginClient == null)
+            {
+                _loginClient = await OctopusAsyncClient.Create(new OctopusServerEndpoint(_octopusServerAddress), new OctopusClientOptions());
+            }
+
             var loginCommand = new LoginCommand()
             {
                 Username = userName,
@@ -27,20 +31,24 @@
 
             try
             {
-                await _repository.Users.SignIn(loginCommand);
+                await _loginClient.Repository.Users.SignIn(loginCommand);
             }
             catch (OctopusException e) when (e is OctopusValidationException || e is OctopusResourceNotFoundException)
             {
                 return null;
             }
 
-            var user = _repository.Users.GetCurrent().Result;
-            return user;
+            return await _loginClient.Repository.Users.GetCurrent();
         }
 
         public async Task<string> CreateApiKey()
         {
-            var apiKeyResource = await _repository.Users.CreateApiKey(_repository.Users.GetCurrent().Result, "Kraken");
+            if (_loginClient == null)
+            {
+                throw new InvalidOperationException("Login must be called before an API key can be created.");
+            }
+
+            var apiKeyResource = await _loginClient.Repository.Users.CreateApiKey(await _loginClient.Repository.Users.GetCurrent(), "Kraken");
             return apiKeyResource.ApiKey;
         }
 
@@ -80,7 +88,12 @@
             return user.Username;
         }
 
+        public void Dispose()
+        {
+            _loginClient?.Dispose();
+        }
+        
         private readonly string _octopusServerAddress;
-        private readonly IOctopusAsyncRepository _repository;
+        private IOctopusAsyncClient _loginClient;
     }
 }

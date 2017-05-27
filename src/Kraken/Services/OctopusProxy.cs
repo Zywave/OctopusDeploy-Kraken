@@ -13,7 +13,7 @@
     using Microsoft.Extensions.Options;
     using Octopus.Client.Exceptions;
 
-    public class OctopusProxy : IOctopusProxy
+    public class OctopusProxy : IOctopusProxy, IDisposable
     {
         public OctopusProxy(IOptions<AppSettings> settings, IHttpContextAccessor httpContextAccessor)
         {
@@ -21,22 +21,25 @@
 
             var apiKey = httpContextAccessor.HttpContext.User.GetOctopusApiKey();
 
-            var endpoint = new OctopusServerEndpoint(settings.Value.OctopusServerAddress, apiKey);
-            _octopusClient = Octopus.Client.OctopusAsyncClient.Create(endpoint, new OctopusClientOptions()).Result;
+            _endpoint = new OctopusServerEndpoint(settings.Value.OctopusServerAddress, apiKey);
         }
 
         public async Task<IEnumerable<EnvironmentResource>> GetEnvironmentsAsync()
         {
+            await InitializeClient();
             return await _octopusClient.Repository.Environments.FindAll();
         }
 
         public async Task<EnvironmentResource> GetEnvironmentAsync(string idOrName)
         {
+            await InitializeClient();
             return await _octopusClient.Repository.Environments.FindOne(e => e.Id == idOrName || e.Id == "Environments-" + idOrName || string.Equals(e.Name, idOrName, StringComparison.OrdinalIgnoreCase));
         }
 
         public async Task<Dictionary<Permission, IEnumerable<EnvironmentResource>>> GetEnvironmentsWithPermissionsAsync(IEnumerable<Permission> permissionsToGet, IEnumerable<string> projectIds = null)
         {
+            await InitializeClient();
+
             if (projectIds == null)
             {
                 projectIds = new List<string>();
@@ -80,21 +83,29 @@
 
         public async Task<ProjectResource> GetProjectAsync(string idOrSlugOrName)
         {
+            await InitializeClient();
+
             return await _octopusClient.Repository.Projects.FindOne(p => p.Id == idOrSlugOrName || p.Id == "Projects-" + idOrSlugOrName || p.Slug == idOrSlugOrName || string.Equals(p.Name, idOrSlugOrName, StringComparison.OrdinalIgnoreCase));
         }
 
         public async Task<IEnumerable<ProjectResource>> GetProjectsAsync(string nameFilter)
         {
+            await InitializeClient();
+
             return await _octopusClient.Repository.Projects.FindMany(p => string.IsNullOrEmpty(nameFilter) || CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.Name, nameFilter, CompareOptions.IgnoreCase) >= 0);
         }
 
         public async Task<DashboardResource> GetDynamicDashboardAsync(IEnumerable<string> projectIds, IEnumerable<string> environmentIds)
         {
+            await InitializeClient();
+
             return await _octopusClient.Repository.Dashboards.GetDynamicDashboard(projectIds.ToArray(), environmentIds.ToArray());
         }
 
         public async Task<ReleaseResource> GetLatestReleaseAsync(string projectId)
         {
+            await InitializeClient();
+
             var project = await GetProjectAsync(projectId);
             var releases = (await _octopusClient.Repository.Projects.GetReleases(project)).Items;
             return releases.FirstOrDefault();
@@ -102,23 +113,31 @@
 
         public async Task<ReleaseResource> GetLatestDeployedReleaseAsync(string projectId, string environmentId)
         {
+            await InitializeClient();
+
             var deployment = (await _octopusClient.Repository.Deployments.FindAll(new[] { projectId }, new[] { environmentId })).Items.FirstOrDefault();
             return deployment != null ? await _octopusClient.Repository.Releases.Get(deployment.ReleaseId) : null;
         }
 
         public async Task<DeploymentProcessResource> GetDeploymentProcessForProjectAsync(string projectId)
         {
+            await InitializeClient();
+
             var project = await GetProjectAsync(projectId);
             return await _octopusClient.Repository.DeploymentProcesses.Get(project.DeploymentProcessId);
         }
 
         public async Task<FeedResource> GetFeedAsync(string feedId)
         {
+            await InitializeClient();
+
             return await _octopusClient.Repository.Feeds.Get(feedId);
         }
 
         public async Task<DeploymentResource> DeployReleaseAsync(string releaseId, string environmentId, bool forceRedeploy)
         {
+            await InitializeClient();
+
             var deploymentResource = new DeploymentResource
             {
                 ReleaseId = releaseId,
@@ -167,6 +186,8 @@
 
         public async Task<ReleaseResource> CreateReleaseAsync(string projectId, string version, IEnumerable<SelectedPackage> selectedPackages)
         {
+            await InitializeClient();
+
             var release = new ReleaseResource
             {
                 Version = version,
@@ -179,6 +200,8 @@
 
         public async Task<ReleaseResource> CreateReleaseAsync(ReleaseResource release)
         {
+            await InitializeClient();
+
             var project = await _octopusClient.Repository.Projects.Get(release.ProjectId);
             try
             {
@@ -192,6 +215,8 @@
 
         public async Task<ReleaseResource> GetReleaseAsync(string projectId, string releaseVersion)
         {
+            await InitializeClient();
+
             var project = await _octopusClient.Repository.Projects.Get(projectId);
             if (project != null)
             {
@@ -209,10 +234,26 @@
 
         public async Task<VariableSetResource> GetVariableSetForProject(string projectId)
         {
+            await InitializeClient();
+
             var project = await GetProjectAsync(projectId);
             return await _octopusClient.Repository.VariableSets.Get(project.VariableSetId);
         }
 
-        private readonly IOctopusAsyncClient _octopusClient;
+        public void Dispose()
+        {
+            _octopusClient?.Dispose();
+        }
+
+        private async Task InitializeClient()
+        {
+            if (_octopusClient == null)
+            {
+                _octopusClient = await OctopusAsyncClient.Create(_endpoint, new OctopusClientOptions());
+            }
+        }
+
+        private readonly OctopusServerEndpoint _endpoint;
+        private IOctopusAsyncClient _octopusClient;
     }
 }
