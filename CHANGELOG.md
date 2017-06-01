@@ -1,3 +1,13 @@
+<a name="1.1.0-prerelease.10"></a>
+# [1.1.0-prerelease.10](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.9...v1.1.0-prerelease.10) (2017-06-01)
+
+
+### Bug Fixes
+
+* connectionstring override ([7994e6b](https://github.com/zywave/OctopusDeploy-Kraken/commit/7994e6b))
+
+
+
 <a name="1.1.0-prerelease.9"></a>
 # [1.1.0-prerelease.9](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.8...v1.1.0-prerelease.9) (2017-05-27)
 

@@ -3,14 +3,13 @@
 	<metadata>
 		<id>Kraken</id>
 		<title>Kraken Deploy</title>
-		<version>1.1.0-prerelease09</version>
+		<version>1.1.0-prerelease10</version>
 		<projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
 		<authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
 		<description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
 		<releaseNotes>### Bug Fixes
 
-* fixing octopus client usage for async and disposal ([b8ff958](https://github.com/zywave/OctopusDeploy-Kraken/commit/b8ff958))
-* validate api key ([0ada22e](https://github.com/zywave/OctopusDeploy-Kraken/commit/0ada22e))</releaseNotes>
+* connectionstring override ([7994e6b](https://github.com/zywave/OctopusDeploy-Kraken/commit/7994e6b))</releaseNotes>
 	</metadata>
 	<files>
 		<file src="published-app\**\*.*" target=""/>
