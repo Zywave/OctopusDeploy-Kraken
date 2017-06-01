@@ -8,10 +8,8 @@ $contents = @"
 If (-Not [string]::IsNullOrEmpty($DatabaseConnectionString)) {
 $contents = $contents + @"
 ,
-	"Data": {
-		"DefaultConnection": {
-			"ConnectionString": "$DatabaseConnectionString"
-		}
+	"ConnectionStrings": {
+		"DefaultConnection": "$DatabaseConnectionString"
 	}
 "@
 }
