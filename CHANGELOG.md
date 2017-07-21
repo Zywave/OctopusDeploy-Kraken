@@ -1,3 +1,8 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.10...1.1.0) (2017-07-21)
+
+
+
 <a name="1.1.0-prerelease.10"></a>
 # [1.1.0-prerelease.10](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.9...v1.1.0-prerelease.10) (2017-06-01)
 

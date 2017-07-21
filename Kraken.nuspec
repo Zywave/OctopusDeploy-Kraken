@@ -3,13 +3,11 @@
 	<metadata>
 		<id>Kraken</id>
 		<title>Kraken Deploy</title>
-		<version>1.1.0-prerelease10</version>
+		<version>1.1.0</version>
 		<projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
 		<authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
 		<description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
-		<releaseNotes>### Bug Fixes
-
-* connectionstring override ([7994e6b](https://github.com/zywave/OctopusDeploy-Kraken/commit/7994e6b))</releaseNotes>
+		<releaseNotes/>
 	</metadata>
 	<files>
 		<file src="published-app\**\*.*" target=""/>

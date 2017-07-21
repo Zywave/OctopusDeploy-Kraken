@@ -1,6 +1,6 @@
 {
   "name": "OctopusDeploy-Kraken",
-  "version": "1.1.0-prerelease.10",
+  "version": "1.1.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -9,13 +9,13 @@
   "devDependencies": {
     "fs": "0.0.2",
     "gulp": "^3.9.1",
-    "gulp-bump": "^1.0.0",
+    "gulp-bump": "^2.7.0",
     "gulp-conventional-changelog": "^1.1.0",
-    "gulp-git": "^1.7.0",
+    "gulp-git": "^2.4.1",
     "gulp-insert": "^0.5.0",
     "gulp-trim": "^1.0.2",
     "gulp-util": "^3.0.7",
     "gulp-xmlpoke": "^0.2.0",
-    "run-sequence": "^1.1.5"
+    "run-sequence": "^2.0.0"
   }
 }
