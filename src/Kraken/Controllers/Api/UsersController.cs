@@ -16,9 +16,7 @@
     {
         public UsersController(ApplicationDbContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
-
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         // GET: api/Users/me123

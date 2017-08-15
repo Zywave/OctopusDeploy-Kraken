@@ -23,11 +23,8 @@ namespace Kraken.Controllers.Api
     {
         public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy, IOctopusReleaseService octopusReleaseService)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
-            if (octopusProxy == null) throw new ArgumentNullException(nameof(octopusProxy));
-
-            _context = context;
-            _octopusProxy = octopusProxy;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _octopusProxy = octopusProxy ?? throw new ArgumentNullException(nameof(octopusProxy));
             _octopusReleaseService = octopusReleaseService;
         }
 

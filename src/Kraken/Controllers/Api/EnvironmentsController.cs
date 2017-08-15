@@ -17,9 +17,7 @@
     {
         public EnvironmentsController(IOctopusProxy octopusProxy)
         {
-            if (octopusProxy == null) throw new ArgumentNullException(nameof(octopusProxy));
-
-            _octopusProxy = octopusProxy;
+            _octopusProxy = octopusProxy ?? throw new ArgumentNullException(nameof(octopusProxy));
         }
 
         [HttpGet]

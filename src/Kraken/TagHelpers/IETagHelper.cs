@@ -9,9 +9,7 @@
     {
         public IETagHelper(IHttpContextAccessor httpContextAccessor)
         {
-            if (httpContextAccessor == null) throw new ArgumentNullException(nameof(httpContextAccessor));
-
-            _httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)

@@ -25,7 +25,7 @@ namespace Kraken.Models
         [MaxLength(20)]
         public string ReleaseId { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string ReleaseVersion { get; set; }
 
         public ReleaseBatch Batch { get; set; }

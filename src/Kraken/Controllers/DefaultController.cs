@@ -21,11 +21,8 @@
     {
         public DefaultController(IOctopusAuthenticationProxy octopusAuthenticationProxy, ApplicationDbContext dbContext)
         {
-            if (octopusAuthenticationProxy == null) throw new ArgumentNullException(nameof(octopusAuthenticationProxy));
-            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
-
-            OctopusAuthenticationProxy = octopusAuthenticationProxy;
-            DbContext = dbContext;
+            OctopusAuthenticationProxy = octopusAuthenticationProxy ?? throw new ArgumentNullException(nameof(octopusAuthenticationProxy));
+            DbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public IOctopusAuthenticationProxy OctopusAuthenticationProxy { get; }

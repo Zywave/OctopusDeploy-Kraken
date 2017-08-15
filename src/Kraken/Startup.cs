@@ -42,10 +42,9 @@
 
 			services.
                 AddAuthentication(c => {
-					c.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-					c.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+					c.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				})
-                .AddCookieAuthentication(o =>
+                .AddCookie(o =>
                 {
                     o.LoginPath = new PathString("/login");
                     o.AccessDeniedPath = new PathString("/accessdenied");
@@ -62,9 +61,8 @@
 			services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 			services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-			services.AddScoped<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
-			services.AddScoped<IOctopusProxy, OctopusProxy>();
-
+			services.AddTransient<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
+			services.AddTransient<IOctopusProxy, OctopusProxy>();
 			services.AddTransient<INuGetProxy, NuGetProxy>();
 			services.AddTransient<IOctopusReleaseService, OctopusReleaseService>();
 			services.AddTransient<ResponseTextExceptionFilter>();
