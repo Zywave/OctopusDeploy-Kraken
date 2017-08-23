@@ -8,8 +8,8 @@
     using Kraken.Services;
     using Kraken.ViewModels;
     using Microsoft.AspNetCore.Authentication;
-	using Microsoft.AspNetCore.Authentication.Cookies;
-	using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
@@ -85,7 +85,7 @@
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            
+
             return RedirectToAction("Login");
         }
 

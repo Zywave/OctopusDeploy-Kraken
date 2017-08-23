@@ -92,7 +92,7 @@
         {
             _loginClient?.Dispose();
         }
-        
+
         private readonly string _octopusServerAddress;
         private IOctopusAsyncClient _loginClient;
     }

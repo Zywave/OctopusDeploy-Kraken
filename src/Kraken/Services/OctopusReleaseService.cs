@@ -62,7 +62,7 @@
             };
         }
 
-        private async Task<string> GetNuGetPackageIdFromAction(DeploymentActionResource action, string projectId) 
+        private async Task<string> GetNuGetPackageIdFromAction(DeploymentActionResource action, string projectId)
         {
             PropertyValueResource nuGetPackageId;
             if (action.Properties.TryGetValue("Octopus.Action.Package.NuGetPackageId", out nuGetPackageId) ||
