@@ -1,3 +1,13 @@
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/zywave/OctopusDeploy-Kraken/compare/2.0.0...2.0.1) (2018-02-21)
+
+
+### Bug Fixes
+
+* NuGet package doesn't have all required dlls ([#84](https://github.com/zywave/OctopusDeploy-Kraken/issues/84)) ([28f4a20](https://github.com/zywave/OctopusDeploy-Kraken/commit/28f4a20))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0...2.0.0) (2018-02-21)
 

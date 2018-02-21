@@ -3,13 +3,13 @@
 	<metadata>
 		<id>Kraken</id>
 		<title>Kraken Deploy</title>
-		<version>2.0.0</version>
+		<version>2.0.1</version>
 		<projectUrl>https://github.com/Zywave/OctopusDeploy-Kraken</projectUrl>
 		<authors>https://github.com/Zywave/OctopusDeploy-Kraken/graphs/contributors</authors>
 		<description>A companion tool for Octopus Deploy that facilitates deploying multiple projects at once.</description>
-		<releaseNotes>### Features
+		<releaseNotes>### Bug Fixes
 
-* ASP.NET Core 2.0 (closes [#79](https://github.com/zywave/OctopusDeploy-Kraken/issues/79)) ([#81](https://github.com/zywave/OctopusDeploy-Kraken/issues/81)) ([5514d64](https://github.com/zywave/OctopusDeploy-Kraken/commit/5514d64))</releaseNotes>
+* NuGet package doesn't have all required dlls ([#84](https://github.com/zywave/OctopusDeploy-Kraken/issues/84)) ([28f4a20](https://github.com/zywave/OctopusDeploy-Kraken/commit/28f4a20))</releaseNotes>
 	</metadata>
 	<files>
 		<file src="published-app\**\*.*" target=""/>
