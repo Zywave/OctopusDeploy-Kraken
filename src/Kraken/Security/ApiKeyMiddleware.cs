@@ -14,11 +14,8 @@
     {
         public ApiKeyMiddleware(RequestDelegate next, IOctopusAuthenticationProxy octopusAuthenticationProxy)
         {
-            if (next == null) throw new ArgumentNullException(nameof(next));
-            if (octopusAuthenticationProxy == null) throw new ArgumentNullException(nameof(octopusAuthenticationProxy));
-
-            _next = next;
-            _octopusAuthenticationProxy = octopusAuthenticationProxy;
+            _next = next ?? throw new ArgumentNullException(nameof(next));
+            _octopusAuthenticationProxy = octopusAuthenticationProxy ?? throw new ArgumentNullException(nameof(octopusAuthenticationProxy));
         }
 
         public async Task Invoke(HttpContext httpContext)

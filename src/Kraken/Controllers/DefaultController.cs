@@ -7,22 +7,22 @@
     using Kraken.Security;
     using Kraken.Services;
     using Kraken.ViewModels;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Newtonsoft.Json;
     using Octopus.Client.Model;
+
     [Authorize]
     public class DefaultController : Controller
     {
         public DefaultController(IOctopusAuthenticationProxy octopusAuthenticationProxy, ApplicationDbContext dbContext)
         {
-            if (octopusAuthenticationProxy == null) throw new ArgumentNullException(nameof(octopusAuthenticationProxy));
-            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
-
-            OctopusAuthenticationProxy = octopusAuthenticationProxy;
-            DbContext = dbContext;
+            OctopusAuthenticationProxy = octopusAuthenticationProxy ?? throw new ArgumentNullException(nameof(octopusAuthenticationProxy));
+            DbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public IOctopusAuthenticationProxy OctopusAuthenticationProxy { get; }
@@ -64,7 +64,7 @@
                         await SetApplicationUserOctopusApiKey(appUser.UserName, octopusApiKey);
                     }
 
-                    await HttpContext.Authentication.SignInAsync("Cookies", ClaimsPrincipalHelpers.CreatePrincipal(appUser.UserName, octopusApiKey));
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, ClaimsPrincipalHelpers.CreatePrincipal(appUser.UserName, octopusApiKey));
 
                     if (String.IsNullOrEmpty(returnUrl))
                     {
@@ -84,8 +84,8 @@
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.Authentication.SignOutAsync("Cookies");
-            
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
             return RedirectToAction("Login");
         }
 

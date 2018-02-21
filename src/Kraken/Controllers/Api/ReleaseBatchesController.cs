@@ -23,11 +23,8 @@ namespace Kraken.Controllers.Api
     {
         public ReleaseBatchesController(ApplicationDbContext context, IOctopusProxy octopusProxy, IOctopusReleaseService octopusReleaseService)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
-            if (octopusProxy == null) throw new ArgumentNullException(nameof(octopusProxy));
-
-            _context = context;
-            _octopusProxy = octopusProxy;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _octopusProxy = octopusProxy ?? throw new ArgumentNullException(nameof(octopusProxy));
             _octopusReleaseService = octopusReleaseService;
         }
 
@@ -147,7 +144,7 @@ namespace Kraken.Controllers.Api
             {
                 return BadRequest(ModelState);
             }
-            
+
             var releaseBatch = await GetReleaseBatch(idOrName, false, false);
             if (releaseBatch == null)
             {
@@ -534,7 +531,7 @@ namespace Kraken.Controllers.Api
             releaseBatch.DeployUserName = User.Identity.Name;
 
             await _context.SaveChangesAsync();
-            
+
             return Ok(responseBody);
         }
 
@@ -738,7 +735,7 @@ namespace Kraken.Controllers.Api
         public class DeployBatchItem
         {
             public string Name { get; set; }
-            
+
             public string Message { get; set; }
         }
 
@@ -758,7 +755,7 @@ namespace Kraken.Controllers.Api
             public List<EnvironmentMapping> View { get; set; } = new List<EnvironmentMapping>();
             public List<EnvironmentMapping> Deploy { get; set; } = new List<EnvironmentMapping>();
         }
-        
+
         public class EnvironmentMapping
         {
             public string Id { get; set; }

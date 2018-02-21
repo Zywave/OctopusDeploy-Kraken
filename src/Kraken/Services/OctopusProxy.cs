@@ -115,7 +115,7 @@
         {
             await InitializeClient();
 
-            var deployment = (await _octopusClient.Repository.Deployments.FindAll(new[] { projectId }, new[] { environmentId })).Items.FirstOrDefault();
+            var deployment = (await _octopusClient.Repository.Deployments.FindBy(new[] { projectId }, new[] { environmentId })).Items.FirstOrDefault();
             return deployment != null ? await _octopusClient.Repository.Releases.Get(deployment.ReleaseId) : null;
         }
 

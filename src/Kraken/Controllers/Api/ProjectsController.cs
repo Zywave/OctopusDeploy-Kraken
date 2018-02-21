@@ -17,9 +17,7 @@ namespace Kraken.Controllers.Api
     {
         public ProjectsController(IOctopusProxy octopusProxy)
         {
-            if (octopusProxy == null) throw new ArgumentNullException(nameof(octopusProxy));
-
-            _octopusProxy = octopusProxy;
+            _octopusProxy = octopusProxy ?? throw new ArgumentNullException(nameof(octopusProxy));
         }
 
         // GET: api/projects

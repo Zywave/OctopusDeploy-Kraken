@@ -5,9 +5,11 @@
     using Kraken.Models;
     using Kraken.Security;
     using Kraken.Services;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
     using Microsoft.Extensions.Configuration;
@@ -35,10 +37,19 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFramework()
-                .AddEntityFrameworkSqlServer()
-                .AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.
+                AddAuthentication(c =>
+                {
+                    c.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(o =>
+                {
+                    o.LoginPath = new PathString("/login");
+                    o.AccessDeniedPath = new PathString("/accessdenied");
+                });
 
             // Add framework services.
             services.AddMvc().AddJsonOptions(options =>
@@ -51,9 +62,8 @@
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddScoped<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
-            services.AddScoped<IOctopusProxy, OctopusProxy>();
-
+            services.AddTransient<IOctopusAuthenticationProxy, OctopusAuthenticationProxy>();
+            services.AddTransient<IOctopusProxy, OctopusProxy>();
             services.AddTransient<INuGetProxy, NuGetProxy>();
             services.AddTransient<IOctopusReleaseService, OctopusReleaseService>();
             services.AddTransient<ResponseTextExceptionFilter>();
@@ -75,18 +85,9 @@
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            //app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
-
             app.UseStaticFiles();
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                LoginPath = new PathString("/login"),
-                AccessDeniedPath = new PathString("/accessdenied"),
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                AuthenticationScheme = "Cookies"
-            });
+            app.UseAuthentication();
 
             app.UseMiddleware<ApiKeyMiddleware>();
 

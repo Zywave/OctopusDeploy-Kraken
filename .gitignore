@@ -38,3 +38,5 @@ node_modules
 **/[Cc]ompiler/[Rr]esources/**/*.js
 *~
 published-app/
+.vscode/
+.vs/
