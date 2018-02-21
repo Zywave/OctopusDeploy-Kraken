@@ -1,3 +1,3 @@
-### Features
+### Bug Fixes
 
-* ASP.NET Core 2.0 (closes [#79](https://github.com/zywave/OctopusDeploy-Kraken/issues/79)) ([#81](https://github.com/zywave/OctopusDeploy-Kraken/issues/81)) ([5514d64](https://github.com/zywave/OctopusDeploy-Kraken/commit/5514d64))
+* NuGet package doesn't have all required dlls ([#84](https://github.com/zywave/OctopusDeploy-Kraken/issues/84)) ([28f4a20](https://github.com/zywave/OctopusDeploy-Kraken/commit/28f4a20))
