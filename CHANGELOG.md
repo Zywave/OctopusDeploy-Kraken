@@ -1,3 +1,13 @@
+<a name="2.0.2"></a>
+## [2.0.2](https://github.com/zywave/OctopusDeploy-Kraken/compare/2.0.1...2.0.2) (2018-02-21)
+
+
+### Bug Fixes
+
+* add back in shame bower copy ([#85](https://github.com/zywave/OctopusDeploy-Kraken/issues/85)) ([1cf69df](https://github.com/zywave/OctopusDeploy-Kraken/commit/1cf69df))
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/zywave/OctopusDeploy-Kraken/compare/2.0.0...2.0.1) (2018-02-21)
 

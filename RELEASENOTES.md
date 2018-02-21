@@ -1,3 +1,3 @@
 ### Bug Fixes
 
-* NuGet package doesn't have all required dlls ([#84](https://github.com/zywave/OctopusDeploy-Kraken/issues/84)) ([28f4a20](https://github.com/zywave/OctopusDeploy-Kraken/commit/28f4a20))
+* add back in shame bower copy ([#85](https://github.com/zywave/OctopusDeploy-Kraken/issues/85)) ([1cf69df](https://github.com/zywave/OctopusDeploy-Kraken/commit/1cf69df))
