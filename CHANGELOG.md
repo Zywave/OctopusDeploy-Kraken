@@ -1,3 +1,13 @@
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0...2.0.0) (2018-02-21)
+
+
+### Features
+
+* ASP.NET Core 2.0 (closes [#79](https://github.com/zywave/OctopusDeploy-Kraken/issues/79)) ([#81](https://github.com/zywave/OctopusDeploy-Kraken/issues/81)) ([5514d64](https://github.com/zywave/OctopusDeploy-Kraken/commit/5514d64))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/zywave/OctopusDeploy-Kraken/compare/1.1.0-prerelease.10...1.1.0) (2017-07-21)
 
